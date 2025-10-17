@@ -4,7 +4,8 @@ export const BASE_PATH = '/arbeidgsgiver/ansatte/narmesteleder'
 
 const nextConfig: NextConfig = {
   /* config options here */
-    basePath: BASE_PATH
+    basePath: BASE_PATH,
+    output: "standalone"
 };
 
 export default nextConfig;
