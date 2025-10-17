@@ -1,28 +1,25 @@
-# Hello NAIS
+# Nærmeste leder frontend
 
-This is a bare bone repository containing a simple web server.
-The repository is used by the hello nais tutorial in the nais documentation.
-
-## Local Development
+## Getting Started
 
 ### Prerequisites
 
-- [ ] Docker CLI - via one of these alternatives:
-   - [Colima](https://github.com/abiosoft/colima) - Colima command-line tool (recommended)
-   - [Rancher](https://rancherdesktop.io) - Rancher desktop
-   - [Podman](https://podman-desktop.io) - Podman desktop
-   - [Docker desktop](https://www.docker.com/products/docker-desktop/) - Docker desktop (requires license)
+TODO We should link to eSYFO documentation about how to start with NextJS and what is required?
 
-### Build
+- [Node.js](https://nodejs.org/) (version 18 or later)
+- TODO link to PAT token
+- Run `npm install`
 
-1. Build Docker image:
+### Running the development server
 
-    ```shell
-    docker build . -t hello-nais
-    ```
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-2. Run Docker image:
-
-    ```shell
-    docker run -p 8080:8080 hello-nais
-    ```
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
