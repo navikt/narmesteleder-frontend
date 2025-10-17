@@ -1,10 +1,13 @@
-FROM busybox:latest
-ENV PORT=8080
+FROM gcr.io/distroless/nodejs22-debian12 as runtime
 
-ADD ./www/index.html /www/index.html
-ADD ./www/hello-nais.png /www/hello-nais.png
+WORKDIR /app
 
-HEALTHCHECK CMD nc -z localhost $PORT
+COPY package.json /app/
+COPY .next/standalone /app/
+COPY public /app/public/
 
-# Create a basic webserver and run it until the container is stopped
-CMD echo "httpd started" && trap "exit 0;" TERM INT; httpd -v -p $PORT -h /www -f & wait
+EXPOSE 3000
+
+ENV NODE_ENV=production
+
+CMD ["server.js"]
