@@ -1,9 +1,19 @@
+import {Button} from "@navikt/ds-react";
+import styles from "./page.module.css";
+import {ThumbUpIcon} from "@navikt/aksel-icons";
+import {PageBlock} from "@navikt/ds-react/Page";
+
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-          <h1>Hello nærmeste leder frontend</h1>
-      </main>
-    </div>
-  );
+    return (
+        <main>
+            <PageBlock width="md" gutters>
+                <Button
+                    icon={<ThumbUpIcon title="a11y tittel" />}
+                    className={styles.limeButton}
+                >
+                    Knapp
+                </Button>
+            </PageBlock>
+        </main>
+    );
 }
