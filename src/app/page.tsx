@@ -1,5 +1,4 @@
 import {Button} from "@navikt/ds-react";
-import styles from "./page.module.css";
 import {ThumbUpIcon} from "@navikt/aksel-icons";
 import {PageBlock} from "@navikt/ds-react/Page";
 
@@ -9,9 +8,9 @@ export default function Home() {
             <PageBlock width="md" gutters>
                 <Button
                     icon={<ThumbUpIcon title="a11y tittel" />}
-                    className={styles.limeButton}
+                    variant="primary"
                 >
-                    Knapp
+                    Gjør noe!
                 </Button>
             </PageBlock>
         </main>
