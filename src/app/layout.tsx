@@ -4,6 +4,7 @@ import { fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr'
 import { publicEnv } from '@/constants/envs'
 import { Page, PageBlock } from '@navikt/ds-react/Page'
 import Script from 'next/script'
+import Providers from '@/app/Providers'
 
 export const metadata: Metadata = {
   title: 'Oppdater nærmeste leder',
@@ -53,13 +54,15 @@ export default async function RootLayout({
         <title>Nærmeste leder</title>
       </head>
       <body>
-        <Page footer={<Decorator.Footer />}>
-          <Decorator.Header />
-          <PageBlock as="main" width="lg" className="max-w-3xl" gutters>
-            {children}
-          </PageBlock>
-          <Decorator.Scripts loader={Script} />
-        </Page>
+        <Providers>
+          <Page footer={<Decorator.Footer />}>
+            <Decorator.Header />
+            <PageBlock as="main" width="lg" className="max-w-3xl" gutters>
+              {children}
+            </PageBlock>
+            <Decorator.Scripts loader={Script} />
+          </Page>
+        </Providers>
       </body>
     </html>
   )
