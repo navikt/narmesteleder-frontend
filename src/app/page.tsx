@@ -1,9 +1,17 @@
+import {BodyShort, Button, Heading, VStack } from '@navikt/ds-react'
+import { ThumbUpIcon } from '@navikt/aksel-icons'
+
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-          <h1>Hello nærmeste leder frontend</h1>
-      </main>
-    </div>
-  );
+    <VStack gap="space-12">
+      <Heading size={'large'} level="1" spacing>
+        Oppdater nærmeste leder
+      </Heading>
+      <BodyShort spacing>
+        <Button icon={<ThumbUpIcon title="a11y tittel" />} size={"medium"} variant="primary">
+          Gjør noe!
+        </Button>
+      </BodyShort>
+    </VStack>
+  )
 }
