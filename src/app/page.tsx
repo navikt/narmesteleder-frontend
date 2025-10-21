@@ -1,6 +1,5 @@
-import { Button, Heading, VStack } from '@navikt/ds-react'
+import {BodyShort, Button, Heading, VStack } from '@navikt/ds-react'
 import { ThumbUpIcon } from '@navikt/aksel-icons'
-import { PageBlock } from '@navikt/ds-react/Page'
 
 export default function Home() {
   return (
@@ -8,11 +7,11 @@ export default function Home() {
       <Heading size={'large'} level="1" spacing>
         Oppdater nærmeste leder
       </Heading>
-      <PageBlock width="md" gutters>
-        <Button icon={<ThumbUpIcon title="a11y tittel" />} variant="primary">
+      <BodyShort spacing>
+        <Button icon={<ThumbUpIcon title="a11y tittel" />} size={"medium"} variant="primary">
           Gjør noe!
         </Button>
-      </PageBlock>
+      </BodyShort>
     </VStack>
   )
 }
