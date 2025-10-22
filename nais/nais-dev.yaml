@@ -12,6 +12,17 @@ spec:
     max: 4
     cpuThresholdPercentage: 90
   port: 3000
+  tokenx:
+    enabled: true
+  idporten:
+    enabled: true
+    sidecar:
+      enabled: true
+      autoLogin: true
+      level: Level4
+      autoLoginIgnorePaths:
+        - /arbeidgsgiver/ansatte/narmesteleder/api/internal/isAlive
+        - /arbeidgsgiver/ansatte/narmesteleder/api/internal/isReady
   liveness:
     path: /arbeidgsgiver/ansatte/narmesteleder/api/internal/isAlive
     initialDelay: 20
@@ -23,6 +34,17 @@ spec:
     initialDelay: 20
     periodSeconds: 5
     timeout: 5
+  prometheus:
+    enabled: true
+    path: actuator/metrics
+  observability:
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
+    autoInstrumentation:
+      enabled: true
+      runtime: nodejs
   resources:
     limits:
       cpu: 500m
@@ -32,3 +54,12 @@ spec:
       memory: 256Mi
   ingresses:
     - 'https://www.ekstern.dev.nav.no/arbeidgsgiver/ansatte/narmesteleder'
+  env:
+    - name: NARMESTELEDER_BACKEND_URL
+      value: http://esyfo-narmesteleder
+  accessPolicy:
+    outbound:
+      rules:
+        - application: nav-dekoratoren
+          namespace: personbruker
+        - application: esyfo-narmesteleder
