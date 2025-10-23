@@ -1,3 +1,5 @@
+'use client'
+
 import { PropsWithChildren } from 'react'
 import { configureLogger, logger } from '@navikt/next-logger'
 import { BASE_PATH } from '../../next.config'
