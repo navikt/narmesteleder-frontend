@@ -1,37 +1,44 @@
-"use client"
+'use client'
 
-import {Alert, BodyShort, Button, Heading, VStack} from "@navikt/ds-react";
-import {ThumbUpIcon} from "@navikt/aksel-icons";
-import {useState} from "react";
+import { Alert, BodyShort, Button, Heading, VStack } from '@navikt/ds-react'
+import { ThumbUpIcon } from '@navikt/aksel-icons'
+import { useState } from 'react'
 
 export type NarmestelederLandingProps = {
-    idPortToken: string;
-    oboToken: string;
-    backendPostResult: string
-};
+  idPortToken: string
+  oboToken: string
+  backendPostResult: string
+}
 
-export default function NarmestelederLanding({idPortToken, oboToken, backendPostResult}: NarmestelederLandingProps) {
+export default function NarmestelederLanding({ idPortToken, oboToken, backendPostResult }: NarmestelederLandingProps) {
+  const [infoHidden, setInfoHidden] = useState(false)
 
-    const [infoHidden, setInfoHidden] = useState(false);
+  const handleClick = async () => {
+    console.log('Button clicked!')
+    setInfoHidden(!infoHidden)
+  }
 
-    const handleClick = async () => {
-        console.log("Button clicked!");
-        setInfoHidden(!infoHidden);
-    }
-
-    return <VStack gap="space-12">
-        <Heading size={'large'} level="1" spacing>
-            Angi nærmeste leder
-        </Heading>
-        <BodyShort spacing>
-            <Button onClick={handleClick} icon={<ThumbUpIcon title="a11y tittel" />} size={"medium"} variant="primary">
-                Hide info
-            </Button>
-            <VStack>
-                <Alert hidden={infoHidden} variant={"info"}>IdPorten: {idPortToken}</Alert>
-                <Alert hidden={infoHidden} variant={"info"}>Obo: {oboToken}</Alert>
-                <Alert hidden={infoHidden} variant={"info"}>Backend post result: {backendPostResult}</Alert>
-                </VStack>
-        </BodyShort>
+  return (
+    <VStack gap="space-12">
+      <Heading size={'large'} level="1" spacing>
+        Angi nærmeste leder
+      </Heading>
+      <BodyShort spacing>
+        <Button onClick={handleClick} icon={<ThumbUpIcon title="a11y tittel" />} size={'medium'} variant="primary">
+          Hide info
+        </Button>
+        <VStack>
+          <Alert hidden={infoHidden} variant={'info'}>
+            IdPorten: {idPortToken}
+          </Alert>
+          <Alert hidden={infoHidden} variant={'info'}>
+            Obo: {oboToken}
+          </Alert>
+          <Alert hidden={infoHidden} variant={'info'}>
+            Backend post result: {backendPostResult}
+          </Alert>
+        </VStack>
+      </BodyShort>
     </VStack>
+  )
 }
