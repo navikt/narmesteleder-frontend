@@ -1,8 +1,6 @@
 import {getServerEnv, isLocalOrDemo} from "@/constants/envs";
 import {exchangeIdportenTokenForNarmestelederBackendTokenx, verifyUserLoggedIn} from "@/auth/tokenUtils";
 
-const backendUrl = getServerEnv().NARMESTELEDER_BACKEND_URL;
-
 type Leder = {
     fnr: string;
     mobil: string;
@@ -18,10 +16,11 @@ type NarmesteLederRequest = {
 }
 
 export async function registerNarmesteleder(): Promise<string> {
+
     if(isLocalOrDemo) {
         return "test-post-narmesteleder";
     }
-
+    const backendUrl = getServerEnv().NARMESTELEDER_BACKEND_URL;
     const postPath = `${backendUrl}/api/v1/narmesteleder`;
     const idPortenToken = await verifyUserLoggedIn();
     const oboToken = await exchangeIdportenTokenForNarmestelederBackendTokenx(idPortenToken);
