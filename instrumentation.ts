@@ -1,11 +1,6 @@
 import { type Instrumentation } from 'next'
-import { configureLogger, logger } from '@navikt/next-logger'
-import { BASE_PATH } from './next.config'
-
-configureLogger({
-  basePath: BASE_PATH,
-})
+import { logger } from '@navikt/next-logger'
 
 export const onRequestError: Instrumentation.onRequestError = async (error) => {
-  logger.error(error)
+  logger.error(error, 'Unexpected error on request')
 }
