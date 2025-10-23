@@ -1,6 +1,4 @@
-import generated from '@navikt/eslint-config-teamsykmelding/prettier'
-
 module.exports = {
-    ...(generated),
-    tabWidth: 2,
+  ...require('@navikt/eslint-config-teamsykmelding/prettier'),
+  tabWidth: 2,
 }

@@ -1,52 +1,52 @@
-import '@/app/globals.css'
-import type { Metadata } from 'next'
+import "@/app/globals.css";
+import type { Metadata } from "next";
 
-import { fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr'
-import { publicEnv } from '@/constants/envs'
-import { Page, PageBlock } from '@navikt/ds-react/Page'
-import Script from 'next/script'
-import Providers from '@/app/Providers'
+import { fetchDecoratorReact } from "@navikt/nav-dekoratoren-moduler/ssr";
+import { publicEnv } from "@/constants/envs";
+import { Page, PageBlock } from "@navikt/ds-react/Page";
+import Script from "next/script";
+import Providers from "@/app/Providers";
 
 export const metadata: Metadata = {
-  title: 'Oppdater nærmeste leder',
-  description: 'En tjeneste for å oppdatere hvem som er din nærmeste leder',
-}
+  title: "Oppdater nærmeste leder",
+  description: "En tjeneste for å oppdatere hvem som er din nærmeste leder",
+};
 
-function getDecoratorEnv(): 'dev' | 'prod' {
+function getDecoratorEnv(): "dev" | "prod" {
   switch (publicEnv.NEXT_PUBLIC_RUNTIME_ENVIRONMENT) {
-    case 'local':
-    case 'test':
-    case 'dev':
-      return 'dev'
+    case "local":
+    case "test":
+    case "dev":
+      return "dev";
     default:
-      return 'prod'
+      return "prod";
   }
 }
 
 const breadcrumbs = [
-  { title: 'Ditt Nav', url: 'https://www.nav.no/person/dittnav' },
+  { title: "Ditt Nav", url: "https://www.nav.no/person/dittnav" },
   {
-    title: 'Oppdater nærmeste leder',
-    analyticsTitle: 'Oppdater nærmeste leder',
-    url: 'https://www.nav.no/arbeidgsgiver/ansatte/narmesteleder',
+    title: "Oppdater nærmeste leder",
+    analyticsTitle: "Oppdater nærmeste leder",
+    url: "https://www.nav.no/arbeidgsgiver/ansatte/narmesteleder",
   },
-]
+];
 
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   const Decorator = await fetchDecoratorReact({
     env: getDecoratorEnv(),
     params: {
       breadcrumbs: breadcrumbs,
-      language: 'nb',
-      context: 'arbeidsgiver',
+      language: "nb",
+      context: "arbeidsgiver",
       logoutWarning: true,
       redirectToApp: true,
     },
-  })
+  });
 
   return (
     <html lang="no">
@@ -66,5 +66,5 @@ export default async function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }
