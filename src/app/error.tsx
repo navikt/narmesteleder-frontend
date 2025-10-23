@@ -2,8 +2,8 @@
 
 import React, { ReactElement, useEffect } from 'react'
 import { BodyShort, Box, Button, HGrid, Heading, Link, List, Page, VStack } from '@navikt/ds-react'
-import { logger } from '@navikt/next-logger'
 import { CONTACT_NAV_URL } from '@/constants'
+import { logger } from '@navikt/next-logger'
 
 type Props = {
   error: Error
@@ -11,7 +11,7 @@ type Props = {
 
 export default function Error({ error }: Props): ReactElement {
   useEffect(() => {
-    logger.error(error, `Displaying 500 error page, error: ${error.message}`)
+    logger.warn(`Displaying 500-page, error message: ${error.message}`)
   }, [error])
 
   return (
