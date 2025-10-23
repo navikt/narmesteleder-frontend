@@ -23,7 +23,7 @@ const getOboToken = async () => {
   return exchangeIdportenTokenForNarmestelederBackendTokenx(idPortenToken)
 }
 
-const getPostNarmestelederPath = () => `${getBackendUrl}/api/v1/narmesteleder`
+const getPostNarmestelederPath = () => `${getBackendUrl()}/api/v1/narmesteleder`
 
 const narmestelederPostRequestSample: NarmesteLederPostRequest = {
   sykmeldtFnr: '26095514420',
