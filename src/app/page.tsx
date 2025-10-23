@@ -1,17 +1,14 @@
-import {BodyShort, Button, Heading, VStack } from '@navikt/ds-react'
-import { ThumbUpIcon } from '@navikt/aksel-icons'
 
-export default function Home() {
-  return (
-    <VStack gap="space-12">
-      <Heading size={'large'} level="1" spacing>
-        Oppdater nærmeste leder
-      </Heading>
-      <BodyShort spacing>
-        <Button icon={<ThumbUpIcon title="a11y tittel" />} size={"medium"} variant="primary">
-          Gjør noe!
-        </Button>
-      </BodyShort>
-    </VStack>
-  )
+import {exchangeIdportenTokenForNarmestelederBackendTokenx, verifyUserLoggedIn} from "@/auth/tokenUtils";
+import NarmestelederLanding from "@/features/NarmestelederLanding";
+import {registerNarmesteleder} from "@/services/narmesteleder/narmestelederService";
+
+export default async function Home() {
+
+    const idPortToken = await verifyUserLoggedIn();
+    const oboToken = await exchangeIdportenTokenForNarmestelederBackendTokenx(idPortToken) // In a real scenario, you would exchange the idPortToken for an OBO token here.
+    const backendPostResult = await registerNarmesteleder();
+    const narmestelederContext = { idPortToken, oboToken, backendPostResult }
+
+    return <NarmestelederLanding  {...narmestelederContext} />
 }
