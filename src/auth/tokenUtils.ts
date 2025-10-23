@@ -4,8 +4,6 @@ import {headers} from "next/headers";
 import {redirect} from "next/navigation";
 import {getServerEnv, isLocalOrDemo, loginUrl} from "@/constants/envs";
 
-const NARMESTELEDER_BACKEND_CLIENT_ID = `${getServerEnv().NAIS_CLUSTER_NAME}:team-esyfo:esyfo-narmesteleder-backend`
-
 async function getTokenFromHeaders() {
     const requestHeaders = await headers()
     return getToken(requestHeaders)
@@ -41,7 +39,7 @@ export async function exchangeIdportenTokenForNarmestelederBackendTokenx(
     if (!idportenToken) {
         throw new Error('Mangler idportenToken')
     }
-
+    const NARMESTELEDER_BACKEND_CLIENT_ID = `${getServerEnv().NAIS_CLUSTER_NAME}:team-esyfo:esyfo-narmesteleder-backend`
     const tokenxGrant = await requestOboToken(idportenToken, NARMESTELEDER_BACKEND_CLIENT_ID)
 
     if (!tokenxGrant.ok) {
