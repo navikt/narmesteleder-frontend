@@ -1,5 +1,6 @@
 import { getServerEnv, isLocalOrDemo } from '@/constants/envs'
 import { exchangeIdportenTokenForNarmestelederBackendTokenx, verifyUserLoggedIn } from '@/auth/tokenUtils'
+import { withErrorLogging } from '@/services/serviceUtils'
 
 type Leder = {
   fnr: string
@@ -36,7 +37,7 @@ const narmestelederPostRequestSample: NarmesteLederPostRequest = {
   },
 }
 
-export async function registerNarmesteleder(): Promise<string> {
+const registerNarmesteleder = async (): Promise<string> => {
   if (isLocalOrDemo) {
     return 'test-post-narmesteleder'
   }
@@ -48,10 +49,7 @@ export async function registerNarmesteleder(): Promise<string> {
     },
     body: JSON.stringify(narmestelederPostRequestSample),
   })
-
-  if (!response.ok) {
-    throw new Error(`Failed to register narmesteleder: ${response.statusText}`)
-  }
-
-  return await response.text()
+  return response.ok ? response.text() : Promise.reject(`Failed to register narmesteleder: ${response.statusText}`)
 }
+
+export const registerNarmestelederWithLogging = withErrorLogging(registerNarmesteleder)
