@@ -23,7 +23,8 @@ const getPostNarmestelederPath = () => `${getBackendUrl()}/api/v1/narmesteleder`
 
 const narmestelederBackendId = () => `${getServerEnv().NAIS_CLUSTER_NAME}:team-esyfo:esyfo-narmesteleder`
 
-const narmestelederPostRequestSample: NarmesteLederPostRequest = {
+// TODO replace with real data from form
+const narmestelederPostRequestDemoSample: NarmesteLederPostRequest = {
   sykmeldtFnr: '26095514420',
   organisasjonsnummer: '963890095',
   leder: {
@@ -42,9 +43,12 @@ const registerNarmesteleder = withMockForLocalOrDemo('test-post-narmesteleder', 
       'Content-Type': 'application/json',
       Authorization: `Bearer ${await getOboTokenX(narmestelederBackendId())}`,
     },
-    body: JSON.stringify(narmestelederPostRequestSample),
+    body: JSON.stringify(narmestelederPostRequestDemoSample),
   })
-  return response.ok ? response.text() : Promise.reject(`Failed to register narmesteleder: ${response.statusText}`)
+  if (!response.ok) {
+    throw Error(`Failed to register narmesteleder: ${response.statusText}`)
+  }
+  return response.text()
 })
 
 export const registerNarmestelederWithLogging = withErrorLogging(registerNarmesteleder)

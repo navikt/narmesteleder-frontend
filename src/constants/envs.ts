@@ -48,7 +48,7 @@ const getRawServerConfig = (): Partial<unknown> =>
     NAIS_CLUSTER_NAME: process.env.NAIS_CLUSTER_NAME,
   }) satisfies Record<keyof ServerEnv, string | undefined>
 
-export function getServerEnv(): ServerEnv & PublicEnv {
+export const getServerEnv = (): ServerEnv & PublicEnv => {
   try {
     return { ...serverEnvSchema.parse(getRawServerConfig()), ...publicEnvSchema.parse(publicEnv) }
   } catch (e) {
