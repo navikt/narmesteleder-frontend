@@ -1,17 +1,9 @@
-import {BodyShort, Button, Heading, VStack } from '@navikt/ds-react'
-import { ThumbUpIcon } from '@navikt/aksel-icons'
+import NarmestelederLanding from '@/features/NarmestelederLanding'
+import { registerNarmestelederWithLogging } from '@/services/narmesteleder/narmestelederService'
 
-export default function Home() {
-  return (
-    <VStack gap="space-12">
-      <Heading size={'large'} level="1" spacing>
-        Oppdater nærmeste leder
-      </Heading>
-      <BodyShort spacing>
-        <Button icon={<ThumbUpIcon title="a11y tittel" />} size={"medium"} variant="primary">
-          Gjør noe!
-        </Button>
-      </BodyShort>
-    </VStack>
-  )
+export default async function Home() {
+  const backendPostResult = await registerNarmestelederWithLogging()
+  const narmestelederContext = { backendPostResult }
+
+  return <NarmestelederLanding {...narmestelederContext} />
 }
