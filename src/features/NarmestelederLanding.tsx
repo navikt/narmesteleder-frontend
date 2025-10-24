@@ -5,12 +5,10 @@ import { ThumbUpIcon } from '@navikt/aksel-icons'
 import { useState } from 'react'
 
 export type NarmestelederLandingProps = {
-  idPortToken: string
-  oboToken: string
   backendPostResult: string
 }
 
-export default function NarmestelederLanding({ idPortToken, oboToken, backendPostResult }: NarmestelederLandingProps) {
+export default function NarmestelederLanding({ backendPostResult }: NarmestelederLandingProps) {
   const [infoHidden, setInfoHidden] = useState(false)
 
   const handleClick = async () => {
@@ -28,12 +26,6 @@ export default function NarmestelederLanding({ idPortToken, oboToken, backendPos
           Hide info
         </Button>
         <VStack>
-          <Alert hidden={infoHidden} variant={'info'}>
-            IdPorten: {idPortToken}
-          </Alert>
-          <Alert hidden={infoHidden} variant={'info'}>
-            Obo: {oboToken}
-          </Alert>
           <Alert hidden={infoHidden} variant={'info'}>
             Backend post result: {backendPostResult}
           </Alert>

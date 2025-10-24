@@ -1,6 +1,7 @@
-import { getServerEnv, isLocalOrDemo } from '@/constants/envs'
-import { exchangeIdportenTokenForNarmestelederBackendTokenx, verifyUserLoggedIn } from '@/auth/tokenUtils'
-import { withErrorLogging } from '@/services/serviceUtils'
+import { getServerEnv } from '@/constants/envs'
+import { getOboTokenX } from '@/auth/tokenUtils'
+import { withErrorLogging } from '@/utils/logging'
+import { withMockForLocalOrDemo } from '@/utils/mock'
 
 type Leder = {
   fnr: string
@@ -18,12 +19,9 @@ type NarmesteLederPostRequest = {
 
 const getBackendUrl = () => getServerEnv().NARMESTELEDER_BACKEND_URL
 
-const getOboToken = async () => {
-  const idPortenToken = await verifyUserLoggedIn()
-  return exchangeIdportenTokenForNarmestelederBackendTokenx(idPortenToken)
-}
-
 const getPostNarmestelederPath = () => `${getBackendUrl()}/api/v1/narmesteleder`
+
+const narmestelederBackendId = () => `${getServerEnv().NAIS_CLUSTER_NAME}:team-esyfo:esyfo-narmesteleder`
 
 const narmestelederPostRequestSample: NarmesteLederPostRequest = {
   sykmeldtFnr: '26095514420',
@@ -37,19 +35,16 @@ const narmestelederPostRequestSample: NarmesteLederPostRequest = {
   },
 }
 
-const registerNarmesteleder = async (): Promise<string> => {
-  if (isLocalOrDemo) {
-    return 'test-post-narmesteleder'
-  }
+const registerNarmesteleder = withMockForLocalOrDemo('test-post-narmesteleder', async (): Promise<string> => {
   const response = await fetch(getPostNarmestelederPath(), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${await getOboToken()}`,
+      Authorization: `Bearer ${await getOboTokenX(narmestelederBackendId())}`,
     },
     body: JSON.stringify(narmestelederPostRequestSample),
   })
   return response.ok ? response.text() : Promise.reject(`Failed to register narmesteleder: ${response.statusText}`)
-}
+})
 
 export const registerNarmestelederWithLogging = withErrorLogging(registerNarmesteleder)
