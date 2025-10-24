@@ -21,9 +21,9 @@ const getBackendUrl = () => getServerEnv().NARMESTELEDER_BACKEND_URL
 
 const getPostNarmestelederPath = () => `${getBackendUrl()}/api/v1/narmesteleder`
 
-const narmestelederBackendId = () => `${getServerEnv().NAIS_CLUSTER_NAME}:team-esyfo:esyfo-narmesteleder`
+const backendId = () => `${getServerEnv().NAIS_CLUSTER_NAME}:team-esyfo:esyfo-narmesteleder`
 
-// TODO replace with real data from form
+// TODO replace with real data from form validated with zod schema
 const narmestelederPostRequestDemoSample: NarmesteLederPostRequest = {
   sykmeldtFnr: '26095514420',
   organisasjonsnummer: '963890095',
@@ -41,7 +41,7 @@ const registerNarmesteleder = withMockForLocalOrDemo('test-post-narmesteleder', 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${await getOboTokenX(narmestelederBackendId())}`,
+      Authorization: `Bearer ${await getOboTokenX(backendId())}`,
     },
     body: JSON.stringify(narmestelederPostRequestDemoSample),
   })
