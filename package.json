@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@navikt/aksel-stylelint": "^7.29.1",
-    "@navikt/eslint-config-teamsykmelding": "8.1.1",
+    "@navikt/eslint-config-teamsykmelding": "8.1.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.9.1",
     "@types/react": "^19.1.12",
