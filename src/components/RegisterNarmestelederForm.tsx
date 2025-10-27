@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { revalidateLogic } from '@tanstack/react-form'
 import { z } from 'zod'
-import { Alert, Button, Fieldset, Heading, TextField } from '@navikt/ds-react'
+import { Alert, Button, Fieldset, Heading } from '@navikt/ds-react'
 import { RegisterRequest, SykmeldtPost } from '@/services/narmesteleder/schemas/formSchema'
 import { useAppForm } from '@/hooks/form'
 import { narmestelederFormDefaults } from '@/narmestelederForm'
