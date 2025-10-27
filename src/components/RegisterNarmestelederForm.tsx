@@ -93,122 +93,33 @@ export default function RegisterNarmestelederForm({ initialSykmeldt, prefillErro
         }}
         className="mt-8"
       >
-        <Fieldset legend="Sykmeldt" className="space-y-4">
-          {/* sykmeldt.navn */}
-          <form.Field
-            name="sykmeldt.navn"
-            // Per-field validation while typing:
-            validators={{ onChange: registerSchema.shape.sykmeldt.shape.navn }}
-          >
-            {(field) => (
-              <TextField
-                label="Navn"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-                error={field.state.meta.errors[0]?.message}
-                required
-              />
-            )}
-          </form.Field>
-
-          {/* sykmeldt.fodselsnummer */}
-          <form.Field
-            name="sykmeldt.fodselsnummer"
-            validators={{ onChange: registerSchema.shape.sykmeldt.shape.fodselsnummer }}
-          >
-            {(field) => (
-              <TextField
-                label="Fødselsnummer (11 sifre)"
-                inputMode="numeric"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value.replace(/\D/g, ''))}
-                onBlur={field.handleBlur}
-                error={field.state.meta.errors[0]?.message}
-                required
-              />
-            )}
-          </form.Field>
-        </Fieldset>
-
-        <Fieldset legend="Leder" className="space-y-4">
-          {/* leder.fodselsnummer */}
-          <form.Field
-            name="leder.fodselsnummer"
-            validators={{ onChange: registerSchema.shape.leder.shape.fodselsnummer }}
-          >
-            {(field) => (
-              <TextField
-                label="Fødselsnummer (11 sifre)"
-                inputMode="numeric"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value.replace(/\D/g, ''))}
-                onBlur={field.handleBlur}
-                error={field.state.meta.errors[0]?.message}
-                required
-              />
-            )}
-          </form.Field>
-
-          {/* leder.fornavn */}
-          <form.Field name="leder.fornavn" validators={{ onChange: registerSchema.shape.leder.shape.fornavn }}>
-            {(field) => (
-              <TextField
-                label="Fornavn"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-                error={field.state.meta.errors[0]?.message}
-                required
-              />
-            )}
-          </form.Field>
-
-          {/* leder.etternavn */}
-          <form.Field name="leder.etternavn" validators={{ onChange: registerSchema.shape.leder.shape.etternavn }}>
-            {(field) => (
-              <TextField
-                label="Etternavn"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-                error={field.state.meta.errors[0]?.message}
-                required
-              />
-            )}
-          </form.Field>
-
-          {/* leder.mobilnummer */}
-          <form.Field name="leder.mobilnummer" validators={{ onChange: registerSchema.shape.leder.shape.mobilnummer }}>
-            {(field) => (
-              <TextField
-                label="Mobilnummer (8 sifre)"
-                inputMode="tel"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value.replace(/\D/g, ''))}
-                onBlur={field.handleBlur}
-                error={field.state.meta.errors[0]?.message}
-                required
-              />
-            )}
-          </form.Field>
-
-          {/* leder.epost */}
-          <form.Field name="leder.epost" validators={{ onChange: registerSchema.shape.leder.shape.epost }}>
-            {(field) => (
-              <TextField
-                label="E-postadresse"
-                type="email"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-                error={field.state.meta.errors[0]?.message}
-                required
-              />
-            )}
-          </form.Field>
-        </Fieldset>
-
+        <form.AppForm>
+          <div className="grid gap-4 mb-4">
+            <Fieldset legend="Sykmeldt" className="space-y-4">
+              <form.AppField name="sykmeldt.navn">{(field) => <field.TextInputField label="Navn" />}</form.AppField>
+              <form.AppField name="sykmeldt.fodselsnummer">
+                {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
+              </form.AppField>
+            </Fieldset>
+          </div>
+          <div className="grid gap-4 mb-4">
+            <Fieldset legend="Nærmeste leder" className="space-y-4">
+              <form.AppField name="leder.fodselsnummer">
+                {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
+              </form.AppField>
+              <form.AppField name="leder.fornavn">{(field) => <field.TextInputField label="Fornavn" />}</form.AppField>
+              <form.AppField name="leder.etternavn">
+                {(field) => <field.TextInputField label="Etternavn" />}
+              </form.AppField>
+              <form.AppField name="leder.mobilnummer">
+                {(field) => <field.TextInputField label="Mobilnummer" />}
+              </form.AppField>
+              <form.AppField name="leder.epost">
+                {(field) => <field.TextInputField label="E-postadresse" />}
+              </form.AppField>
+            </Fieldset>
+          </div>
+        </form.AppForm>
         <div className="flex gap-3">
           <Button type="submit" loading={submitting} variant="primary" disabled={submitting}>
             {submitting ? 'Sender…' : 'Send svarene til Nav'}
