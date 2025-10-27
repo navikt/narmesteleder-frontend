@@ -56,6 +56,7 @@ export default function RegisterNarmestelederForm({ initialSykmeldt, prefillErro
         setSubmitError(false)
         setSubmitting(true)
         await clientPostRegisterLeader(value)
+        logger.info('Nærmeste leder registrert successfully')
       } catch (e) {
         logger.error(`Feil ved innsending av kartleggingssporsmal: ${e}`)
         setSubmitError(true)
@@ -121,7 +122,7 @@ export default function RegisterNarmestelederForm({ initialSykmeldt, prefillErro
           </div>
         </form.AppForm>
         <div className="flex gap-3">
-          <Button type="submit" loading={submitting} variant="primary" disabled={submitting}>
+          <Button type="submit" variant="primary" disabled={submitting} onClick={() => form.handleSubmit()}>
             {submitting ? 'Sender…' : 'Send svarene til Nav'}
           </Button>
           <Button type="button" variant="secondary" onClick={() => form.reset()}>
