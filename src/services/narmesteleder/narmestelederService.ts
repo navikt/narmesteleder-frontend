@@ -3,6 +3,7 @@ import { getOboTokenX } from '@/auth/tokenUtils'
 import { withErrorLogging } from '@/utils/logging'
 import { withMockForLocalOrDemo } from '@/utils/mock'
 import { Sykmeldt } from '@/services/narmesteleder/schemas/formSchema'
+import { logger } from '@navikt/next-logger'
 
 type Leder = {
   fnr: string
@@ -81,7 +82,9 @@ const getMockSykmeldt = (): NarmesteLederGetResponse => ({
 // TODO logging
 export const getSykmeldtInfoForNarmesteleder = (behovId: string) =>
   withMockForLocalOrDemo(getMockSykmeldt(), async (): Promise<NarmesteLederGetResponse> => {
-    const response = await fetch(getNarmestelederGetPath(behovId), {
+    const getPath = getNarmestelederGetPath(behovId)
+    logger.info(`Fetching narmesteleder info from ${getPath}`)
+    const response = await fetch(getPath, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
