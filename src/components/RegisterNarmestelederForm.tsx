@@ -2,55 +2,30 @@
 
 import { useState } from 'react'
 import { revalidateLogic } from '@tanstack/react-form'
-import { z } from 'zod'
-import { Alert, Button, Fieldset, Heading } from '@navikt/ds-react'
-import { RegisterRequest, SykmeldtPost } from '@/services/narmesteleder/schemas/formSchema'
+import { Button, Fieldset, Heading } from '@navikt/ds-react'
+import { RegisterRequest } from '@/services/narmesteleder/schemas/formSchema'
 import { useAppForm } from '@/hooks/form'
-import { narmestelederFormDefaults } from '@/narmestelederForm'
 import { logger } from '@navikt/next-logger'
+import { narmesteLederFormDefaults, registerNarmesteLederSchema } from '@/components/schemas/nærmesteLederSchema'
+import { AlertErrorNarmesteLeder } from '@/components/AlertErrorNarmesteLeder'
 
 // --- API ---
 const clientPostRegisterLeader = async (body: RegisterRequest): Promise<string> => {
   // TODO mapping and sending to backend
   return 'done'
 }
-
-// --- Zod schema (runtime validation) ---
-const registerSchema = z.object({
-  sykmeldt: z.object({
-    navn: z.string().min(1, 'Navn er påkrevd'),
-    fodselsnummer: z.string().regex(/^\d{11}$/, 'Fødselsnummer må være 11 sifre'),
-  }),
-  leder: z.object({
-    fodselsnummer: z.string().regex(/^\d{11}$/, 'Fødselsnummer må være 11 sifre'),
-    fornavn: z.string().min(1, 'Fornavn er påkrevd'),
-    etternavn: z.string().min(1, 'Etternavn er påkrevd'),
-    // Norske mobilnumre er 8 sifre, men juster om du trenger annet
-    mobilnummer: z.string().regex(/^\d{8}$/, 'Mobilnummer må være 8 sifre'),
-    epost: z.string().email('Ugyldig e-postadresse'),
-  }),
-})
-
-// OPTIONAL: if your RegisterRequest type matches the schema, this asserts parity at compile time
-type FormValues = RegisterRequest & z.infer<typeof registerSchema>
-
-export type RegisterNarmestelederFormProps = {
-  initialSykmeldt?: SykmeldtPost
-  prefillError?: string
-}
-
-export default function RegisterNarmestelederForm({ initialSykmeldt, prefillError }: RegisterNarmestelederFormProps) {
+export default function RegisterNarmestelederForm() {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(false)
 
   const form = useAppForm({
-    defaultValues: narmestelederFormDefaults,
+    defaultValues: narmesteLederFormDefaults,
     validationLogic: revalidateLogic({
       mode: 'submit',
       modeAfterSubmission: 'change',
     }),
 
-    validators: { onSubmit: registerSchema },
+    validators: { onSubmit: registerNarmesteLederSchema },
     onSubmit: async ({ value }) => {
       try {
         setSubmitError(false)
@@ -72,20 +47,7 @@ export default function RegisterNarmestelederForm({ initialSykmeldt, prefillErro
         Oppgi nærmeste leder
       </Heading>
 
-      {prefillError && (
-        <Alert variant="error" role="alert">
-          Kunne ikke forhåndsvise sykmeldt-data: {prefillError}
-        </Alert>
-      )}
-
-      {submitError && (
-        <Alert className="mb-8 w-2xl" variant="error" role="alert">
-          <Heading size="small" level="2">
-            Beklager! Det har oppstått en uventet feil
-          </Heading>
-          Vi klarte ikke å sende inn nærmeste leder. Prøv igjen om litt.
-        </Alert>
-      )}
+      {submitError && <AlertErrorNarmesteLeder />}
 
       <form
         onSubmit={(e) => {
