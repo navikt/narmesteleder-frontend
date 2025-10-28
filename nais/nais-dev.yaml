@@ -57,6 +57,8 @@ spec:
   env:
     - name: NARMESTELEDER_BACKEND_URL
       value: http://esyfo-narmesteleder
+    - name: NARMESTELEDER_BACKEND_CLIENT_ID
+      value: "dev-gcp:team-esyfo:esyfo-narmesteleder"
   accessPolicy:
     outbound:
       rules:

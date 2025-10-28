@@ -1,9 +1,9 @@
-import { getServerEnv } from '@/constants/envs'
 import { getOboTokenX } from '@/auth/tokenUtils'
 import { withErrorLogging } from '@/utils/logging'
 import { withMockForLocalOrDemo } from '@/utils/mock'
 import { Sykmeldt } from '@/services/narmesteleder/schemas/formSchema'
 import { logger } from '@navikt/next-logger'
+import { getServerEnv } from '@/env-variables/serverEnv'
 
 type Leder = {
   fnr: string
