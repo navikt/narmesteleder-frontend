@@ -94,5 +94,6 @@ export const getSykmeldtInfoForNarmesteleder = (behovId: string) =>
     if (!response.ok) {
       throw Error(`Failed to get narmesteleder info with ${behovId}: ${response.statusText}`)
     }
+    // TODO zod validation
     return response.json()
   })
