@@ -1,19 +1,19 @@
 'use client'
 import { NarmesteLederGetResponse } from '@/services/narmesteleder/narmestelederService'
-import { BodyLong, BodyShort, GuidePanel, Heading, Page, VStack } from '@navikt/ds-react'
+import { BodyLong, GuidePanel, Heading, Page } from '@navikt/ds-react'
 import { getFullName } from '@/services/narmesteleder/schemas/formSchema'
 
 export default function SykmeldtPanel({ sykmeldt }: { sykmeldt: NarmesteLederGetResponse }) {
   return (
     <Page>
       <Page.Block width={'2xl'}>
-        <Heading size="large" level="1">
+        <Heading size="large" level="1" spacing>
           Oppgi nærmeste leder
         </Heading>
       </Page.Block>
       <Page.Block width={'2xl'}>
         <GuidePanel>
-          <Heading level="2" size="medium" spacing>
+          <Heading size="medium" level="2" spacing>
             Hei xxx!
           </Heading>
           <BodyLong spacing>

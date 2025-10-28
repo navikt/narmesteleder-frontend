@@ -43,7 +43,7 @@ export default function RegisterNarmestelederForm() {
 
   return (
     <div className="space-y-6">
-      <Heading size="large" level="1">
+      <Heading size="large" level="1" spacing>
         Oppgi nærmeste leder
       </Heading>
 
@@ -65,18 +65,23 @@ export default function RegisterNarmestelederForm() {
               </form.AppField>
             </Fieldset>
           </div>
+
           <div className="grid gap-4 mb-4">
             <Fieldset legend="Nærmeste leder" className="space-y-4">
               <form.AppField name="leder.fodselsnummer">
                 {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
               </form.AppField>
+
               <form.AppField name="leder.fornavn">{(field) => <field.TextInputField label="Fornavn" />}</form.AppField>
+
               <form.AppField name="leder.etternavn">
                 {(field) => <field.TextInputField label="Etternavn" />}
               </form.AppField>
+
               <form.AppField name="leder.mobilnummer">
                 {(field) => <field.TextInputField label="Mobilnummer" />}
               </form.AppField>
+
               <form.AppField name="leder.epost">
                 {(field) => <field.TextInputField label="E-postadresse" />}
               </form.AppField>
