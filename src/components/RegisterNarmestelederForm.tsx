@@ -6,7 +6,7 @@ import { Button, Fieldset, Heading } from '@navikt/ds-react'
 import { RegisterRequest } from '@/services/narmesteleder/schemas/formSchema'
 import { useAppForm } from '@/components/form/hooks/form'
 import { logger } from '@navikt/next-logger'
-import { narmesteLederFormDefaults, registerNarmesteLederSchema } from '@/schemas/nærmestelederSchema'
+import { narmesteLederFormDefaults, registerNarmesteLederSchema } from '@/schemas/nærmestelederFormSchema'
 import { AlertErrorNarmesteLeder } from '@/components/AlertErrorNarmesteLeder'
 
 // --- API ---

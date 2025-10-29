@@ -1,9 +1,8 @@
 'use client'
-import { NarmesteLederGetResponse } from '@/services/narmesteleder/narmestelederService'
 import { BodyLong, GuidePanel, Heading, Page } from '@navikt/ds-react'
-import { getFullName } from '@/services/narmesteleder/schemas/formSchema'
+import { SykmeldtInfo } from '@/server/fetchData/fetchSykmeldtInfo'
 
-export default function SykmeldtPanel({ sykmeldt }: { sykmeldt: NarmesteLederGetResponse }) {
+export default function SykmeldtPanel({ sykmeldt }: { sykmeldt: SykmeldtInfo }) {
   return (
     <Page>
       <Page.Block width={'2xl'}>
@@ -18,7 +17,7 @@ export default function SykmeldtPanel({ sykmeldt }: { sykmeldt: NarmesteLederGet
           </Heading>
           <BodyLong spacing>
             <span className="font-bold">
-              {getFullName(sykmeldt.name)} ({sykmeldt.sykmeldtFnr})
+              {sykmeldt.sykmeldt.fullnavn} ({sykmeldt.sykmeldtFnr})
             </span>{' '}
             er sykmeldt. Nav mangler informasjon om hvem som er nærmeste leder i bedrift{' '}
             <span className="font-bold">{sykmeldt.orgnummer}</span>. Personen som oppgis som nærmeste leder, får tilgang

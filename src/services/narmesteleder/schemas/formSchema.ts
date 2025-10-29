@@ -15,16 +15,3 @@ export type RegisterRequest = {
   sykmeldt: SykmeldtPost
   leder: LederPost
 }
-
-export type PrefillResponse = {
-  sykmeldt: SykmeldtPost
-}
-
-export type Sykmeldt = {
-  firstName: string
-  lastName: string
-  middleName?: string
-}
-
-export const getFullName = (sykmeldt: Sykmeldt): string =>
-  [sykmeldt.firstName, sykmeldt.middleName, sykmeldt.lastName].filter(Boolean).join(' ')

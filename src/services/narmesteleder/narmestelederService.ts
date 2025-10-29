@@ -1,8 +1,5 @@
 import { getOboTokenX } from '@/auth/tokenUtils'
-import { withErrorLogging } from '@/utils/logging'
 import { withMockForLocalOrDemo } from '@/utils/mock'
-import { Sykmeldt } from '@/services/narmesteleder/schemas/formSchema'
-import { logger } from '@navikt/next-logger'
 import { getServerEnv } from '@/env-variables/serverEnv'
 
 type Leder = {
@@ -19,21 +16,9 @@ type NarmesteLederPostRequest = {
   leder: Leder
 }
 
-// TODO replace with real data from form validated with zod schema
-export type NarmesteLederGetResponse = {
-  id: string
-  sykmeldtFnr: string
-  orgnummer: string
-  hovedenhetOrgnummer: string
-  narmesteLederFnr: string
-  name: Sykmeldt
-}
-
 const getBackendUrl = () => getServerEnv().NARMESTELEDER_BACKEND_HOST
 
 const getNarmestelederPostPath = () => `${getBackendUrl()}/api/v1/narmesteleder`
-
-const getNarmestelederGetPath = (behovId: string) => `${getBackendUrl()}/api/v1/narmesteleder/behov/${behovId}`
 
 const backendId = () => `${getServerEnv().NAIS_CLUSTER_NAME}:team-esyfo:esyfo-narmesteleder`
 
@@ -64,36 +49,3 @@ const registerNarmesteleder = withMockForLocalOrDemo('test-post-narmesteleder', 
   }
   return response.text()
 })
-
-export const registerNarmestelederWithLogging = withErrorLogging(registerNarmesteleder)
-
-const getMockSykmeldt = (): NarmesteLederGetResponse => ({
-  id: '123456',
-  sykmeldtFnr: '26095514420',
-  orgnummer: '963890095',
-  hovedenhetOrgnummer: '123456789',
-  narmesteLederFnr: '19048938755',
-  name: {
-    firstName: 'John',
-    lastName: 'Doe',
-  },
-})
-
-// TODO logging
-export const getSykmeldtInfoForNarmesteleder = (behovId: string) =>
-  withMockForLocalOrDemo(getMockSykmeldt(), async (): Promise<NarmesteLederGetResponse> => {
-    const getPath = getNarmestelederGetPath(behovId)
-    logger.info(`Fetching narmesteleder info from ${getPath}`)
-    const response = await fetch(getPath, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${await getOboTokenX(backendId())}`,
-      },
-    })
-    if (!response.ok) {
-      throw Error(`Failed to get narmesteleder info with ${behovId}: ${response.statusText}`)
-    }
-    // TODO zod validation
-    return response.json()
-  })
