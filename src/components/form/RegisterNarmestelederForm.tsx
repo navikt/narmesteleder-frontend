@@ -10,7 +10,6 @@ import {
   narmesteLederInfoDefaults,
   narmesteLederInfoSchema,
 } from '@/schemas/nærmestelederFormSchema'
-import { AlertErrorNarmesteLeder } from '@/components/AlertErrorNarmesteLeder'
 import { SykmeldtSubform } from '@/components/form/SykmeldtSubform'
 import { NarmestelederSubform } from '@/components/form/NarmestelederSubform'
 
@@ -21,7 +20,6 @@ const clientPostRegisterLeader = async (body: NarmesteLederInfo): Promise<string
 }
 export default function RegisterNarmestelederForm() {
   const [submitting, setSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState(false)
 
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
@@ -33,13 +31,11 @@ export default function RegisterNarmestelederForm() {
     validators: { onSubmit: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
       try {
-        setSubmitError(false)
         setSubmitting(true)
         await clientPostRegisterLeader(value)
         logger.info('Nærmeste leder registrert successfully')
       } catch (e) {
         logger.error(`Feil ved innsending av kartleggingssporsmal: ${e}`)
-        setSubmitError(true)
       } finally {
         setSubmitting(false)
       }
@@ -51,8 +47,6 @@ export default function RegisterNarmestelederForm() {
       <Heading size="large" level="1" spacing>
         Oppgi nærmeste leder
       </Heading>
-
-      {submitError && <AlertErrorNarmesteLeder />}
 
       <form
         onSubmit={(e) => {

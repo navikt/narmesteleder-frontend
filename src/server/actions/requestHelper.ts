@@ -1,29 +1,29 @@
 import { NarmesteLederForm, NarmesteLederInfo } from '@/schemas/nærmestelederFormSchema'
 
-export type NarmestelederRequest = {
-  fnr: string
-  mobil: string
-  epost: string
-  fornavn: string
-  etternavn: string
+export type ManagerRequest = {
+  nationalIdentificationNumber: string
+  mobile: string
+  email: string
+  firstName: string
+  lastName: string
 }
 
-export type NarmestelederInfoRequest = {
-  sykmeldtFnr: string
-  organisasjonsnummer: string
-  leder: NarmestelederRequest
+export type LineManagerRequest = {
+  employeeIdentificationNumber: string
+  orgnumber: string
+  manager: ManagerRequest
 }
 
-export const mapToNarmesteLederRequest = (narmesteLeder: NarmesteLederForm): NarmestelederRequest => ({
-  fnr: narmesteLeder.fodselsnummer,
-  mobil: narmesteLeder.mobilnummer,
-  epost: narmesteLeder.epost,
-  fornavn: narmesteLeder.fornavn,
-  etternavn: narmesteLeder.etternavn,
+export const mapToManagerRequest = (narmesteLeder: NarmesteLederForm): ManagerRequest => ({
+  nationalIdentificationNumber: narmesteLeder.fodselsnummer,
+  mobile: narmesteLeder.mobilnummer,
+  email: narmesteLeder.epost,
+  firstName: narmesteLeder.fornavn,
+  lastName: narmesteLeder.etternavn,
 })
 
-export const mapToNarmesteLederInfoRequest = (narmesteLederInfoForm: NarmesteLederInfo): NarmestelederInfoRequest => ({
-  sykmeldtFnr: narmesteLederInfoForm.sykmeldt.fodselsnummer,
-  organisasjonsnummer: narmesteLederInfoForm.sykmeldt.orgnummer,
-  leder: mapToNarmesteLederRequest(narmesteLederInfoForm.leder),
+export const mapToLineManagerRequest = (narmesteLederInfoForm: NarmesteLederInfo): LineManagerRequest => ({
+  employeeIdentificationNumber: narmesteLederInfoForm.sykmeldt.fodselsnummer,
+  orgnumber: narmesteLederInfoForm.sykmeldt.orgnummer,
+  manager: mapToManagerRequest(narmesteLederInfoForm.leder),
 })

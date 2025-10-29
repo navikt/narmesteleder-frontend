@@ -1,8 +1,8 @@
 'use client'
 import { BodyLong, GuidePanel, Heading, Page } from '@navikt/ds-react'
-import { SykmeldtInfo } from '@/server/fetchData/fetchSykmeldtInfo'
+import { LederInfo } from '@/server/fetchData/fetchLederInfo'
 
-export default function SykmeldtPanel({ sykmeldt }: { sykmeldt: SykmeldtInfo }) {
+export default function OppgiLederPanel({ lederInfo }: { lederInfo: LederInfo }) {
   return (
     <Page>
       <Page.Block width={'2xl'}>
@@ -17,11 +17,11 @@ export default function SykmeldtPanel({ sykmeldt }: { sykmeldt: SykmeldtInfo }) 
           </Heading>
           <BodyLong spacing>
             <span className="font-bold">
-              {sykmeldt.sykmeldt.fullnavn} ({sykmeldt.sykmeldtFnr})
+              {lederInfo.sykmeldt.fullnavn} ({lederInfo.sykmeldtFnr})
             </span>{' '}
             er sykmeldt. Nav mangler informasjon om hvem som er nærmeste leder i bedrift{' '}
-            <span className="font-bold">{sykmeldt.orgnummer}</span>. Personen som oppgis som nærmeste leder, får tilgang
-            den sykmeldte ansatte og oppfølgingstjenestene Nav tilbyr på &quot;Dine sykmeldte&quot; hos Nav.
+            <span className="font-bold">{lederInfo.orgnummer}</span>. Personen som oppgis som nærmeste leder, får
+            tilgang den sykmeldte ansatte og oppfølgingstjenestene Nav tilbyr på &quot;Dine sykmeldte&quot; hos Nav.
           </BodyLong>
           <BodyLong>
             Vi har forhåndsutfylt skjemaet med navn og f.nr til den ansatte. Du må legge inn kontaktinformasjonen til
