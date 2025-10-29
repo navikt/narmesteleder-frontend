@@ -28,7 +28,7 @@ export type LederInfo = {
   sykmeldt: Navn
 }
 
-const mapSykmeldtInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederInfo => {
+const mapToLederInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederInfo => {
   return {
     id: sykmeldtInfoResponse.id,
     sykmeldtFnr: formatFnr(sykmeldtInfoResponse.employeeIdentificationNumber),
@@ -47,8 +47,8 @@ const mapSykmeldtInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederIn
 const getFullName = (employee: EmployeeResponse): string =>
   [employee.firstName, employee.middleName, employee.lastName].filter(Boolean).join(' ')
 
-export const fetchLinemanagerRequirement = withMockForLocalOrDemo(
-  mapSykmeldtInfo(mockLineManagerRequirement),
+export const fetchLederInfo = withMockForLocalOrDemo(
+  mapToLederInfo(mockLineManagerRequirement),
   async (requirementId: string): Promise<LederInfo> => {
     const result = await tokenXFetchGet({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
@@ -56,6 +56,6 @@ export const fetchLinemanagerRequirement = withMockForLocalOrDemo(
       responseDataSchema: lineManagerReadSchema,
       redirectAfterLoginUrl: getRedirectAfterLoginUrlForAG(requirementId),
     })
-    return mapSykmeldtInfo(result)
+    return mapToLederInfo(result)
   },
 )

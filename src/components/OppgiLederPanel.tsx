@@ -1,6 +1,6 @@
 'use client'
 import { BodyLong, GuidePanel, Heading, Page } from '@navikt/ds-react'
-import { LederInfo } from '@/server/fetchData/fetchLinemanagerRequirement'
+import { LederInfo } from '@/server/fetchData/fetchLederInfo'
 
 export default function OppgiLederPanel({ lederInfo }: { lederInfo: LederInfo }) {
   return (
