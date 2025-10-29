@@ -9,7 +9,7 @@ import { getRedirectAfterLoginUrlForAG } from '@/auth/redirectToLogin'
 import { formatFnr } from '@/utils/formatting'
 import { withMockForLocalOrDemo } from '@/utils/mock'
 
-const getNarmestelederGetPath = (id: string) =>
+const getLineManagerRequirementPath = (id: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`
 
 export type Navn = {
@@ -52,7 +52,7 @@ export const fetchLederInfo = withMockForLocalOrDemo(
   async (requirementId: string): Promise<LederInfo> => {
     const result = await tokenXFetchGet({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      endpoint: getNarmestelederGetPath(requirementId),
+      endpoint: getLineManagerRequirementPath(requirementId),
       responseDataSchema: lineManagerReadSchema,
       redirectAfterLoginUrl: getRedirectAfterLoginUrlForAG(requirementId),
     })
