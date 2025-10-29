@@ -15,6 +15,9 @@ export const publicEnvSchema = z.object({
   NEXT_PUBLIC_BASE_PATH: z.string(),
 })
 
+/**
+ * These envs are available in the browser. They are replaced during the bundling step by NextJS.
+ */
 export const rawPublicEnv = publicEnvSchema.parse({
   NEXT_PUBLIC_RUNTIME_ENVIRONMENT: process.env.NEXT_PUBLIC_RUNTIME_ENVIRONMENT,
   NEXT_PUBLIC_ASSET_PREFIX: process.env.NEXT_PUBLIC_ASSET_PREFIX,

@@ -43,9 +43,6 @@ spec:
       memory: 256Mi
   ingresses:
     - {{ingress}}
-  env:
-    - name: NARMESTELEDER_BACKEND_URL
-      value: http://esyfo-narmesteleder
   accessPolicy:
     outbound:
       rules:

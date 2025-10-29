@@ -29,7 +29,7 @@ export type NarmesteLederGetResponse = {
   name: Sykmeldt
 }
 
-const getBackendUrl = () => getServerEnv().NARMESTELEDER_BACKEND_URL
+const getBackendUrl = () => getServerEnv().NARMESTELEDER_BACKEND_HOST
 
 const getNarmestelederPostPath = () => `${getBackendUrl()}/api/v1/narmesteleder`
 
