@@ -1,3 +1,5 @@
+'use server'
+
 import { NarmesteLederInfo } from '@/schemas/nærmestelederFormSchema'
 import { getServerEnv } from '@/env-variables/serverEnv'
 import { tokenXFetchUpdate } from '@/server/tokenXFetch'

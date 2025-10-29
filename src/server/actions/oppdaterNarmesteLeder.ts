@@ -1,3 +1,5 @@
+'use server'
+
 import { NarmesteLederForm } from '@/schemas/nærmestelederFormSchema'
 import { tokenXFetchUpdate } from '@/server/tokenXFetch'
 import { TokenXTargetApi } from '@/server/helpers'
