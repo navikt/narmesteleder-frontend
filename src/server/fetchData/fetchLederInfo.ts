@@ -12,22 +12,6 @@ import { withMockForLocalOrDemo } from '@/utils/mock'
 const getLineManagerRequirementPath = (id: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`
 
-export type Navn = {
-  fornavn: string
-  etternavn: string
-  mellomnavn?: string
-  fullnavn: string
-}
-
-export type LederInfo = {
-  id: string
-  sykmeldtFnr: string
-  orgnummer: string
-  hovedenhetOrgnummer: string
-  narmesteLederFnr: string
-  sykmeldt: Navn
-}
-
 const mapToLederInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederInfo => {
   return {
     id: sykmeldtInfoResponse.id,
@@ -46,6 +30,22 @@ const mapToLederInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederInf
 
 const getFullName = (employee: EmployeeResponse): string =>
   [employee.firstName, employee.middleName, employee.lastName].filter(Boolean).join(' ')
+
+export type Navn = {
+  fornavn: string
+  etternavn: string
+  mellomnavn?: string
+  fullnavn: string
+}
+
+export type LederInfo = {
+  id: string
+  sykmeldtFnr: string
+  orgnummer: string
+  hovedenhetOrgnummer: string
+  narmesteLederFnr: string
+  sykmeldt: Navn
+}
 
 export const fetchLederInfo = withMockForLocalOrDemo(
   mapToLederInfo(mockLineManagerRequirement),
