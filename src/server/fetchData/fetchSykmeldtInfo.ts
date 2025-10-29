@@ -1,3 +1,5 @@
+'use server'
+
 import { getServerEnv } from '@/env-variables/serverEnv'
 import { mockSykmeldtInfo } from '@/server/fetchData/demoMockData/mockSykmeldtInfo'
 import { SykmeldtInfoResponse, sykmeldtInfoSchema, SykmeldtResponse } from '@/schemas/sykmeldtInfoSchema'
@@ -42,7 +44,7 @@ const mapSykmeldtInfo = (sykmeldtInfoResponse: SykmeldtInfoResponse): SykmeldtIn
   }
 }
 
-export const getFullName = (sykmeldt: SykmeldtResponse): string =>
+const getFullName = (sykmeldt: SykmeldtResponse): string =>
   [sykmeldt.firstName, sykmeldt.middleName, sykmeldt.lastName].filter(Boolean).join(' ')
 
 export const fetchSykmeldtInfo = withMockForLocalOrDemo(
