@@ -1,26 +1,13 @@
 'use client'
 
-import { useState } from 'react'
 import { revalidateLogic } from '@tanstack/react-form'
-import { Button, Heading } from '@navikt/ds-react'
+import { Heading } from '@navikt/ds-react'
 import { useAppForm } from '@/components/form/hooks/form'
-import { logger } from '@navikt/next-logger'
-import {
-  NarmesteLederInfo,
-  narmesteLederInfoDefaults,
-  narmesteLederInfoSchema,
-} from '@/schemas/nærmestelederFormSchema'
+import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
 import { SykmeldtSubform } from '@/components/form/SykmeldtSubform'
 import { NarmestelederSubform } from '@/components/form/NarmestelederSubform'
 
-// --- API ---
-const clientPostRegisterLeader = async (body: NarmesteLederInfo): Promise<string> => {
-  // TODO mapping and sending to backend
-  return 'done'
-}
 export default function RegisterNarmestelederForm() {
-  const [submitting, setSubmitting] = useState(false)
-
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
     validationLogic: revalidateLogic({
@@ -30,15 +17,8 @@ export default function RegisterNarmestelederForm() {
 
     validators: { onSubmit: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
-      try {
-        setSubmitting(true)
-        await clientPostRegisterLeader(value)
-        logger.info('Nærmeste leder registrert successfully')
-      } catch (e) {
-        logger.error(`Feil ved innsending av kartleggingssporsmal: ${e}`)
-      } finally {
-        setSubmitting(false)
-      }
+      console.log(value)
+      alert(JSON.stringify(value, null, 2))
     },
   })
 
@@ -49,9 +29,10 @@ export default function RegisterNarmestelederForm() {
       </Heading>
 
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault()
           e.stopPropagation()
+          await form.handleSubmit()
         }}
         className="mt-8"
       >
@@ -65,12 +46,9 @@ export default function RegisterNarmestelederForm() {
           </div>
         </form.AppForm>
         <div className="flex gap-3">
-          <Button type="submit" variant="primary" disabled={submitting} onClick={() => form.handleSubmit()}>
-            {submitting ? 'Sender…' : 'Send svarene til Nav'}
-          </Button>
-          <Button type="button" variant="secondary" onClick={() => form.reset()}>
-            Nullstill
-          </Button>
+          <form.AppForm>
+            <form.BoundSubmitButton label="Lagre nærmeste leder" />
+          </form.AppForm>
         </div>
       </form>
     </div>

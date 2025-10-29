@@ -1,11 +1,13 @@
-import { createFormHook, createFormHookContexts } from '@tanstack/react-form'
+import { createFormHook } from '@tanstack/react-form'
 import { BoundTextField } from '@/components/form/formComponents/boundTextField'
-
-export const { fieldContext, formContext, useFieldContext } = createFormHookContexts()
+import { BoundSubmitButton } from '@/components/form/formComponents/boundSubmitButton'
+import { fieldContext, formContext } from '@/components/form/hooks/form-context'
 
 export const { useAppForm, withForm } = createFormHook({
   fieldContext,
   formContext,
   fieldComponents: { TextInputField: BoundTextField },
-  formComponents: {},
+  formComponents: {
+    BoundSubmitButton,
+  },
 })
