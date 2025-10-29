@@ -1,6 +1,6 @@
 import { SykmeldtInfoResponse } from '@/schemas/sykmeldtInfoSchema'
 
-export const mockSykmeldtInfo = (): SykmeldtInfoResponse => ({
+export const mockSykmeldtInfo: SykmeldtInfoResponse = {
   id: '123456',
   sykmeldtFnr: '26095514420',
   orgnummer: '963890095',
@@ -9,5 +9,6 @@ export const mockSykmeldtInfo = (): SykmeldtInfoResponse => ({
   name: {
     firstName: 'John',
     lastName: 'Doe',
+    middleName: 'Muller',
   },
-})
+}

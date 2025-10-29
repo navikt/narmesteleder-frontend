@@ -1,11 +1,11 @@
 import { getServerEnv } from '@/env-variables/serverEnv'
-import { isLocalOrDemo } from '@/env-variables/envHelpers'
 import { mockSykmeldtInfo } from '@/server/fetchData/demoMockData/mockSykmeldtInfo'
 import { SykmeldtInfoResponse, sykmeldtInfoSchema, SykmeldtResponse } from '@/schemas/sykmeldtInfoSchema'
 import { tokenXFetchGet } from '@/server/tokenXFetch'
 import { TokenXTargetApi } from '@/server/helpers'
 import { getRedirectAfterLoginUrlForAG } from '@/auth/redirectToLogin'
 import { formatFnr } from '@/utils/formatting'
+import { withMockForLocalOrDemo } from '@/utils/mock'
 
 const getBackendHost = () => getServerEnv().NARMESTELEDER_BACKEND_HOST
 
@@ -46,15 +46,15 @@ const mapSykmeldtInfo = (sykmeldtInfoResponse: SykmeldtInfoResponse): SykmeldtIn
 export const getFullName = (sykmeldt: SykmeldtResponse): string =>
   [sykmeldt.firstName, sykmeldt.middleName, sykmeldt.lastName].filter(Boolean).join(' ')
 
-export const fetchSykmeldtInfo = async (behovId: string): Promise<SykmeldtInfo> => {
-  if (isLocalOrDemo) {
-    return mapSykmeldtInfo(mockSykmeldtInfo())
-  }
-  const result = await tokenXFetchGet({
-    targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-    endpoint: getNarmestelederGetPath(behovId),
-    responseDataSchema: sykmeldtInfoSchema,
-    redirectAfterLoginUrl: getRedirectAfterLoginUrlForAG(behovId),
-  })
-  return mapSykmeldtInfo(result)
-}
+export const fetchSykmeldtInfo = withMockForLocalOrDemo(
+  mapSykmeldtInfo(mockSykmeldtInfo),
+  async (behovId: string): Promise<SykmeldtInfo> => {
+    const result = await tokenXFetchGet({
+      targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+      endpoint: getNarmestelederGetPath(behovId),
+      responseDataSchema: sykmeldtInfoSchema,
+      redirectAfterLoginUrl: getRedirectAfterLoginUrlForAG(behovId),
+    })
+    return mapSykmeldtInfo(result)
+  },
+)
