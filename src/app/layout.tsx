@@ -8,8 +8,8 @@ import Providers from '@/app/Providers'
 import { publicEnv } from '@/env-variables/publicEnv'
 
 export const metadata: Metadata = {
-  title: 'Oppdater nærmeste leder',
-  description: 'En tjeneste for å oppdatere hvem som er din nærmeste leder',
+  title: 'Oppgi nærmeste leder',
+  description: 'En tjeneste for å oppgi hvem som er din nærmeste leder',
 }
 
 const getDecoratorEnv = (): 'dev' | 'prod' => {
@@ -26,8 +26,8 @@ const getDecoratorEnv = (): 'dev' | 'prod' => {
 const breadcrumbs = [
   { title: 'Ditt Nav', url: 'https://www.nav.no/person/dittnav' },
   {
-    title: 'Oppdater nærmeste leder',
-    analyticsTitle: 'Oppdater nærmeste leder',
+    title: 'Oppgi nærmeste leder',
+    analyticsTitle: 'Oppgi nærmeste leder',
     url: 'https://www.nav.no/arbeidgsgiver/ansatte/narmesteleder',
   },
 ]
