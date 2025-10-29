@@ -3,14 +3,17 @@
 import { useState } from 'react'
 import { revalidateLogic } from '@tanstack/react-form'
 import { Button, Fieldset, Heading } from '@navikt/ds-react'
-import { RegisterRequest } from '@/services/narmesteleder/schemas/formSchema'
 import { useAppForm } from '@/components/form/hooks/form'
 import { logger } from '@navikt/next-logger'
-import { narmesteLederFormDefaults, registerNarmesteLederSchema } from '@/schemas/nærmestelederFormSchema'
+import {
+  NarmesteLederInfo,
+  narmesteLederInfoDefaults,
+  narmesteLederInfoSchema,
+} from '@/schemas/nærmestelederFormSchema'
 import { AlertErrorNarmesteLeder } from '@/components/AlertErrorNarmesteLeder'
 
 // --- API ---
-const clientPostRegisterLeader = async (body: RegisterRequest): Promise<string> => {
+const clientPostRegisterLeader = async (body: NarmesteLederInfo): Promise<string> => {
   // TODO mapping and sending to backend
   return 'done'
 }
@@ -19,13 +22,13 @@ export default function RegisterNarmestelederForm() {
   const [submitError, setSubmitError] = useState(false)
 
   const form = useAppForm({
-    defaultValues: narmesteLederFormDefaults,
+    defaultValues: narmesteLederInfoDefaults,
     validationLogic: revalidateLogic({
       mode: 'submit',
       modeAfterSubmission: 'change',
     }),
 
-    validators: { onSubmit: registerNarmesteLederSchema },
+    validators: { onSubmit: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
       try {
         setSubmitError(false)
@@ -59,9 +62,11 @@ export default function RegisterNarmestelederForm() {
         <form.AppForm>
           <div className="grid gap-4 mb-4">
             <Fieldset legend="Sykmeldt" className="space-y-4">
-              <form.AppField name="sykmeldt.navn">{(field) => <field.TextInputField label="Navn" />}</form.AppField>
               <form.AppField name="sykmeldt.fodselsnummer">
                 {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
+              </form.AppField>
+              <form.AppField name="sykmeldt.orgnummer">
+                {(field) => <field.TextInputField label="Orgnummer" />}
               </form.AppField>
             </Fieldset>
           </div>

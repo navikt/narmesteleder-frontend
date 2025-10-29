@@ -1,37 +1,46 @@
-import { z } from 'zod'
+import { email, object, string, z } from 'zod'
 
-export const registerNarmesteLederSchema = z.object({
-  sykmeldt: z.object({
-    navn: z.string().nonempty('Navn er påkrevd'),
-    fodselsnummer: z.string().regex(/^\d{11}$/, 'Fødselsnummer må være 11 sifre'),
-  }),
-  leder: z.object({
-    fodselsnummer: z
-      .string()
-      .trim()
-      .regex(/^\d{11}$/, 'Fødselsnummer må være 11 sifre'),
-    fornavn: z.string().nonempty('Fornavn er påkrevd'),
-    etternavn: z.string().nonempty('Etternavn er påkrevd'),
-    // Norske mobilnumre er 8 sifre, men juster om du trenger annet
-    mobilnummer: z
-      .string()
-      .trim()
-      .regex(/^\d{8}$/, 'Mobilnummer må være 8 sifre'),
-    epost: z.email('Ugyldig e-postadresse'),
-  }),
+const requireFieldErrorMessage = 'Feltet er påkrevd'
+
+// TODO validate Norwegian phone number, org-number and fnr formats
+export const narmesteLederFormSchema = object({
+  fodselsnummer: string().nonempty(requireFieldErrorMessage),
+  mobilnummer: string().nonempty(requireFieldErrorMessage),
+  epost: email().nonempty(requireFieldErrorMessage),
+  fornavn: string().nonempty(requireFieldErrorMessage),
+  etternavn: string().nonempty(requireFieldErrorMessage),
 })
-export type NarmesteLederForm = z.infer<typeof registerNarmesteLederSchema>
+
+export type NarmesteLederForm = z.infer<typeof narmesteLederFormSchema>
+
+export const sykmeldtFormSchema = object({
+  fodselsnummer: string().nonempty(requireFieldErrorMessage),
+  orgnummer: string().nonempty(),
+})
+
+export type SykmeldtForm = z.infer<typeof sykmeldtFormSchema>
+
+export const narmesteLederInfoSchema = object({
+  sykmeldt: sykmeldtFormSchema,
+  leder: narmesteLederFormSchema,
+})
+
+export type NarmesteLederInfo = z.infer<typeof narmesteLederInfoSchema>
+
+export const sykmeldtFormDefaults: SykmeldtForm = {
+  fodselsnummer: '',
+  orgnummer: '',
+} satisfies SykmeldtForm
 
 export const narmesteLederFormDefaults: NarmesteLederForm = {
-  sykmeldt: {
-    navn: '',
-    fodselsnummer: '',
-  },
-  leder: {
-    fodselsnummer: '',
-    fornavn: '',
-    etternavn: '',
-    mobilnummer: '',
-    epost: '',
-  },
+  fodselsnummer: '',
+  mobilnummer: '',
+  epost: '',
+  fornavn: '',
+  etternavn: '',
 } satisfies NarmesteLederForm
+
+export const narmesteLederInfoDefaults = {
+  sykmeldt: sykmeldtFormDefaults,
+  leder: narmesteLederFormDefaults,
+} satisfies NarmesteLederInfo

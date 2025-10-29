@@ -7,9 +7,8 @@ import { getRedirectAfterLoginUrlForAG } from '@/auth/redirectToLogin'
 import { formatFnr } from '@/utils/formatting'
 import { withMockForLocalOrDemo } from '@/utils/mock'
 
-const getBackendHost = () => getServerEnv().NARMESTELEDER_BACKEND_HOST
-
-const getNarmestelederGetPath = (behovId: string) => `${getBackendHost()}/api/v1/narmesteleder/behov/${behovId}`
+const getNarmestelederGetPath = (behovId: string) =>
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/narmesteleder/behov/${behovId}`
 
 export type Sykmeldt = {
   fornavn: string
