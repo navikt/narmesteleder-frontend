@@ -1,4 +1,4 @@
-'use server'
+import 'server-only'
 
 import { NarmesteLederForm } from '@/schemas/nærmestelederFormSchema'
 import { tokenXFetchUpdate } from '@/server/tokenXFetch'

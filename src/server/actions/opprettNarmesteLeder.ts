@@ -1,4 +1,4 @@
-'use server'
+import 'server-only'
 
 import { NarmesteLederInfo } from '@/schemas/nærmestelederFormSchema'
 import { getServerEnv } from '@/env-variables/serverEnv'
