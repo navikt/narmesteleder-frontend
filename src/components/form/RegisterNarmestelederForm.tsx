@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { revalidateLogic } from '@tanstack/react-form'
-import { Button, Fieldset, Heading } from '@navikt/ds-react'
+import { Button, Heading } from '@navikt/ds-react'
 import { useAppForm } from '@/components/form/hooks/form'
 import { logger } from '@navikt/next-logger'
 import {
@@ -11,6 +11,8 @@ import {
   narmesteLederInfoSchema,
 } from '@/schemas/nærmestelederFormSchema'
 import { AlertErrorNarmesteLeder } from '@/components/AlertErrorNarmesteLeder'
+import { SykmeldtSubform } from '@/components/form/SykmeldtSubform'
+import { NarmestelederSubform } from '@/components/form/NarmestelederSubform'
 
 // --- API ---
 const clientPostRegisterLeader = async (body: NarmesteLederInfo): Promise<string> => {
@@ -61,36 +63,11 @@ export default function RegisterNarmestelederForm() {
       >
         <form.AppForm>
           <div className="grid gap-4 mb-4">
-            <Fieldset legend="Sykmeldt" className="space-y-4">
-              <form.AppField name="sykmeldt.fodselsnummer">
-                {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
-              </form.AppField>
-              <form.AppField name="sykmeldt.orgnummer">
-                {(field) => <field.TextInputField label="Orgnummer" />}
-              </form.AppField>
-            </Fieldset>
+            <SykmeldtSubform form={form} />
           </div>
 
           <div className="grid gap-4 mb-4">
-            <Fieldset legend="Nærmeste leder" className="space-y-4">
-              <form.AppField name="leder.fodselsnummer">
-                {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
-              </form.AppField>
-
-              <form.AppField name="leder.fornavn">{(field) => <field.TextInputField label="Fornavn" />}</form.AppField>
-
-              <form.AppField name="leder.etternavn">
-                {(field) => <field.TextInputField label="Etternavn" />}
-              </form.AppField>
-
-              <form.AppField name="leder.mobilnummer">
-                {(field) => <field.TextInputField label="Mobilnummer" />}
-              </form.AppField>
-
-              <form.AppField name="leder.epost">
-                {(field) => <field.TextInputField label="E-postadresse" />}
-              </form.AppField>
-            </Fieldset>
+            <NarmestelederSubform form={form} />
           </div>
         </form.AppForm>
         <div className="flex gap-3">

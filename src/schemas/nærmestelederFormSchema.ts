@@ -15,7 +15,7 @@ export type NarmesteLederForm = z.infer<typeof narmesteLederFormSchema>
 
 export const sykmeldtFormSchema = object({
   fodselsnummer: string().nonempty(requireFieldErrorMessage),
-  orgnummer: string().nonempty(),
+  orgnummer: string().nonempty(requireFieldErrorMessage),
 })
 
 export type SykmeldtForm = z.infer<typeof sykmeldtFormSchema>
