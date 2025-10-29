@@ -2,8 +2,9 @@ import { logger } from '@navikt/next-logger'
 import { getToken, requestOboToken, validateToken } from '@navikt/oasis'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { loginUrl } from '@/constants/envs'
 import { withMockForLocalOrDemo } from '@/utils/mock'
+
+const loginUrl = `/oauth2/login`
 
 const getTokenFromHeaders = async () => {
   const requestHeaders = await headers()

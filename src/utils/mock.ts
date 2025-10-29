@@ -1,5 +1,5 @@
-import { isLocalOrDemo } from '@/constants/envs'
 import { logger } from '@navikt/next-logger'
+import { isLocalOrDemo } from '@/env-variables/envHelpers'
 
 export const withMockForLocalOrDemo =
   <T, TArgs extends unknown[]>(mockValue: T, fn: (...args: TArgs) => Promise<T>): ((...args: TArgs) => Promise<T>) =>

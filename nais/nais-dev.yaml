@@ -55,8 +55,10 @@ spec:
   ingresses:
     - 'https://www.ekstern.dev.nav.no/arbeidgsgiver/ansatte/narmesteleder'
   env:
-    - name: NARMESTELEDER_BACKEND_URL
+    - name: NARMESTELEDER_BACKEND_HOST
       value: http://esyfo-narmesteleder
+    - name: NARMESTELEDER_BACKEND_CLIENT_ID
+      value: "dev-gcp:team-esyfo:esyfo-narmesteleder"
   accessPolicy:
     outbound:
       rules:

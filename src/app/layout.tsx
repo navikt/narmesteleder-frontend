@@ -2,17 +2,17 @@ import '@/app/globals.css'
 import type { Metadata } from 'next'
 
 import { fetchDecoratorReact } from '@navikt/nav-dekoratoren-moduler/ssr'
-import { publicEnv } from '@/constants/envs'
 import { Page, PageBlock } from '@navikt/ds-react/Page'
 import Script from 'next/script'
 import Providers from '@/app/Providers'
+import { publicEnv } from '@/env-variables/publicEnv'
 
 export const metadata: Metadata = {
   title: 'Oppdater nærmeste leder',
   description: 'En tjeneste for å oppdatere hvem som er din nærmeste leder',
 }
 
-function getDecoratorEnv(): 'dev' | 'prod' {
+const getDecoratorEnv = (): 'dev' | 'prod' => {
   switch (publicEnv.NEXT_PUBLIC_RUNTIME_ENVIRONMENT) {
     case 'local':
     case 'test':
