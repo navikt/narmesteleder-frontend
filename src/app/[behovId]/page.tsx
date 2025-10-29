@@ -1,7 +1,7 @@
-import SykmeldtPanel from '@/components/SykmeldtPanel'
+import OppgiLederPanel from '@/components/OppgiLederPanel'
 import { logger } from '@navikt/next-logger'
 import notFound from '@/app/not-found'
-import { fetchSykmeldtInfo } from '@/server/fetchData/fetchSykmeldtInfo'
+import { fetchLinemanagerRequirement } from '@/server/fetchData/fetchLinemanagerRequirement'
 
 export default async function Home({ params }: { params: Promise<{ behovId: string }> }) {
   const { behovId } = await params
@@ -11,8 +11,8 @@ export default async function Home({ params }: { params: Promise<{ behovId: stri
     await notFound() // triggers Next.js 404 page
   }
 
-  logger.info(`Henter sykmeldt info for nærmeste leder med behovId ${behovId}`)
-  const sykmeldt = await fetchSykmeldtInfo(behovId)
+  logger.debug(`Henter sykmeldt info for nærmeste leder med behovId ${behovId}`)
+  const lederInfo = await fetchLinemanagerRequirement(behovId)
 
-  return <SykmeldtPanel sykmeldt={sykmeldt} />
+  return <OppgiLederPanel lederInfo={lederInfo} />
 }
