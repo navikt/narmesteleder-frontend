@@ -1,16 +1,19 @@
 'use client'
 
 import { revalidateLogic } from '@tanstack/react-form'
-import { Heading } from '@navikt/ds-react'
 import { useAppForm } from '@/components/form/hooks/form'
 import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
-import { SykmeldtSubform } from '@/components/form/SykmeldtSubform'
 import { NarmestelederSubform } from '@/components/form/NarmestelederSubform'
-import { opprettNaresteLeder } from '@/server/actions/opprettNarmesteLeder'
 import { useState } from 'react'
 import { AlertError } from '@/components/AlertError'
+import { oppdaterNarmesteLeder } from '@/server/actions/oppdaterNarmesteLeder'
+import ThankYouAlert from '@/components/form/ThankYouAlert'
 
-export default function RegisterNarmestelederForm() {
+type props = {
+  behovId: string
+}
+
+export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
   const [submitError, setSubmitError] = useState(false)
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
@@ -18,7 +21,8 @@ export default function RegisterNarmestelederForm() {
     validators: { onDynamic: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
       try {
-        await opprettNaresteLeder(value)
+        await oppdaterNarmesteLeder(behovId, value.leder)
+        return ThankYouAlert()
       } catch {
         setSubmitError(true)
       }
@@ -27,10 +31,6 @@ export default function RegisterNarmestelederForm() {
 
   return (
     <div className="space-y-6">
-      <Heading size="large" level="1" spacing>
-        Oppgi nærmeste leder
-      </Heading>
-
       <form
         onSubmit={async (e) => {
           e.preventDefault()
@@ -40,10 +40,6 @@ export default function RegisterNarmestelederForm() {
         className="mt-8"
       >
         <form.AppForm>
-          <div className="grid gap-4 mb-4">
-            <SykmeldtSubform form={form} />
-          </div>
-
           <div className="grid gap-4 mb-4">
             <NarmestelederSubform form={form} />
           </div>
