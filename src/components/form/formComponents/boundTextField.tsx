@@ -1,5 +1,5 @@
 import { TextField } from '@navikt/ds-react'
-import { useFieldContext } from '@/components/form/hooks/form'
+import { useFieldContext } from '@/components/form/hooks/form-context'
 
 export type TextFieldProps = {
   label: string

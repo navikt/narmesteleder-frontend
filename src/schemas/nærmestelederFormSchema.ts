@@ -1,12 +1,32 @@
 import { email, object, string, z } from 'zod'
 
-const requireFieldErrorMessage = 'Feltet er påkrevd'
+import { fnr } from '@navikt/fnrvalidator'
+import { isLocalOrDemo } from '@/env-variables/envHelpers'
 
-// TODO validate Norwegian phone number, org-number and fnr formats
+const requireFieldErrorMessage = 'Feltet er påkrevd'
+const invalidEmailErrorMessage = 'Ugyldig e-postadresse'
+const lengthOrgnummerMessage = 'Organisasjonsnummer må være 9 siffer'
+const invalidFnrErrorMessage = 'Fødselsnummeret er ikke gyldig'
+const requiredFnrErrorMessage = 'Fødselsnummeret er påkrevd'
+
+const validateFnr = (value: string): boolean => {
+  if (!/^\d{11}$/.test(value)) return false
+
+  // Skip further validation when locally/demo
+  if (isLocalOrDemo) return true
+
+  // Validate checksum and date logic in prod
+  return fnr(value).status === 'valid'
+}
+
+export const FnrSchema = z.string().trim().nonempty(requiredFnrErrorMessage).refine(validateFnr, {
+  message: invalidFnrErrorMessage,
+})
+
 export const narmesteLederFormSchema = object({
-  fodselsnummer: string().nonempty(requireFieldErrorMessage),
+  fodselsnummer: FnrSchema,
   mobilnummer: string().nonempty(requireFieldErrorMessage),
-  epost: email().nonempty(requireFieldErrorMessage),
+  epost: email(invalidEmailErrorMessage).nonempty(requireFieldErrorMessage),
   fornavn: string().nonempty(requireFieldErrorMessage),
   etternavn: string().nonempty(requireFieldErrorMessage),
 })
@@ -14,8 +34,8 @@ export const narmesteLederFormSchema = object({
 export type NarmesteLederForm = z.infer<typeof narmesteLederFormSchema>
 
 export const sykmeldtFormSchema = object({
-  fodselsnummer: string().nonempty(requireFieldErrorMessage),
-  orgnummer: string().nonempty(requireFieldErrorMessage),
+  fodselsnummer: FnrSchema,
+  orgnummer: string().nonempty(requireFieldErrorMessage).length(9, lengthOrgnummerMessage),
 })
 
 export type SykmeldtForm = z.infer<typeof sykmeldtFormSchema>
@@ -44,3 +64,7 @@ export const narmesteLederInfoDefaults = {
   sykmeldt: sykmeldtFormDefaults,
   leder: narmesteLederFormDefaults,
 } satisfies NarmesteLederInfo
+
+export const lederOnlySchema = narmesteLederInfoSchema.pick({ leder: true })
+export type LederOnly = Pick<NarmesteLederInfo, 'leder'>
+export const lederOnlyDefaults: LederOnly = { leder: narmesteLederFormDefaults }

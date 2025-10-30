@@ -1,18 +1,30 @@
-import OppgiLederPanel from '@/components/OppgiLederPanel'
+import AngiLederPanel from '@/components/AngiLederPanel'
 import { logger } from '@navikt/next-logger'
 import notFound from '@/app/not-found'
 import { fetchLederInfo } from '@/server/fetchData/fetchLederInfo'
+import { requirementIdSchema } from '@/schemas/requirementSchema'
+import AngiNarmesteLederForSykmeldt from '@/components/form/AngiNarmesteLederForSykmeldt'
+import { Heading, Page, VStack } from '@navikt/ds-react'
+
+const isValidBehovId = (behovId: string) => !requirementIdSchema.safeParse(behovId).success
 
 export default async function Home({ params }: { params: Promise<{ behovId: string }> }) {
   const { behovId } = await params
-  const isValidUuid = /^[0-9a-fA-F-]{36}$/.test(behovId)
-  if (!isValidUuid) {
+  if (isValidBehovId(behovId)) {
     logger.warn(`Invalid behovId format: ${behovId}`)
-    await notFound() // triggers Next.js 404 page
+    return notFound()
   }
-
-  logger.debug(`Henter sykmeldt info for nærmeste leder med behovId ${behovId}`)
   const lederInfo = await fetchLederInfo(behovId)
 
-  return <OppgiLederPanel lederInfo={lederInfo} />
+  return (
+    <Page>
+      <Heading size="large" level="1" spacing>
+        Angi nærmeste leder for sykmeldt
+      </Heading>
+      <VStack gap="8">
+        <AngiLederPanel lederInfo={lederInfo} />
+        <AngiNarmesteLederForSykmeldt behovId={behovId} />
+      </VStack>
+    </Page>
+  )
 }

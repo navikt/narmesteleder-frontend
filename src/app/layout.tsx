@@ -26,8 +26,8 @@ const getDecoratorEnv = (): 'dev' | 'prod' => {
 const breadcrumbs = [
   { title: 'Ditt Nav', url: 'https://www.nav.no/person/dittnav' },
   {
-    title: 'Oppgi nærmeste leder',
-    analyticsTitle: 'Oppgi nærmeste leder',
+    title: 'Nærmeste leder',
+    analyticsTitle: 'Nærmeste leder',
     url: 'https://www.nav.no/arbeidgsgiver/ansatte/narmesteleder',
   },
 ]
