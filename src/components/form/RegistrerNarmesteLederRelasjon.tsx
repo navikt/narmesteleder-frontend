@@ -21,8 +21,8 @@ export default function RegistrerNarmesteLederRelasjon() {
   })
 
   return (
-    <div className="space-y-6">
-      <Heading size="large" level="1" spacing>
+    <VStack gap="6">
+      <Heading size="large" level="1">
         Registrer nærmeste leder
       </Heading>
 
@@ -32,25 +32,27 @@ export default function RegistrerNarmesteLederRelasjon() {
           e.stopPropagation()
           await form.handleSubmit()
         }}
-        className="mt-8"
       >
         <form.AppForm>
-          <VStack gap="space-16">
-            <div className="grid gap-4 mb-4">
-              <Heading size="medium">Sykmeldt</Heading>
+          <VStack gap="16">
+            <VStack gap="4">
+              <Heading size="medium" level="2">
+                Sykmeldt
+              </Heading>
               <SykmeldtGroup form={form} fields="sykmeldt" />
-            </div>
+            </VStack>
 
-            <div className="grid gap-4 mb-4">
-              <Heading size="medium">Nærmeste leder</Heading>
+            <VStack gap="4">
+              <Heading size="medium" level="2">
+                Nærmeste leder
+              </Heading>
               <LederGroup form={form} fields="leder" />
-            </div>
+            </VStack>
+
+            <form.BoundSubmitButton label="Lagre nærmeste leder" />
           </VStack>
         </form.AppForm>
-        <form.AppForm>
-          <form.BoundSubmitButton label="Lagre nærmeste leder" />
-        </form.AppForm>
       </form>
-    </div>
+    </VStack>
   )
 }

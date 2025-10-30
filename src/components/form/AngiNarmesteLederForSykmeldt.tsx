@@ -6,6 +6,7 @@ import { lederOnlyDefaults, lederOnlySchema } from '@/schemas/nærmestelederForm
 import { LederGroup } from '@/components/form/LederGroup'
 import { oppdaterNarmesteLeder } from '@/server/actions/oppdaterNarmesteLeder'
 import ThankYouAlert from '@/components/form/ThankYouAlert'
+import { HStack, VStack } from '@navikt/ds-react'
 
 type props = {
   behovId: string
@@ -23,26 +24,26 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
   })
 
   return (
-    <div className="space-y-6">
+    <VStack gap="6">
       <form
         onSubmit={async (e) => {
           e.preventDefault()
           e.stopPropagation()
           await form.handleSubmit()
         }}
-        className="mt-8"
       >
         <form.AppForm>
-          <div className="grid gap-4 mb-4">
+          <VStack gap="4">
             <LederGroup form={form} fields="leder" />
-          </div>
+          </VStack>
         </form.AppForm>
-        <div className="flex gap-3">
+
+        <HStack gap="3" className="mt-8">
           <form.AppForm>
             <form.BoundSubmitButton label="Lagre nærmeste leder" />
           </form.AppForm>
-        </div>
+        </HStack>
       </form>
-    </div>
+    </VStack>
   )
 }
