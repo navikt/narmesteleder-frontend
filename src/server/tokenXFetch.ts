@@ -53,7 +53,7 @@ function logErrorMessageAndThrowError(logMessage: string): never {
 
 async function logFailedFetchAndThrowError(
   response: Response,
-  calledEnpoint: string,
+  calledEndpoint: string,
   calledMethod: string = 'GET',
 ): Promise<never> {
   let bodySnippet: string | undefined
@@ -64,7 +64,7 @@ async function logFailedFetchAndThrowError(
     /* ignore */
   }
 
-  const errorMessage = `Fetch failed: method=${calledMethod} endpoint=${calledEnpoint} status=${response.status} ${response.statusText}${bodySnippet ? ` body=${bodySnippet}` : ''}`
+  const errorMessage = `Fetch failed: method=${calledMethod} endpoint=${calledEndpoint} status=${response.status} ${response.statusText}${bodySnippet ? ` body=${bodySnippet}` : ''}`
   logErrorMessageAndThrowError(errorMessage)
 }
 
