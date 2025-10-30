@@ -1,7 +1,7 @@
 import { email, object, string, z } from 'zod'
 
 import { fnr } from '@navikt/fnrvalidator'
-import { isLocalOrDemo } from '@/env-variables/envHelpers'
+import { isNonProd } from '@/env-variables/envHelpers'
 
 const requireFieldErrorMessage = 'Feltet er påkrevd'
 const invalidEmailErrorMessage = 'Ugyldig e-postadresse'
@@ -12,10 +12,8 @@ const requiredFnrErrorMessage = 'Fødselsnummeret er påkrevd'
 const validateFnr = (value: string): boolean => {
   if (!/^\d{11}$/.test(value)) return false
 
-  // Skip further validation when locally/demo
-  if (isLocalOrDemo) return true
+  if (isNonProd) return true
 
-  // Validate checksum and date logic in prod
   return fnr(value).status === 'valid'
 }
 
