@@ -6,7 +6,7 @@ export default function AngiLederPanel({ lederInfo }: { lederInfo: LederInfo }) 
   return (
     <GuidePanel>
       <Heading size="medium" level="2" spacing>
-        Hei xxx!
+        Hei!
       </Heading>
       <BodyLong spacing>
         <span className="font-bold">
