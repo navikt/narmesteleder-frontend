@@ -10,7 +10,9 @@ export const SykmeldtSubform = withForm({
         <form.AppField name="sykmeldt.fodselsnummer">
           {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
         </form.AppField>
-        <form.AppField name="sykmeldt.orgnummer">{(field) => <field.TextInputField label="Orgnummer" />}</form.AppField>
+        <form.AppField name="sykmeldt.orgnummer">
+          {(field) => <field.TextInputField label="Orgnummer (8 sifre)" />}
+        </form.AppField>
       </Fieldset>
     )
   },
