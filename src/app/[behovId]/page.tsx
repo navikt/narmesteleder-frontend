@@ -2,16 +2,16 @@ import OppgiLederPanel from '@/components/OppgiLederPanel'
 import { logger } from '@navikt/next-logger'
 import notFound from '@/app/not-found'
 import { fetchLederInfo } from '@/server/fetchData/fetchLederInfo'
+import { requirementIdSchema } from '@/schemas/requirementSchema'
+
+const isValidBehovId = (behovId: string) => !requirementIdSchema.safeParse(behovId).success
 
 export default async function Home({ params }: { params: Promise<{ behovId: string }> }) {
   const { behovId } = await params
-  const isValidUuid = /^[0-9a-fA-F-]{36}$/.test(behovId)
-  if (!isValidUuid) {
+  if (isValidBehovId(behovId)) {
     logger.warn(`Invalid behovId format: ${behovId}`)
-    await notFound() // triggers Next.js 404 page
+    return notFound()
   }
-
-  logger.debug(`Henter sykmeldt info for nærmeste leder med behovId ${behovId}`)
   const lederInfo = await fetchLederInfo(behovId)
 
   return <OppgiLederPanel lederInfo={lederInfo} />
