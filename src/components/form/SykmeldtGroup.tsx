@@ -10,7 +10,7 @@ export const SykmeldtGroup = withFieldGroup({
           {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
         </group.AppField>
         <group.AppField name="orgnummer">
-          {(field) => <field.TextInputField label="Orgnummer (8 sifre)" />}
+          {(field) => <field.TextInputField label="Orgnummer (9 sifre)" />}
         </group.AppField>
       </>
     )
