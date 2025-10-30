@@ -4,8 +4,6 @@ import { revalidateLogic } from '@tanstack/react-form'
 import { useAppForm } from '@/components/form/hooks/form'
 import { lederOnlyDefaults, lederOnlySchema } from '@/schemas/nærmestelederFormSchema'
 import { LederGroup } from '@/components/form/LederGroup'
-import { useState } from 'react'
-import { AlertError } from '@/components/AlertError'
 import { oppdaterNarmesteLeder } from '@/server/actions/oppdaterNarmesteLeder'
 import ThankYouAlert from '@/components/form/ThankYouAlert'
 
@@ -14,18 +12,13 @@ type props = {
 }
 
 export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
-  const [submitError, setSubmitError] = useState(false)
   const form = useAppForm({
     defaultValues: lederOnlyDefaults,
     validationLogic: revalidateLogic(),
     validators: { onDynamic: lederOnlySchema },
     onSubmit: async ({ value }) => {
-      try {
-        await oppdaterNarmesteLeder(behovId, value.leder)
-        return ThankYouAlert()
-      } catch {
-        setSubmitError(true)
-      }
+      await oppdaterNarmesteLeder(behovId, value.leder)
+      return ThankYouAlert()
     },
   })
 
@@ -44,7 +37,6 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
             <LederGroup form={form} fields="leder" />
           </div>
         </form.AppForm>
-        {submitError && <AlertError />}
         <div className="flex gap-3">
           <form.AppForm>
             <form.BoundSubmitButton label="Lagre nærmeste leder" />
