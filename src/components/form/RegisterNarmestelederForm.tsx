@@ -6,19 +6,22 @@ import { useAppForm } from '@/components/form/hooks/form'
 import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
 import { SykmeldtSubform } from '@/components/form/SykmeldtSubform'
 import { NarmestelederSubform } from '@/components/form/NarmestelederSubform'
+import { opprettNaresteLeder } from '@/server/actions/opprettNarmesteLeder'
+import { useState } from 'react'
+import { AlertError } from '@/components/AlertError'
 
 export default function RegisterNarmestelederForm() {
+  const [submitError, setSubmitError] = useState(false)
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
-    validationLogic: revalidateLogic({
-      mode: 'submit',
-      modeAfterSubmission: 'change',
-    }),
-
-    validators: { onSubmit: narmesteLederInfoSchema },
+    validationLogic: revalidateLogic(),
+    validators: { onDynamic: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
-      console.log(value)
-      alert(JSON.stringify(value, null, 2))
+      try {
+        await opprettNaresteLeder(value)
+      } catch {
+        setSubmitError(true)
+      }
     },
   })
 
@@ -45,6 +48,7 @@ export default function RegisterNarmestelederForm() {
             <NarmestelederSubform form={form} />
           </div>
         </form.AppForm>
+        {submitError && <AlertError />}
         <div className="flex gap-3">
           <form.AppForm>
             <form.BoundSubmitButton label="Lagre nærmeste leder" />
