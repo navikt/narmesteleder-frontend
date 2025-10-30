@@ -8,7 +8,7 @@ import { tokenXFetchUpdate } from '@/server/tokenXFetch'
 import { TokenXTargetApi } from '@/server/helpers'
 import { mapToLineManagerRequest } from '@/server/actions/requestHelper'
 
-const getLineManagerPostPath = () => `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/`
+const getLineManagerPostPath = () => `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`
 
 export const opprettNaresteLeder = async (narmesteLeder: NarmesteLederInfo): Promise<void> => {
   narmesteLederInfoSchema.parse(narmesteLeder)
