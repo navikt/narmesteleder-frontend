@@ -4,12 +4,12 @@ import { revalidateLogic } from '@tanstack/react-form'
 import { Heading } from '@navikt/ds-react'
 import { useAppForm } from '@/components/form/hooks/form'
 import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
-import { SykmeldtSubform } from '@/components/form/SykmeldtSubform'
-import { NarmestelederSubform } from '@/components/form/NarmestelederSubform'
+import { SykmeldtGroup } from '@/components/form/SykmeldtGroup'
 import { opprettNaresteLeder } from '@/server/actions/opprettNarmesteLeder'
 import { useState } from 'react'
 import { AlertError } from '@/components/AlertError'
 import ThankYouAlert from '@/components/form/ThankYouAlert'
+import { LederGroup } from '@/components/form/LederGroup'
 
 export default function RegistrerNarmesteLederRelasjon() {
   const [submitError, setSubmitError] = useState(false)
@@ -43,11 +43,11 @@ export default function RegistrerNarmesteLederRelasjon() {
       >
         <form.AppForm>
           <div className="grid gap-4 mb-4">
-            <SykmeldtSubform form={form} />
+            <SykmeldtGroup form={form} fields="sykmeldt" />
           </div>
 
           <div className="grid gap-4 mb-4">
-            <NarmestelederSubform form={form} />
+            <LederGroup form={form} fields="leder" />
           </div>
         </form.AppForm>
         {submitError && <AlertError />}

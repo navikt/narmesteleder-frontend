@@ -3,7 +3,7 @@
 import { revalidateLogic } from '@tanstack/react-form'
 import { useAppForm } from '@/components/form/hooks/form'
 import { lederOnlyDefaults, lederOnlySchema } from '@/schemas/nærmestelederFormSchema'
-import { NarmestelederSubform } from '@/components/form/NarmestelederSubform'
+import { LederGroup } from '@/components/form/LederGroup'
 import { useState } from 'react'
 import { AlertError } from '@/components/AlertError'
 import { oppdaterNarmesteLeder } from '@/server/actions/oppdaterNarmesteLeder'
@@ -41,7 +41,7 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
       >
         <form.AppForm>
           <div className="grid gap-4 mb-4">
-            <NarmestelederSubform form={form} />
+            <LederGroup form={form} fields="leder" />
           </div>
         </form.AppForm>
         {submitError && <AlertError />}
