@@ -12,7 +12,7 @@ export default function AngiLederPanel({ lederInfo }: { lederInfo: LederInfo }) 
         <span className="font-bold">
           {lederInfo.sykmeldt.fullnavn} ({lederInfo.sykmeldtFnr})
         </span>
-        er sykmeldt. Nav mangler informasjon om hvem som er nærmeste leder i bedrift{' '}
+        er sykmeldt. Nav mangler informasjon om hvem som er nærmeste leder i bedrift
         <span className="font-bold">{lederInfo.orgnummer}</span>. Personen som oppgis som nærmeste leder, får tilgang
         den sykmeldte ansatte og oppfølgingstjenestene Nav tilbyr på &quot;Dine sykmeldte&quot; hos Nav.
       </BodyLong>
