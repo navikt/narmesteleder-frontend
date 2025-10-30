@@ -5,7 +5,7 @@ import { isLocalOrDemo } from '@/env-variables/envHelpers'
 
 const requireFieldErrorMessage = 'Feltet er påkrevd'
 const invalidEmailErrorMessage = 'Ugyldig e-postadresse'
-const lengthOrgnummerMessage = 'Organisasjonsnummer må være 8 siffer'
+const lengthOrgnummerMessage = 'Organisasjonsnummer må være 9 siffer'
 const invalidFnrErrorMessage = 'Fødselsnummeret er ikke gyldig'
 const requiredFnrErrorMessage = 'Fødselsnummeret er påkrevd'
 
@@ -35,7 +35,7 @@ export type NarmesteLederForm = z.infer<typeof narmesteLederFormSchema>
 
 export const sykmeldtFormSchema = object({
   fodselsnummer: FnrSchema,
-  orgnummer: string().nonempty(requireFieldErrorMessage).length(8, lengthOrgnummerMessage),
+  orgnummer: string().nonempty(requireFieldErrorMessage).length(9, lengthOrgnummerMessage),
 })
 
 export type SykmeldtForm = z.infer<typeof sykmeldtFormSchema>
