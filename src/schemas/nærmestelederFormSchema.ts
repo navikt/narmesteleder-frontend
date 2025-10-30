@@ -64,3 +64,7 @@ export const narmesteLederInfoDefaults = {
   sykmeldt: sykmeldtFormDefaults,
   leder: narmesteLederFormDefaults,
 } satisfies NarmesteLederInfo
+
+export const lederOnlySchema = narmesteLederInfoSchema.pick({ leder: true })
+export type LederOnly = Pick<NarmesteLederInfo, 'leder'>
+export const lederOnlyDefaults: LederOnly = { leder: narmesteLederFormDefaults }

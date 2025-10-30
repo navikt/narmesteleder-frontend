@@ -1,9 +1,14 @@
 import { withForm } from '@/components/form/hooks/form'
 import { Fieldset } from '@navikt/ds-react'
 import { narmestelederFormOptions } from '@/components/form/form-Options'
+import { NarmesteLederInfo, sykmeldtFormDefaults } from '@/schemas/nærmestelederFormSchema'
 
-export const SykmeldtSubform = withForm({
+const sykmeldtOnlyOptions = {
   ...narmestelederFormOptions,
+  defaultValues: { sykmeldt: sykmeldtFormDefaults } as Pick<NarmesteLederInfo, 'sykmeldt'>,
+}
+export const SykmeldtSubform = withForm({
+  ...sykmeldtOnlyOptions,
   render: ({ form }) => {
     return (
       <Fieldset legend="Sykmeldt" className="space-y-4">

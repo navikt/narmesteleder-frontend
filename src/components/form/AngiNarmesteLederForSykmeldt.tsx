@@ -2,7 +2,7 @@
 
 import { revalidateLogic } from '@tanstack/react-form'
 import { useAppForm } from '@/components/form/hooks/form'
-import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
+import { lederOnlyDefaults, lederOnlySchema } from '@/schemas/nærmestelederFormSchema'
 import { NarmestelederSubform } from '@/components/form/NarmestelederSubform'
 import { useState } from 'react'
 import { AlertError } from '@/components/AlertError'
@@ -16,9 +16,9 @@ type props = {
 export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
   const [submitError, setSubmitError] = useState(false)
   const form = useAppForm({
-    defaultValues: narmesteLederInfoDefaults,
+    defaultValues: lederOnlyDefaults,
     validationLogic: revalidateLogic(),
-    validators: { onDynamic: narmesteLederInfoSchema },
+    validators: { onDynamic: lederOnlySchema },
     onSubmit: async ({ value }) => {
       try {
         await oppdaterNarmesteLeder(behovId, value.leder)

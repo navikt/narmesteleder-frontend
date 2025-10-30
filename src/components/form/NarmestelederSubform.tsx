@@ -1,9 +1,15 @@
 import { withForm } from '@/components/form/hooks/form'
 import { narmestelederFormOptions } from '@/components/form/form-Options'
 import { Fieldset } from '@navikt/ds-react'
+import { narmesteLederFormDefaults, NarmesteLederInfo } from '@/schemas/nærmestelederFormSchema'
+
+const narmesteLederOnlyOptions = {
+  ...narmestelederFormOptions,
+  defaultValues: { leder: narmesteLederFormDefaults } as Pick<NarmesteLederInfo, 'leder'>,
+}
 
 export const NarmestelederSubform = withForm({
-  ...narmestelederFormOptions,
+  ...narmesteLederOnlyOptions,
   render: ({ form }) => {
     return (
       <Fieldset legend="Nærmeste leder" className="space-y-4">
