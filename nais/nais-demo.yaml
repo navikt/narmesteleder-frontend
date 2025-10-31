@@ -21,13 +21,13 @@ spec:
     sidecar:
       enabled: false
   liveness:
-    path: /arbeidgsgiver/ansatte/narmesteleder/api/internal/isAlive
+    path: /arbeidsgiver/ansatte/narmesteleder/api/internal/isAlive
     initialDelay: 20
     timeout: 5
     periodSeconds: 5
     failureThreshold: 30
   readiness:
-    path: /arbeidgsgiver/ansatte/narmesteleder/api/internal/isReady
+    path: /arbeidsgiver/ansatte/narmesteleder/api/internal/isReady
     initialDelay: 20
     periodSeconds: 5
     timeout: 5
