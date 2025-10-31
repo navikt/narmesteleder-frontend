@@ -7,7 +7,7 @@ type SykmeldtProps = {
 
 export default function SykmeldtBox({ fodselsnummer, navn }: SykmeldtProps) {
   return (
-    <Box padding="space-16" background="surface-info-subtle" borderRadius="large" borderColor="border-subtle">
+    <Box padding="space-16" background="surface-info-subtle" borderRadius="large">
       <VStack gap="4">
         <Heading level="2" size="small">
           Sykmeldt
