@@ -1,6 +1,6 @@
 import type { NextConfig } from 'next'
 
-export const BASE_PATH = '/arbeidgsgiver/ansatte/narmesteleder'
+export const BASE_PATH = '/arbeidsgiver/ansatte/narmesteleder'
 
 const nextConfig: NextConfig = {
   /* config options here */

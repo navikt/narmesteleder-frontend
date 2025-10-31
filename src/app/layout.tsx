@@ -28,7 +28,7 @@ const breadcrumbs = [
   {
     title: 'Nærmeste leder',
     analyticsTitle: 'Nærmeste leder',
-    url: 'https://www.nav.no/arbeidgsgiver/ansatte/narmesteleder',
+    url: 'https://www.nav.no/arbeidsgiver/ansatte/narmesteleder',
   },
 ]
 
