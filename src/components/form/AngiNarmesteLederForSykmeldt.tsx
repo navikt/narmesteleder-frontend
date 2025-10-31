@@ -31,26 +31,26 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
   })
 
   return (
-    <VStack gap="6">
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          await form.handleSubmit()
-        }}
-      >
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        await form.handleSubmit()
+      }}
+    >
+      <VStack gap="4">
         <form.AppForm>
           <VStack gap="4">
             <LederGroup form={form} fields="leder" />
           </VStack>
         </form.AppForm>
         {actionError && <ErrorAlert />}
-        <HStack gap="3" className="mt-8">
+        <HStack className="mt-0">
           <form.AppForm>
             <form.BoundSubmitButton label="Lagre nærmeste leder" />
           </form.AppForm>
         </HStack>
-      </form>
-    </VStack>
+      </VStack>
+    </form>
   )
 }

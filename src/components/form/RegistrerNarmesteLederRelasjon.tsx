@@ -1,7 +1,7 @@
 'use client'
 
 import { revalidateLogic } from '@tanstack/react-form'
-import { Heading, VStack } from '@navikt/ds-react'
+import { Heading, HStack, VStack } from '@navikt/ds-react'
 import { useAppForm } from '@/components/form/hooks/form'
 import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
 import { SykmeldtGroup } from '@/components/form/SykmeldtGroup'
@@ -41,7 +41,7 @@ export default function RegistrerNarmesteLederRelasjon() {
         }}
       >
         <form.AppForm>
-          <VStack gap="16">
+          <VStack gap="6">
             <VStack gap="4">
               <Heading size="medium" level="2">
                 Sykmeldt
@@ -56,7 +56,9 @@ export default function RegistrerNarmesteLederRelasjon() {
               <LederGroup form={form} fields="leder" />
             </VStack>
             {actionError && <ErrorAlert />}
-            <form.BoundSubmitButton label="Lagre nærmeste leder" />
+            <HStack className="mt-0">
+              <form.BoundSubmitButton label="Lagre nærmeste leder" />
+            </HStack>
           </VStack>
         </form.AppForm>
       </form>
