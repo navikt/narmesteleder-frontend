@@ -7,18 +7,25 @@ import { LederGroup } from '@/components/form/LederGroup'
 import { oppdaterNarmesteLeder } from '@/server/actions/oppdaterNarmesteLeder'
 import ThankYouAlert from '@/components/form/ThankYouAlert'
 import { HStack, VStack } from '@navikt/ds-react'
+import { useState } from 'react'
+import ErrorAlert from '@/components/form/ErrorAlert'
 
 type props = {
   behovId: string
 }
 
 export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
+  const [actionError, setActionError] = useState(false)
+
   const form = useAppForm({
     defaultValues: lederOnlyDefaults,
     validationLogic: revalidateLogic(),
     validators: { onDynamic: lederOnlySchema },
     onSubmit: async ({ value }) => {
-      await oppdaterNarmesteLeder(behovId, value.leder)
+      const actionResult = await oppdaterNarmesteLeder(behovId, value.leder)
+      if (!actionResult.success) {
+        setActionError(true)
+      }
       return ThankYouAlert()
     },
   })
@@ -37,7 +44,7 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
             <LederGroup form={form} fields="leder" />
           </VStack>
         </form.AppForm>
-
+        {actionError && <ErrorAlert />}
         <HStack gap="3" className="mt-8">
           <form.AppForm>
             <form.BoundSubmitButton label="Lagre nærmeste leder" />

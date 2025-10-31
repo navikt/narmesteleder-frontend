@@ -6,7 +6,7 @@ import { tokenXFetchGet } from '@/server/tokenXFetch'
 import { TokenXTargetApi } from '@/server/helpers'
 import { getRedirectAfterLoginUrlForAG } from '@/auth/redirectToLogin'
 import { formatFnr } from '@/utils/formatting'
-import { withMockForLocalOrDemo } from '@/utils/mock'
+import { withMockForLocalOrDemo } from '@/server/fetchData/demoMockData/mock'
 
 const getLineManagerRequirementPath = (id: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`

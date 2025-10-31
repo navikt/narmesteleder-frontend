@@ -8,14 +8,21 @@ import { SykmeldtGroup } from '@/components/form/SykmeldtGroup'
 import { opprettNaresteLeder } from '@/server/actions/opprettNarmesteLeder'
 import ThankYouAlert from '@/components/form/ThankYouAlert'
 import { LederGroup } from '@/components/form/LederGroup'
+import { useState } from 'react'
+import ErrorAlert from '@/components/form/ErrorAlert'
 
 export default function RegistrerNarmesteLederRelasjon() {
+  const [actionError, setActionError] = useState(false)
+
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
     validationLogic: revalidateLogic(),
     validators: { onDynamic: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
-      await opprettNaresteLeder(value)
+      const actionResult = await opprettNaresteLeder(value)
+      if (!actionResult.success) {
+        setActionError(true)
+      }
       return ThankYouAlert()
     },
   })
@@ -48,7 +55,7 @@ export default function RegistrerNarmesteLederRelasjon() {
               </Heading>
               <LederGroup form={form} fields="leder" />
             </VStack>
-
+            {actionError && <ErrorAlert />}
             <form.BoundSubmitButton label="Lagre nærmeste leder" />
           </VStack>
         </form.AppForm>
