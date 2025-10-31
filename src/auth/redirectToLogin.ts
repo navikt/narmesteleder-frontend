@@ -6,7 +6,7 @@ export function getRedirectAfterLoginUrlForAG(behovId: string) {
 }
 
 export const redirectToLogin = (redirectAfterLoginUrl: string) => {
-  const loginPath = `/oauth2/login/redirect?redirect=${encodeURIComponent(redirectAfterLoginUrl)}`
+  const loginPath = `/oauth2/login?redirect=${encodeURIComponent(redirectAfterLoginUrl)}`
 
   return redirect(loginPath)
 }
