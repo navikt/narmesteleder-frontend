@@ -10,7 +10,7 @@ import { withActionResult } from '@/server/actions/ActionResult'
 const getLineManagerPutPath = (requirementId: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${requirementId}`
 
-export const oppdaterNarmesteLeder = (requirementId: string, narmesteLeder: NarmesteLederForm) =>
+export const oppdaterNarmesteLeder = async (requirementId: string, narmesteLeder: NarmesteLederForm) =>
   withActionResult(async () => {
     narmesteLederFormSchema.parse(narmesteLeder)
 
