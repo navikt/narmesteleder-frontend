@@ -6,6 +6,7 @@ import { TokenXTargetApi } from '@/server/helpers'
 import { getServerEnv } from '@/env-variables/serverEnv'
 import { mapToManagerRequest } from '@/server/actions/requestHelper'
 import { withActionResult } from '@/server/actions/ActionResult'
+import { requirementIdSchema } from '@/schemas/requirementSchema'
 
 const getLineManagerPutPath = (requirementId: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${requirementId}`
@@ -13,6 +14,7 @@ const getLineManagerPutPath = (requirementId: string) =>
 export const oppdaterNarmesteLeder = async (requirementId: string, narmesteLeder: NarmesteLederForm) =>
   withActionResult(async () => {
     narmesteLederFormSchema.parse(narmesteLeder)
+    requirementIdSchema.parse(requirementId)
 
     return await tokenXFetchUpdate({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
