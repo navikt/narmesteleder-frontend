@@ -17,8 +17,8 @@ export default function AngiLederPanel({ lederInfo }: { lederInfo: LederInfo }) 
         ansatte og oppfølgingstjenestene Nav tilbyr på &quot;Dine sykmeldte&quot; hos Nav.
       </BodyLong>
       <BodyLong>
-        Vi har forhåndsutfylt skjemaet med navn og f.nr til den ansatte. Du må legge inn kontaktinformasjonen til
-        lederen som skal få tilgang.
+        Vi har forhåndsutfylt skjemaet med navn og fødselsnummer til den ansatte. Du må legge inn kontaktinformasjonen
+        til lederen som skal få tilgang.
       </BodyLong>
       <BodyLong>
         Den ansatte vil se hvem bedriften har meldt inn som leder på &quot;Ditt sykefravær&quot; hos Nav
