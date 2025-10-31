@@ -3,10 +3,9 @@ import { getServerEnv } from '@/env-variables/serverEnv'
 import { mockLineManagerRequirement } from '@/server/fetchData/demoMockData/mockLineManagerRequirement'
 import { LineManagerReadResponse, lineManagerReadSchema, EmployeeResponse } from '@/schemas/lineManagerReadSchema'
 import { tokenXFetchGet } from '@/server/tokenXFetch'
-import { TokenXTargetApi } from '@/server/helpers'
+import { TokenXTargetApi, withMockForLocalOrDemo } from '@/server/helpers'
 import { getRedirectAfterLoginUrlForAG } from '@/auth/redirectToLogin'
 import { formatFnr } from '@/utils/formatting'
-import { withMockForLocalOrDemo } from '@/server/fetchData/demoMockData/mock'
 
 const getLineManagerRequirementPath = (id: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`

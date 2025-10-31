@@ -5,7 +5,7 @@ import { Heading, VStack } from '@navikt/ds-react'
 import { useAppForm } from '@/components/form/hooks/form'
 import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
 import { SykmeldtGroup } from '@/components/form/SykmeldtGroup'
-import { opprettNaresteLeder } from '@/server/actions/opprettNarmesteLeder'
+import { opprettNarmesteLeder } from '@/server/actions/opprettNarmesteLeder'
 import ThankYouAlert from '@/components/form/ThankYouAlert'
 import { LederGroup } from '@/components/form/LederGroup'
 import { useState } from 'react'
@@ -19,7 +19,7 @@ export default function RegistrerNarmesteLederRelasjon() {
     validationLogic: revalidateLogic(),
     validators: { onDynamic: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
-      const actionResult = await opprettNaresteLeder(value)
+      const actionResult = await opprettNarmesteLeder(value)
       if (!actionResult.success) {
         setActionError(true)
       }

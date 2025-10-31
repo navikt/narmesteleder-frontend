@@ -11,7 +11,7 @@ import { withActionResult } from '@/server/actions/ActionResult'
 
 const getLineManagerPostPath = () => `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`
 
-export const opprettNaresteLeder = (narmesteLeder: NarmesteLederInfo) =>
+export const opprettNarmesteLeder = (narmesteLeder: NarmesteLederInfo) =>
   withActionResult(async () => {
     narmesteLederInfoSchema.parse(narmesteLeder)
 
