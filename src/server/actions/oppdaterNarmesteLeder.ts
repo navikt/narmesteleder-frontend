@@ -14,7 +14,7 @@ export const oppdaterNarmesteLeder = async (requirementId: string, narmesteLeder
   withActionResult(async () => {
     narmesteLederFormSchema.parse(narmesteLeder)
 
-    await tokenXFetchUpdate({
+    return await tokenXFetchUpdate({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
       endpoint: getLineManagerPutPath(requirementId),
       method: 'PUT',
