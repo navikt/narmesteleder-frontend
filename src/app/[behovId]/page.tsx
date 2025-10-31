@@ -5,6 +5,7 @@ import { fetchLederInfo } from '@/server/fetchData/fetchLederInfo'
 import { requirementIdSchema } from '@/schemas/requirementSchema'
 import AngiNarmesteLederForSykmeldt from '@/components/form/AngiNarmesteLederForSykmeldt'
 import { Heading, Page, VStack } from '@navikt/ds-react'
+import SykmeldtBox from '@/components/SykmeldtBox'
 
 const isValidBehovId = (behovId: string) => !requirementIdSchema.safeParse(behovId).success
 
@@ -23,6 +24,7 @@ export default async function Home({ params }: { params: Promise<{ behovId: stri
       </Heading>
       <VStack gap="8">
         <AngiLederPanel lederInfo={lederInfo} />
+        <SykmeldtBox fodselsnummer={lederInfo.sykmeldtFnr} navn={lederInfo.sykmeldt.fullnavn} />
         <AngiNarmesteLederForSykmeldt behovId={behovId} />
       </VStack>
     </Page>
