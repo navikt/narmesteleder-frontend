@@ -13,6 +13,7 @@ import ErrorAlert from '@/components/form/ErrorAlert'
 
 export default function RegistrerNarmesteLederRelasjon() {
   const [actionError, setActionError] = useState(false)
+  const [showThankYou, setShowThankYou] = useState(false)
 
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
@@ -22,10 +23,15 @@ export default function RegistrerNarmesteLederRelasjon() {
       const actionResult = await opprettNarmesteLeder(value)
       if (!actionResult.success) {
         setActionError(true)
+        return
       }
-      return ThankYouAlert()
+      setShowThankYou(true)
     },
   })
+
+  if (showThankYou) {
+    return <ThankYouAlert />
+  }
 
   return (
     <VStack gap="6">

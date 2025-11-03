@@ -16,6 +16,7 @@ type props = {
 
 export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
   const [actionError, setActionError] = useState(false)
+  const [showThankYou, setShowThankYou] = useState(false)
 
   const form = useAppForm({
     defaultValues: lederOnlyDefaults,
@@ -25,10 +26,15 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
       const actionResult = await oppdaterNarmesteLeder(behovId, value.leder)
       if (!actionResult.success) {
         setActionError(true)
+        return
       }
-      return ThankYouAlert()
+      setShowThankYou(true)
     },
   })
+
+  if (showThankYou) {
+    return <ThankYouAlert />
+  }
 
   return (
     <form
