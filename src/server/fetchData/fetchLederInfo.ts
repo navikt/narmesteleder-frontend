@@ -15,6 +15,7 @@ const mapToLederInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederInf
     id: sykmeldtInfoResponse.id,
     sykmeldtFnr: formatFnr(sykmeldtInfoResponse.employeeIdentificationNumber),
     orgnummer: sykmeldtInfoResponse.orgnumber,
+    orgnavn: sykmeldtInfoResponse.orgName,
     hovedenhetOrgnummer: sykmeldtInfoResponse.mainOrgnumber,
     narmesteLederFnr: sykmeldtInfoResponse.managerIdentificationNumber,
     sykmeldt: {
@@ -40,6 +41,7 @@ export type LederInfo = {
   id: string
   sykmeldtFnr: string
   orgnummer: string
+  orgnavn?: string
   hovedenhetOrgnummer: string
   narmesteLederFnr: string
   sykmeldt: Navn

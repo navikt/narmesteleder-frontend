@@ -10,6 +10,7 @@ export const lineManagerReadSchema = object({
   id: string(),
   employeeIdentificationNumber: string(),
   orgnumber: string(),
+  orgName: string().optional(),
   mainOrgnumber: string(),
   managerIdentificationNumber: string(),
   name: employeeSchema,
