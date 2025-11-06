@@ -6,14 +6,14 @@ import { useAppForm } from '@/components/form/hooks/form'
 import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
 import { SykmeldtGroup } from '@/components/form/SykmeldtGroup'
 import { opprettNarmesteLeder } from '@/server/actions/opprettNarmesteLeder'
-import ThankYouAlert from '@/components/form/ThankYouAlert'
 import { LederGroup } from '@/components/form/LederGroup'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import ErrorAlert from '@/components/form/ErrorAlert'
 
 export default function RegistrerNarmesteLederRelasjon() {
   const [actionError, setActionError] = useState(false)
-  const [showThankYou, setShowThankYou] = useState(false)
+  const router = useRouter()
 
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
@@ -25,13 +25,9 @@ export default function RegistrerNarmesteLederRelasjon() {
         setActionError(true)
         return
       }
-      setShowThankYou(true)
+      router.push('/success')
     },
   })
-
-  if (showThankYou) {
-    return <ThankYouAlert />
-  }
 
   return (
     <VStack gap="6">

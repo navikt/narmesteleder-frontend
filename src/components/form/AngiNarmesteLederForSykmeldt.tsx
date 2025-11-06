@@ -5,9 +5,9 @@ import { useAppForm } from '@/components/form/hooks/form'
 import { lederOnlyDefaults, lederOnlySchema } from '@/schemas/nærmestelederFormSchema'
 import { LederGroup } from '@/components/form/LederGroup'
 import { oppdaterNarmesteLeder } from '@/server/actions/oppdaterNarmesteLeder'
-import ThankYouAlert from '@/components/form/ThankYouAlert'
 import { HStack, VStack } from '@navikt/ds-react'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import ErrorAlert from '@/components/form/ErrorAlert'
 
 type props = {
@@ -16,7 +16,7 @@ type props = {
 
 export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
   const [actionError, setActionError] = useState(false)
-  const [showThankYou, setShowThankYou] = useState(false)
+  const router = useRouter()
 
   const form = useAppForm({
     defaultValues: lederOnlyDefaults,
@@ -28,13 +28,9 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
         setActionError(true)
         return
       }
-      setShowThankYou(true)
+      router.push('/success')
     },
   })
-
-  if (showThankYou) {
-    return <ThankYouAlert />
-  }
 
   return (
     <form
