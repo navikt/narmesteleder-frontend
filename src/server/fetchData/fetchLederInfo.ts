@@ -21,7 +21,7 @@ const mapToLederInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederInf
     sykmeldt: {
       fornavn: sykmeldtInfoResponse.name.firstName,
       etternavn: sykmeldtInfoResponse.name.lastName,
-      mellomnavn: sykmeldtInfoResponse.name.middleName || undefined,
+      mellomnavn: sykmeldtInfoResponse.name.middleName,
       fullnavn: getFullName(sykmeldtInfoResponse.name),
     },
   }
@@ -33,7 +33,7 @@ const getFullName = (employee: EmployeeResponse): string =>
 export type Navn = {
   fornavn: string
   etternavn: string
-  mellomnavn?: string
+  mellomnavn: string | null
   fullnavn: string
 }
 
@@ -41,7 +41,7 @@ export type LederInfo = {
   id: string
   sykmeldtFnr: string
   orgnummer: string
-  orgnavn?: string
+  orgnavn: string | null
   hovedenhetOrgnummer: string
   narmesteLederFnr: string
   sykmeldt: Navn

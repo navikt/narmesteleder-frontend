@@ -3,14 +3,14 @@ import { object, string, z } from 'zod'
 export const employeeSchema = object({
   firstName: string(),
   lastName: string(),
-  middleName: string().nullish(),
+  middleName: string().nullable(),
 })
 
 export const lineManagerReadSchema = object({
   id: string(),
   employeeIdentificationNumber: string(),
   orgnumber: string(),
-  orgName: string().optional(),
+  orgName: string().nullable(),
   mainOrgnumber: string(),
   managerIdentificationNumber: string(),
   name: employeeSchema,
