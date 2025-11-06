@@ -1,4 +1,5 @@
 import ThankYouAlert from '@/components/form/ThankYouAlert'
+import { publicEnv } from '@/env-variables/publicEnv'
 import { Button } from '@navikt/ds-react'
 import Link from 'next/link'
 
@@ -8,8 +9,8 @@ export default function SuccessPage() {
       <ThankYouAlert />
       
       <div className="mt-6">
-        <Button as={Link} href="/" variant="secondary">
-          Tilbake til forsiden
+        <Button as={Link} href={publicEnv.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL} variant="secondary">
+          Min side arbeidsgiver
         </Button>
       </div>
     </div>
