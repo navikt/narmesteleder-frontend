@@ -12,7 +12,6 @@ export default function SuccessPage() {
           Min side arbeidsgiver
         </Button>
       </HStack>
-
     </VStack>
   )
 }
