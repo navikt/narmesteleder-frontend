@@ -3,6 +3,9 @@
 # IntelliJ files
 .idea
 
+# VS Code files
+.vscode/
+
 # dependencies
 /node_modules
 /.pnp
