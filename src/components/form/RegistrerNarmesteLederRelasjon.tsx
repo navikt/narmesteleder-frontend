@@ -30,7 +30,7 @@ export default function RegistrerNarmesteLederRelasjon() {
   return (
     <VStack gap="6">
       <Heading size="large" level="1">
-        Registrer nærmeste leder
+        Oppgi nærmeste leder
       </Heading>
 
       <form

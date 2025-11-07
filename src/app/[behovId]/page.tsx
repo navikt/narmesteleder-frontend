@@ -20,7 +20,7 @@ export default async function Home({ params }: { params: Promise<{ behovId: stri
   return (
     <Page>
       <Heading size="large" level="1" spacing>
-        Angi nærmeste leder for sykmeldt
+        Oppgi nærmeste leder for sykmeldt
       </Heading>
       <VStack gap="8">
         <AngiLederPanel lederInfo={lederInfo} />
