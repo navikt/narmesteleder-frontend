@@ -1,0 +1,4 @@
+# Only format files in src directory
+**
+!src/
+!src/**
