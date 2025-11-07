@@ -47,7 +47,7 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
         {actionError && <ErrorAlert />}
         <HStack className="mt-0">
           <form.AppForm>
-            <form.BoundSubmitButton label="Lagre nærmeste leder" />
+            <form.BoundSubmitButton label="Send inn" />
           </form.AppForm>
         </HStack>
       </VStack>
