@@ -1,7 +1,7 @@
 import { BodyLong, GuidePanel, Heading } from '@navikt/ds-react'
 import { LederInfo } from '@/server/fetchData/fetchLederInfo'
 
-export default function AngiLederPanel({ lederInfo }: { lederInfo: LederInfo }) {
+export default function OppgiLederPanel({ lederInfo }: { lederInfo: LederInfo }) {
   return (
     <GuidePanel>
       <Heading size="medium" level="2" spacing>
@@ -12,12 +12,16 @@ export default function AngiLederPanel({ lederInfo }: { lederInfo: LederInfo }) 
         <strong>
           {lederInfo.sykmeldt.fullnavn} ({lederInfo.sykmeldtFnr})
         </strong>{' '}
-        er sykmeldt. Nav mangler informasjon om hvem som er nærmeste leder{lederInfo.orgnavn ? (
-          <span> i bedrift 
+        er sykmeldt. Nav mangler informasjon om hvem som er nærmeste leder for den sykmeldte i{' '}
+        {lederInfo.orgnavn ? (
+          <span>
             <strong>{lederInfo.orgnavn}</strong>
           </span>
-        ) : ''}. Personen som oppgis som nærmeste leder, får tilgang den sykmeldte
-        ansatte og oppfølgingstjenestene Nav tilbyr på &quot;Dine sykmeldte&quot; hos Nav.
+        ) : (
+          ' organisasjonen/virksomheten'
+        )}
+        . Personen som oppgis som nærmeste leder, får tilgang den sykmeldte ansatte og oppfølgingstjenestene Nav tilbyr
+        på &quot;Dine sykmeldte&quot; hos Nav.
       </BodyLong>
 
       <BodyLong>

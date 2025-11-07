@@ -30,7 +30,7 @@ export default function RegistrerNarmesteLederRelasjon() {
   return (
     <VStack gap="6">
       <Heading size="large" level="1">
-        Registrer nærmeste leder
+        Oppgi nærmeste leder
       </Heading>
 
       <form
@@ -57,7 +57,7 @@ export default function RegistrerNarmesteLederRelasjon() {
             </VStack>
             {actionError && <ErrorAlert />}
             <HStack className="mt-0">
-              <form.BoundSubmitButton label="Lagre nærmeste leder" />
+              <form.BoundSubmitButton label="Send inn" />
             </HStack>
           </VStack>
         </form.AppForm>

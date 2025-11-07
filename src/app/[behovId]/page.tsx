@@ -1,9 +1,9 @@
-import AngiLederPanel from '@/components/AngiLederPanel'
+import OppgiLederPanel from '@/components/OppgiLederPanel'
 import { logger } from '@navikt/next-logger'
 import notFound from '@/app/not-found'
 import { fetchLederInfo } from '@/server/fetchData/fetchLederInfo'
 import { requirementIdSchema } from '@/schemas/requirementSchema'
-import AngiNarmesteLederForSykmeldt from '@/components/form/AngiNarmesteLederForSykmeldt'
+import OppgiNarmesteLederForSykmeldt from '@/components/form/OppgiNarmesteLederForSykmeldt'
 import { Heading, Page, VStack } from '@navikt/ds-react'
 import SykmeldtBox from '@/components/SykmeldtBox'
 
@@ -20,12 +20,12 @@ export default async function Home({ params }: { params: Promise<{ behovId: stri
   return (
     <Page>
       <Heading size="large" level="1" spacing>
-        Angi nærmeste leder for sykmeldt
+        Oppgi nærmeste leder for sykmeldt
       </Heading>
       <VStack gap="8">
-        <AngiLederPanel lederInfo={lederInfo} />
+        <OppgiLederPanel lederInfo={lederInfo} />
         <SykmeldtBox fodselsnummer={lederInfo.sykmeldtFnr} navn={lederInfo.sykmeldt.fullnavn} />
-        <AngiNarmesteLederForSykmeldt behovId={behovId} />
+        <OppgiNarmesteLederForSykmeldt behovId={behovId} />
       </VStack>
     </Page>
   )

@@ -13,6 +13,7 @@ export const publicEnvSchema = z.object({
   NEXT_PUBLIC_ASSET_PREFIX: z.string().optional(),
   NEXT_PUBLIC_TELEMETRY_URL: z.string().optional(),
   NEXT_PUBLIC_BASE_PATH: z.string(),
+  NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL: z.string(),
 })
 
 /**
@@ -23,6 +24,7 @@ export const rawPublicEnv = publicEnvSchema.parse({
   NEXT_PUBLIC_ASSET_PREFIX: process.env.NEXT_PUBLIC_ASSET_PREFIX,
   NEXT_PUBLIC_TELEMETRY_URL: process.env.NEXT_PUBLIC_TELEMETRY_URL,
   NEXT_PUBLIC_BASE_PATH: process.env.NEXT_PUBLIC_BASE_PATH,
+  NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL: process.env.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL,
 } satisfies Record<keyof PublicEnv, string | undefined>)
 
 // Evaluate once at module load time with an IIFE.

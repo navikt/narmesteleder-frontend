@@ -6,7 +6,7 @@ import { lederOnlyDefaults, lederOnlySchema } from '@/schemas/nærmestelederForm
 import { LederGroup } from '@/components/form/LederGroup'
 import { oppdaterNarmesteLeder } from '@/server/actions/oppdaterNarmesteLeder'
 import ThankYouAlert from '@/components/form/ThankYouAlert'
-import { HStack, VStack } from '@navikt/ds-react'
+import { Heading, HStack, VStack } from '@navikt/ds-react'
 import { useState } from 'react'
 import ErrorAlert from '@/components/form/ErrorAlert'
 
@@ -14,7 +14,7 @@ type props = {
   behovId: string
 }
 
-export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
+export default function OppgiNarmesteLederForSykmeldt({ behovId }: props) {
   const [actionError, setActionError] = useState(false)
 
   const form = useAppForm({
@@ -39,6 +39,10 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
       }}
     >
       <VStack gap="4">
+        <Heading level="2" size="small">
+          Nærmeste leder
+        </Heading>
+
         <form.AppForm>
           <VStack gap="4">
             <LederGroup form={form} fields="leder" />
@@ -47,7 +51,7 @@ export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
         {actionError && <ErrorAlert />}
         <HStack className="mt-0">
           <form.AppForm>
-            <form.BoundSubmitButton label="Lagre nærmeste leder" />
+            <form.BoundSubmitButton label="Send inn" />
           </form.AppForm>
         </HStack>
       </VStack>
