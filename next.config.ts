@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForDev: true,
   },
   reactStrictMode: true,
+  reactCompiler: true,
   basePath: BASE_PATH,
   output: "standalone",
   productionBrowserSourceMaps: true,
