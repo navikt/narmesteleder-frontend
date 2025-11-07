@@ -1,16 +1,22 @@
-import 'server-only'
-import { getServerEnv } from '@/env-variables/serverEnv'
-import { mockLineManagerRequirement } from '@/server/fetchData/demoMockData/mockLineManagerRequirement'
-import { LineManagerReadResponse, lineManagerReadSchema, EmployeeResponse } from '@/schemas/lineManagerReadSchema'
-import { tokenXFetchGet } from '@/server/tokenXFetch'
-import { TokenXTargetApi, withMockForLocalOrDemo } from '@/server/helpers'
-import { getRedirectAfterLoginUrlForAG } from '@/auth/redirectToLogin'
-import { formatFnr } from '@/utils/formatting'
+import "server-only";
+import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
+import { getServerEnv } from "@/env-variables/serverEnv";
+import {
+  EmployeeResponse,
+  LineManagerReadResponse,
+  lineManagerReadSchema,
+} from "@/schemas/lineManagerReadSchema";
+import { mockLineManagerRequirement } from "@/server/fetchData/demoMockData/mockLineManagerRequirement";
+import { TokenXTargetApi, withMockForLocalOrDemo } from "@/server/helpers";
+import { tokenXFetchGet } from "@/server/tokenXFetch";
+import { formatFnr } from "@/utils/formatting";
 
 const getLineManagerRequirementPath = (id: string) =>
-  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`;
 
-const mapToLederInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederInfo => {
+const mapToLederInfo = (
+  sykmeldtInfoResponse: LineManagerReadResponse,
+): LederInfo => {
   return {
     id: sykmeldtInfoResponse.id,
     sykmeldtFnr: formatFnr(sykmeldtInfoResponse.employeeIdentificationNumber),
@@ -24,28 +30,30 @@ const mapToLederInfo = (sykmeldtInfoResponse: LineManagerReadResponse): LederInf
       mellomnavn: sykmeldtInfoResponse.name.middleName,
       fullnavn: getFullName(sykmeldtInfoResponse.name),
     },
-  }
-}
+  };
+};
 
 const getFullName = (employee: EmployeeResponse): string =>
-  [employee.firstName, employee.middleName, employee.lastName].filter(Boolean).join(' ')
+  [employee.firstName, employee.middleName, employee.lastName]
+    .filter(Boolean)
+    .join(" ");
 
 export type Navn = {
-  fornavn: string
-  etternavn: string
-  mellomnavn: string | null
-  fullnavn: string
-}
+  fornavn: string;
+  etternavn: string;
+  mellomnavn: string | null;
+  fullnavn: string;
+};
 
 export type LederInfo = {
-  id: string
-  sykmeldtFnr: string
-  orgnummer: string
-  orgnavn: string | null
-  hovedenhetOrgnummer: string
-  narmesteLederFnr: string
-  sykmeldt: Navn
-}
+  id: string;
+  sykmeldtFnr: string;
+  orgnummer: string;
+  orgnavn: string | null;
+  hovedenhetOrgnummer: string;
+  narmesteLederFnr: string;
+  sykmeldt: Navn;
+};
 
 export const fetchLederInfo = withMockForLocalOrDemo(
   mapToLederInfo(mockLineManagerRequirement),
@@ -55,7 +63,7 @@ export const fetchLederInfo = withMockForLocalOrDemo(
       endpoint: getLineManagerRequirementPath(requirementId),
       responseDataSchema: lineManagerReadSchema,
       redirectAfterLoginUrl: getRedirectAfterLoginUrlForAG(requirementId),
-    })
-    return mapToLederInfo(result)
+    });
+    return mapToLederInfo(result);
   },
-)
+);

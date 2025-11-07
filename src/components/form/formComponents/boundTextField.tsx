@@ -1,12 +1,12 @@
-import { TextField } from '@navikt/ds-react'
-import { useFieldContext } from '@/components/form/hooks/form-context'
+import { TextField } from "@navikt/ds-react";
+import { useFieldContext } from "@/components/form/hooks/form-context";
 
 export type TextFieldProps = {
-  label: string
-}
+  label: string;
+};
 
 export function BoundTextField({ label }: TextFieldProps) {
-  const field = useFieldContext<string>()
+  const field = useFieldContext<string>();
   return (
     <TextField
       label={label}
@@ -15,5 +15,5 @@ export function BoundTextField({ label }: TextFieldProps) {
       onBlur={field.handleBlur}
       error={field.state.meta.errors[0]?.message}
     />
-  )
+  );
 }

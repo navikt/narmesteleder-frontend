@@ -1,10 +1,10 @@
-import { object, string, z } from 'zod'
+import { object, string, z } from "zod";
 
 export const employeeSchema = object({
   firstName: string(),
   lastName: string(),
   middleName: string().nullable(),
-})
+});
 
 export const lineManagerReadSchema = object({
   id: string(),
@@ -14,8 +14,8 @@ export const lineManagerReadSchema = object({
   mainOrgnumber: string(),
   managerIdentificationNumber: string(),
   name: employeeSchema,
-})
+});
 
-export type LineManagerReadResponse = z.infer<typeof lineManagerReadSchema>
+export type LineManagerReadResponse = z.infer<typeof lineManagerReadSchema>;
 
-export type EmployeeResponse = z.infer<typeof employeeSchema>
+export type EmployeeResponse = z.infer<typeof employeeSchema>;

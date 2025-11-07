@@ -1,21 +1,26 @@
-import OppgiLederPanel from '@/components/OppgiLederPanel'
-import { logger } from '@navikt/next-logger'
-import notFound from '@/app/not-found'
-import { fetchLederInfo } from '@/server/fetchData/fetchLederInfo'
-import { requirementIdSchema } from '@/schemas/requirementSchema'
-import OppgiNarmesteLederForSykmeldt from '@/components/form/OppgiNarmesteLederForSykmeldt'
-import { Heading, Page, VStack } from '@navikt/ds-react'
-import SykmeldtBox from '@/components/SykmeldtBox'
+import { Heading, Page, VStack } from "@navikt/ds-react";
+import { logger } from "@navikt/next-logger";
+import notFound from "@/app/not-found";
+import OppgiLederPanel from "@/components/OppgiLederPanel";
+import SykmeldtBox from "@/components/SykmeldtBox";
+import OppgiNarmesteLederForSykmeldt from "@/components/form/OppgiNarmesteLederForSykmeldt";
+import { requirementIdSchema } from "@/schemas/requirementSchema";
+import { fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
 
-const isValidBehovId = (behovId: string) => !requirementIdSchema.safeParse(behovId).success
+const isValidBehovId = (behovId: string) =>
+  !requirementIdSchema.safeParse(behovId).success;
 
-export default async function Home({ params }: { params: Promise<{ behovId: string }> }) {
-  const { behovId } = await params
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ behovId: string }>;
+}) {
+  const { behovId } = await params;
   if (isValidBehovId(behovId)) {
-    logger.warn(`Invalid behovId format: ${behovId}`)
-    return notFound()
+    logger.warn(`Invalid behovId format: ${behovId}`);
+    return notFound();
   }
-  const lederInfo = await fetchLederInfo(behovId)
+  const lederInfo = await fetchLederInfo(behovId);
 
   return (
     <Page>
@@ -24,9 +29,12 @@ export default async function Home({ params }: { params: Promise<{ behovId: stri
       </Heading>
       <VStack gap="8">
         <OppgiLederPanel lederInfo={lederInfo} />
-        <SykmeldtBox fodselsnummer={lederInfo.sykmeldtFnr} navn={lederInfo.sykmeldt.fullnavn} />
+        <SykmeldtBox
+          fodselsnummer={lederInfo.sykmeldtFnr}
+          navn={lederInfo.sykmeldt.fullnavn}
+        />
         <OppgiNarmesteLederForSykmeldt behovId={behovId} />
       </VStack>
     </Page>
-  )
+  );
 }

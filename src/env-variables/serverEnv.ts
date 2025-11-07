@@ -1,8 +1,12 @@
-import { z } from 'zod'
-import { PublicEnv, publicEnvSchema, rawPublicEnv } from '@/env-variables/publicEnv'
-import { throwEnvSchemaParsingError } from '@/env-variables/envHelpers'
+import { z } from "zod";
+import { throwEnvSchemaParsingError } from "@/env-variables/envHelpers";
+import {
+  PublicEnv,
+  publicEnvSchema,
+  rawPublicEnv,
+} from "@/env-variables/publicEnv";
 
-export type ServerEnv = z.infer<typeof serverEnvSchema>
+export type ServerEnv = z.infer<typeof serverEnvSchema>;
 export const serverEnvSchema = z.object({
   // Provided by nais-*.yaml
   NARMESTELEDER_BACKEND_HOST: z.string(),
@@ -14,7 +18,7 @@ export const serverEnvSchema = z.object({
   IDPORTEN_WELL_KNOWN_URL: z.string(),
   IDPORTEN_CLIENT_ID: z.string(),
   NAIS_CLUSTER_NAME: z.string(),
-})
+});
 
 const rawServerEnv = {
   // Provided by nais-*.yml
@@ -28,9 +32,9 @@ const rawServerEnv = {
   IDPORTEN_WELL_KNOWN_URL: process.env.IDPORTEN_WELL_KNOWN_URL,
   IDPORTEN_CLIENT_ID: process.env.IDPORTEN_CLIENT_ID,
   NAIS_CLUSTER_NAME: process.env.NAIS_CLUSTER_NAME,
-} satisfies Record<keyof ServerEnv, string | undefined>
+} satisfies Record<keyof ServerEnv, string | undefined>;
 
-let cachedServerEnv: Readonly<ServerEnv & PublicEnv> | undefined
+let cachedServerEnv: Readonly<ServerEnv & PublicEnv> | undefined;
 
 export function getServerEnv(): Readonly<ServerEnv & PublicEnv> {
   if (!cachedServerEnv) {
@@ -38,10 +42,10 @@ export function getServerEnv(): Readonly<ServerEnv & PublicEnv> {
       cachedServerEnv = Object.freeze({
         ...serverEnvSchema.parse(rawServerEnv),
         ...publicEnvSchema.parse(rawPublicEnv),
-      })
+      });
     } catch (e) {
-      throwEnvSchemaParsingError(e)
+      throwEnvSchemaParsingError(e);
     }
   }
-  return cachedServerEnv
+  return cachedServerEnv;
 }

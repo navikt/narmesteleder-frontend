@@ -1,24 +1,27 @@
-'use server'
+"use server";
 
-import 'server-only'
+import "server-only";
+import { getServerEnv } from "@/env-variables/serverEnv";
+import {
+  NarmesteLederInfo,
+  narmesteLederInfoSchema,
+} from "@/schemas/nærmestelederFormSchema";
+import { withActionResult } from "@/server/actions/ActionResult";
+import { mapToLineManagerRequest } from "@/server/actions/requestHelper";
+import { TokenXTargetApi } from "@/server/helpers";
+import { tokenXFetchUpdate } from "@/server/tokenXFetch";
 
-import { NarmesteLederInfo, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
-import { getServerEnv } from '@/env-variables/serverEnv'
-import { tokenXFetchUpdate } from '@/server/tokenXFetch'
-import { TokenXTargetApi } from '@/server/helpers'
-import { mapToLineManagerRequest } from '@/server/actions/requestHelper'
-import { withActionResult } from '@/server/actions/ActionResult'
-
-const getLineManagerPostPath = () => `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`
+const getLineManagerPostPath = () =>
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`;
 
 export const opprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
   withActionResult(async () => {
-    narmesteLederInfoSchema.parse(narmesteLeder)
+    narmesteLederInfoSchema.parse(narmesteLeder);
 
     await tokenXFetchUpdate({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
       endpoint: getLineManagerPostPath(),
-      method: 'POST',
+      method: "POST",
       requestBody: mapToLineManagerRequest(narmesteLeder),
-    })
-  })
+    });
+  });
