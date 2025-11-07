@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   productionBrowserSourceMaps: true,
   assetPrefix: process.env.NEXT_PUBLIC_ASSET_PREFIX,
+  serverExternalPackages: ["@navikt/next-logger", "pino"],
 };
 
 export default nextConfig;
