@@ -14,7 +14,7 @@ type props = {
   behovId: string
 }
 
-export default function AngiNarmesteLederForSykmeldt({ behovId }: props) {
+export default function OppgiNarmesteLederForSykmeldt({ behovId }: props) {
   const [actionError, setActionError] = useState(false)
 
   const form = useAppForm({

@@ -1,7 +1,7 @@
 import { BodyLong, GuidePanel, Heading } from '@navikt/ds-react'
 import { LederInfo } from '@/server/fetchData/fetchLederInfo'
 
-export default function AngiLederPanel({ lederInfo }: { lederInfo: LederInfo }) {
+export default function OppgiLederPanel({ lederInfo }: { lederInfo: LederInfo }) {
   return (
     <GuidePanel>
       <Heading size="medium" level="2" spacing>
