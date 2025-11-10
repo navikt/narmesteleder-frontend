@@ -1,8 +1,8 @@
 import { cache } from "react";
-import { logger } from "@navikt/next-logger";
-import { requestOboToken } from "@navikt/oasis";
 import "server-only";
 import z from "zod";
+import { logger } from "@navikt/next-logger";
+import { requestOboToken } from "@navikt/oasis";
 import { redirectToLogin } from "@/auth/redirectToLogin";
 import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
 import {

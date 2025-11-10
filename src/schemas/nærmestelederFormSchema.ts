@@ -1,5 +1,5 @@
-import { fnr } from "@navikt/fnrvalidator";
 import { email, object, string, z } from "zod";
+import { fnr } from "@navikt/fnrvalidator";
 import { isNonProd } from "@/env-variables/envHelpers";
 
 const requireFieldErrorMessage = "Feltet er påkrevd";

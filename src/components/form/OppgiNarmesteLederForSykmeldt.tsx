@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { HStack, Heading, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
+import { HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import ThankYouAlert from "@/components/form/ThankYouAlert";
