@@ -1,5 +1,5 @@
-import { withFieldGroup } from '@/components/form/hooks/form'
-import { sykmeldtFormDefaults } from '@/schemas/nærmestelederFormSchema'
+import { withFieldGroup } from "@/components/form/hooks/form";
+import { sykmeldtFormDefaults } from "@/schemas/nærmestelederFormSchema";
 
 export const SykmeldtGroup = withFieldGroup({
   defaultValues: sykmeldtFormDefaults,
@@ -13,6 +13,6 @@ export const SykmeldtGroup = withFieldGroup({
           {(field) => <field.TextInputField label="Orgnummer (9 sifre)" />}
         </group.AppField>
       </>
-    )
+    );
   },
-})
+});

@@ -1,9 +1,9 @@
-import { BodyShort, Box, Heading, Label, VStack } from '@navikt/ds-react'
+import { BodyShort, Box, Heading, Label, VStack } from "@navikt/ds-react";
 
 type SykmeldtProps = {
-  fodselsnummer: string
-  navn: string
-}
+  fodselsnummer: string;
+  navn: string;
+};
 
 export default function SykmeldtBox({ fodselsnummer, navn }: SykmeldtProps) {
   return (
@@ -26,5 +26,5 @@ export default function SykmeldtBox({ fodselsnummer, navn }: SykmeldtProps) {
         </VStack>
       </VStack>
     </Box>
-  )
+  );
 }

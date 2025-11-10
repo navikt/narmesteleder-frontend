@@ -1,4 +1,4 @@
-import { Alert, Heading } from '@navikt/ds-react'
+import { Alert, Heading } from "@navikt/ds-react";
 
 export default function ErrorAlert() {
   return (
@@ -10,5 +10,5 @@ export default function ErrorAlert() {
         Vi klarte ikke å sende inn svarene dine. Prøv igjen om litt.
       </Alert>
     </>
-  )
+  );
 }

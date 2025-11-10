@@ -1,31 +1,34 @@
-'use client'
+"use client";
 
-import { revalidateLogic } from '@tanstack/react-form'
-import { Heading, HStack, VStack } from '@navikt/ds-react'
-import { useAppForm } from '@/components/form/hooks/form'
-import { narmesteLederInfoDefaults, narmesteLederInfoSchema } from '@/schemas/nærmestelederFormSchema'
-import { SykmeldtGroup } from '@/components/form/SykmeldtGroup'
-import { opprettNarmesteLeder } from '@/server/actions/opprettNarmesteLeder'
-import ThankYouAlert from '@/components/form/ThankYouAlert'
-import { LederGroup } from '@/components/form/LederGroup'
-import { useState } from 'react'
-import ErrorAlert from '@/components/form/ErrorAlert'
+import { useState } from "react";
+import { revalidateLogic } from "@tanstack/react-form";
+import { HStack, Heading, VStack } from "@navikt/ds-react";
+import ErrorAlert from "@/components/form/ErrorAlert";
+import { LederGroup } from "@/components/form/LederGroup";
+import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
+import ThankYouAlert from "@/components/form/ThankYouAlert";
+import { useAppForm } from "@/components/form/hooks/form";
+import {
+  narmesteLederInfoDefaults,
+  narmesteLederInfoSchema,
+} from "@/schemas/nærmestelederFormSchema";
+import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 
 export default function RegistrerNarmesteLederRelasjon() {
-  const [actionError, setActionError] = useState(false)
+  const [actionError, setActionError] = useState(false);
 
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
     validationLogic: revalidateLogic(),
     validators: { onDynamic: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
-      const actionResult = await opprettNarmesteLeder(value)
+      const actionResult = await opprettNarmesteLeder(value);
       if (!actionResult.success) {
-        setActionError(true)
+        setActionError(true);
       }
-      return ThankYouAlert()
+      return ThankYouAlert();
     },
-  })
+  });
 
   return (
     <VStack gap="6">
@@ -35,9 +38,9 @@ export default function RegistrerNarmesteLederRelasjon() {
 
       <form
         onSubmit={async (e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          await form.handleSubmit()
+          e.preventDefault();
+          e.stopPropagation();
+          await form.handleSubmit();
         }}
       >
         <form.AppForm>
@@ -63,5 +66,5 @@ export default function RegistrerNarmesteLederRelasjon() {
         </form.AppForm>
       </form>
     </VStack>
-  )
+  );
 }

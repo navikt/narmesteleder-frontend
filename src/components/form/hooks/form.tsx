@@ -1,7 +1,10 @@
-import { createFormHook } from '@tanstack/react-form'
-import { BoundTextField } from '@/components/form/formComponents/boundTextField'
-import { BoundSubmitButton } from '@/components/form/formComponents/boundSubmitButton'
-import { fieldContext, formContext } from '@/components/form/hooks/form-context'
+import { createFormHook } from "@tanstack/react-form";
+import { BoundSubmitButton } from "@/components/form/formComponents/boundSubmitButton";
+import { BoundTextField } from "@/components/form/formComponents/boundTextField";
+import {
+  fieldContext,
+  formContext,
+} from "@/components/form/hooks/form-context";
 
 export const { useAppForm, withFieldGroup } = createFormHook({
   fieldContext,
@@ -10,4 +13,4 @@ export const { useAppForm, withFieldGroup } = createFormHook({
   formComponents: {
     BoundSubmitButton,
   },
-})
+});

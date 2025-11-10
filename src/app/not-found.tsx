@@ -1,8 +1,16 @@
-import React from 'react'
-import { BodyShort, Box, Button, Heading, Link, List, VStack } from '@navikt/ds-react'
-import { PageBlock } from '@navikt/ds-react/Page'
-import { BugIcon } from '@navikt/aksel-icons'
-import { ListItem } from '@navikt/ds-react/List'
+import React from "react";
+import { BugIcon } from "@navikt/aksel-icons";
+import {
+  BodyShort,
+  Box,
+  Button,
+  Heading,
+  Link,
+  List,
+  VStack,
+} from "@navikt/ds-react";
+import { ListItem } from "@navikt/ds-react/List";
+import { PageBlock } from "@navikt/ds-react/Page";
 
 const NotFound = async () => (
   <PageBlock as="main" width="xl" gutters>
@@ -13,7 +21,10 @@ const NotFound = async () => (
             <Heading level="1" size="large" spacing>
               Beklager, vi fant ikke siden
             </Heading>
-            <BodyShort>Denne siden kan være slettet eller flyttet, eller det er en feil i lenken.</BodyShort>
+            <BodyShort>
+              Denne siden kan være slettet eller flyttet, eller det er en feil i
+              lenken.
+            </BodyShort>
             <List>
               <ListItem>Bruk gjerne søket eller menyen</ListItem>
               <ListItem>
@@ -36,12 +47,13 @@ const NotFound = async () => (
           </Heading>
           <BodyShort spacing>The page you requested cannot be found.</BodyShort>
           <BodyShort>
-            Go to the <Link href="#">front page</Link>, or use one of the links in the menu.
+            Go to the <Link href="#">front page</Link>, or use one of the links
+            in the menu.
           </BodyShort>
         </div>
       </VStack>
     </Box>
   </PageBlock>
-)
+);
 
-export default NotFound
+export default NotFound;

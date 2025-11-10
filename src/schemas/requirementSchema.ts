@@ -1,3 +1,3 @@
-import { uuid } from 'zod'
+import { uuid } from "zod";
 
-export const requirementIdSchema = uuid()
+export const requirementIdSchema = uuid();

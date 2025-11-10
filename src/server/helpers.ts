@@ -1,30 +1,37 @@
-import { getServerEnv } from '@/env-variables/serverEnv'
-import { isLocalOrDemo } from '@/env-variables/envHelpers'
-import { logger } from '@navikt/next-logger'
+import { logger } from "@navikt/next-logger";
+import { isLocalOrDemo } from "@/env-variables/envHelpers";
+import { getServerEnv } from "@/env-variables/serverEnv";
 
 export enum TokenXTargetApi {
-  NARMESTELEDER_BACKEND = 'NARMESTELEDER_BACKEND',
+  NARMESTELEDER_BACKEND = "NARMESTELEDER_BACKEND",
 }
 
 export const getBackendRequestHeaders = (oboToken: string) => ({
   Authorization: `Bearer ${oboToken}`,
-  'Content-Type': 'application/json',
-})
+  "Content-Type": "application/json",
+});
 
-export function getClientIdForTokenXTargetApi(targetApi: TokenXTargetApi): string {
+export function getClientIdForTokenXTargetApi(
+  targetApi: TokenXTargetApi,
+): string {
   if (targetApi === TokenXTargetApi.NARMESTELEDER_BACKEND) {
-    return getServerEnv().NARMESTELEDER_BACKEND_CLIENT_ID
+    return getServerEnv().NARMESTELEDER_BACKEND_CLIENT_ID;
   } else {
-    return '' as never
+    return "" as never;
   }
 }
 
 export const withMockForLocalOrDemo =
-  <T, TArgs extends unknown[]>(mockValue: T, fn: (...args: TArgs) => Promise<T>): ((...args: TArgs) => Promise<T>) =>
+  <T, TArgs extends unknown[]>(
+    mockValue: T,
+    fn: (...args: TArgs) => Promise<T>,
+  ): ((...args: TArgs) => Promise<T>) =>
   async (...args: TArgs) => {
     if (isLocalOrDemo) {
-      logger.warn('Is running locally or demo, returning mock value ${mockValue}')
-      return mockValue
+      logger.warn(
+        "Is running locally or demo, returning mock value ${mockValue}",
+      );
+      return mockValue;
     }
-    return fn(...args)
-  }
+    return fn(...args);
+  };

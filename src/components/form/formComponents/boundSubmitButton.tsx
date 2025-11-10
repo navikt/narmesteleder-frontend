@@ -1,8 +1,8 @@
-import { Button } from '@navikt/ds-react'
-import { useFormContext } from '@/components/form/hooks/form-context'
+import { Button } from "@navikt/ds-react";
+import { useFormContext } from "@/components/form/hooks/form-context";
 
 export const BoundSubmitButton = ({ label }: { label: string }) => {
-  const form = useFormContext()
+  const form = useFormContext();
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
@@ -11,5 +11,5 @@ export const BoundSubmitButton = ({ label }: { label: string }) => {
         </Button>
       )}
     </form.Subscribe>
-  )
-}
+  );
+};

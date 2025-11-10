@@ -1,4 +1,4 @@
-import { Alert, Heading } from '@navikt/ds-react'
+import { Alert, Heading } from "@navikt/ds-react";
 
 export default function ThankYouAlert() {
   return (
@@ -7,5 +7,5 @@ export default function ThankYouAlert() {
         Takk, svarene dine er sendt til Nav.
       </Heading>
     </Alert>
-  )
+  );
 }
