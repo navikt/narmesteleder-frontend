@@ -8,10 +8,13 @@ const lengthOrgnummerMessage = "Organisasjonsnummer må være 9 siffer";
 const invalidFnrErrorMessage = "Fødselsnummeret er ikke gyldig";
 const requiredFnrErrorMessage = "Fødselsnummeret er påkrevd";
 
-const validateFnr = (value: string): boolean => {
+const validateFnr = (
+  value: string,
+  isNonProdEnv: boolean = isNonProd,
+): boolean => {
   if (!/^\d{11}$/.test(value)) return false;
 
-  if (isNonProd) return true;
+  if (isNonProdEnv) return true;
 
   return fnr(value).status === "valid";
 };
@@ -20,7 +23,7 @@ export const FnrSchema = z
   .string()
   .trim()
   .nonempty(requiredFnrErrorMessage)
-  .refine(validateFnr, {
+  .refine((value) => validateFnr(value), {
     message: invalidFnrErrorMessage,
   });
 
