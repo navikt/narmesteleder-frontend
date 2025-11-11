@@ -1,4 +1,6 @@
-# Only format files in src directory
+# Only format files in src and tests directories
 **
 !src/
 !src/**
+!tests/
+!tests/**
