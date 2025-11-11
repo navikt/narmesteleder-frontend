@@ -7,22 +7,22 @@ const invalidEmailErrorMessage = "Ugyldig e-postadresse";
 const lengthOrgnummerMessage = "Organisasjonsnummer må være 9 siffer";
 const invalidFnrErrorMessage = "Fødselsnummeret er ikke gyldig";
 const requiredFnrErrorMessage = "Fødselsnummeret er påkrevd";
+const lengthAndNumberFnrErrorMessage =
+  "Fødselsnummeret må være nøyaktig 11 siffer";
 
 const validateFnr = (
   value: string,
   isNonProdEnv: boolean = isNonProd,
-): boolean => {
-  if (!/^\d{11}$/.test(value)) return false;
-
-  if (isNonProdEnv) return true;
-
-  return fnr(value).status === "valid" || dnr(value).status === "valid";
-};
+): boolean =>
+  isNonProdEnv ||
+  fnr(value).status === "valid" ||
+  dnr(value).status === "valid";
 
 export const FnrSchema = z
   .string()
   .trim()
   .nonempty(requiredFnrErrorMessage)
+  .regex(/^\d{11}$/, lengthAndNumberFnrErrorMessage)
   .refine((value) => validateFnr(value), {
     message: invalidFnrErrorMessage,
   });
