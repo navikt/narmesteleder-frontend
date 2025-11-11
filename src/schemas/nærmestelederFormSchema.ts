@@ -1,5 +1,5 @@
 import { email, object, string, z } from "zod";
-import { fnr } from "@navikt/fnrvalidator";
+import { dnr, fnr } from "@navikt/fnrvalidator";
 import { isNonProd } from "@/env-variables/envHelpers";
 
 const requireFieldErrorMessage = "Feltet er påkrevd";
@@ -16,7 +16,7 @@ const validateFnr = (
 
   if (isNonProdEnv) return true;
 
-  return fnr(value).status === "valid";
+  return fnr(value).status === "valid" || dnr(value).status === "valid";
 };
 
 export const FnrSchema = z
