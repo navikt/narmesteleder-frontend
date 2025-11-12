@@ -9,9 +9,9 @@ export const employeeSchema = object({
 export const lineManagerReadSchema = object({
   id: string(),
   employeeIdentificationNumber: string(),
-  orgnumber: string(),
+  orgNumber: string(),
   orgName: string().nullable(),
-  mainOrgnumber: string(),
+  mainOrgNumber: string(),
   managerIdentificationNumber: string(),
   name: employeeSchema,
 });

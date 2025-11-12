@@ -13,7 +13,7 @@ export type ManagerRequest = {
 
 export type LineManagerRequest = {
   employeeIdentificationNumber: string;
-  orgnumber: string;
+  orgNumber: string;
   manager: ManagerRequest;
 };
 
@@ -31,6 +31,6 @@ export const mapToLineManagerRequest = (
   narmesteLederInfoForm: NarmesteLederInfo,
 ): LineManagerRequest => ({
   employeeIdentificationNumber: narmesteLederInfoForm.sykmeldt.fodselsnummer,
-  orgnumber: narmesteLederInfoForm.sykmeldt.orgnummer,
+  orgNumber: narmesteLederInfoForm.sykmeldt.orgnummer,
   manager: mapToManagerRequest(narmesteLederInfoForm.leder),
 });
