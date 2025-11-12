@@ -1,17 +1,13 @@
 import "server-only";
 import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
-import { getServerEnv } from "@/env-variables/serverEnv";
 import {
   LineManagerReadResponse,
   lineManagerReadSchema,
 } from "@/schemas/lineManagerReadSchema";
-import { mockLineManagerRequirement } from "@/server/fetchData/demoMockData/mockLineManagerRequirement";
-import { TokenXTargetApi, withMockForLocalOrDemo } from "@/server/helpers";
+import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
-
-const getLineManagerRequirementPath = (id: string) =>
-  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`;
+import { getLineManagerRequirementPath } from "../apiPaths";
 
 const mapToLederInfo = (
   sykmeldtInfoResponse: LineManagerReadResponse,
@@ -53,15 +49,14 @@ export type LederInfo = {
   sykmeldt: Navn;
 };
 
-export const fetchLederInfo = withMockForLocalOrDemo(
-  mapToLederInfo(mockLineManagerRequirement),
-  async (requirementId: string): Promise<LederInfo> => {
-    const result = await tokenXFetchGet({
-      targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      endpoint: getLineManagerRequirementPath(requirementId),
-      responseDataSchema: lineManagerReadSchema,
-      redirectAfterLoginUrl: getRedirectAfterLoginUrlForAG(requirementId),
-    });
-    return mapToLederInfo(result);
-  },
-);
+export const fetchLederInfo = async (
+  requirementId: string,
+): Promise<LederInfo> => {
+  const result = await tokenXFetchGet({
+    targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+    endpoint: getLineManagerRequirementPath(requirementId),
+    responseDataSchema: lineManagerReadSchema,
+    redirectAfterLoginUrl: getRedirectAfterLoginUrlForAG(requirementId),
+  });
+  return mapToLederInfo(result);
+};
