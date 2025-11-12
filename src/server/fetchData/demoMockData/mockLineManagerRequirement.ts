@@ -5,7 +5,7 @@ export const mockLineManagerRequirement: LineManagerReadResponse = {
   employeeIdentificationNumber: "26095514420",
   orgNumber: "963890095",
   orgName: "Shark AS",
-  mainOrgnumber: "123456789",
+  mainOrgNumber: "123456789",
   managerIdentificationNumber: "19048938755",
   name: {
     firstName: "John",

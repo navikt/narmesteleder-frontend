@@ -22,7 +22,7 @@ const mapToLederInfo = (
     sykmeldtFnr: formatFnr(sykmeldtInfoResponse.employeeIdentificationNumber),
     orgnummer: sykmeldtInfoResponse.orgNumber,
     orgnavn: sykmeldtInfoResponse.orgName,
-    hovedenhetOrgnummer: sykmeldtInfoResponse.mainOrgnumber,
+    hovedenhetOrgnummer: sykmeldtInfoResponse.mainOrgNumber,
     narmesteLederFnr: sykmeldtInfoResponse.managerIdentificationNumber,
     sykmeldt: {
       fornavn: sykmeldtInfoResponse.name.firstName,

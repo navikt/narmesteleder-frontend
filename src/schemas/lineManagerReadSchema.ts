@@ -11,7 +11,7 @@ export const lineManagerReadSchema = object({
   employeeIdentificationNumber: string(),
   orgNumber: string(),
   orgName: string().nullable(),
-  mainOrgnumber: string(),
+  mainOrgNumber: string(),
   managerIdentificationNumber: string(),
   name: employeeSchema,
 });
