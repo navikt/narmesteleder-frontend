@@ -1,39 +1,61 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { ZodError } from "zod";
 import { FnrSchema } from "@/schemas/nærmestelederFormSchema";
 
-vi.mock("@/env-variables/envHelpers", () => ({
-  isNonProd: false, // Default to production
-}));
+type TestCase = {
+  input: string;
+  description: string;
+  isValid: boolean;
+};
+
+const runTestCase = (testCase: TestCase) => {
+  const expectation = expect(
+    () => FnrSchema.parse(testCase.input),
+    `${testCase.description} (input: "${testCase.input}")`,
+  );
+
+  if (testCase.isValid) {
+    expectation.not.toThrow();
+  } else {
+    expectation.toThrow(ZodError);
+  }
+};
+
+const fnrSchemaTestCases: TestCase[] = [
+  { input: "", description: "empty string", isValid: false },
+  { input: "   ", description: "whitespace only", isValid: false },
+  {
+    input: "123456789",
+    description: "too short (9 digits)",
+    isValid: false,
+  },
+  {
+    input: "123456789012",
+    description: "too long (12 digits)",
+    isValid: false,
+  },
+  {
+    input: "1234567890a",
+    description: "contains non-numeric characters",
+    isValid: false,
+  },
+  { input: "00000000000", description: "invalid FNR/DNR", isValid: false },
+  {
+    input: "  12345678901  ",
+    description: "invalid FNR with whitespace",
+    isValid: false,
+  },
+  { input: "20017912152", description: "valid FNR", isValid: true },
+  { input: "42034406566", description: "valid DNR", isValid: true },
+  {
+    input: "  20017912152  ",
+    description: "valid FNR with whitespace",
+    isValid: true,
+  },
+];
 
 describe("FnrSchema", () => {
-  it("should reject empty strings", () => {
-    expect(() => FnrSchema.parse("")).toThrow(ZodError);
-    expect(() => FnrSchema.parse("   ")).toThrow(ZodError); // Only whitespace
-  });
-
-  it("should reject non-11-digit numbers", () => {
-    expect(() => FnrSchema.parse("123456789")).toThrow(ZodError); // 9 digits
-    expect(() => FnrSchema.parse("12345678901234")).toThrow(ZodError); // 14 digits
-  });
-
-  it("should reject non-numeric strings", () => {
-    expect(() => FnrSchema.parse("1234567890a")).toThrow(ZodError);
-    expect(() => FnrSchema.parse("abc")).toThrow(ZodError);
-  });
-
-  it("should trim whitespace and validate", () => {
-    // This should fail because it's not a valid FNR in production
-    expect(() => FnrSchema.parse("  12345678901  ")).toThrow(ZodError);
-  });
-
-  it("should validate with real fnr package in production", () => {
-    // Test with obviously invalid numbers - should throw
-    expect(() => FnrSchema.parse("00000000000")).toThrow(ZodError);
-    expect(() => FnrSchema.parse("12345678901")).toThrow(ZodError);
-
-    // Test with valid FNR (generated with https://www.funksjoner.no/fodselsnummer-generator)
-    expect(() => FnrSchema.parse("20017912152")).not.toThrow();
-    expect(FnrSchema.parse("20017912152")).toBe("20017912152");
+  it("should validate FNR inputs correctly", () => {
+    fnrSchemaTestCases.forEach(runTestCase);
   });
 });
