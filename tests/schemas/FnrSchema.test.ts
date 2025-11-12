@@ -8,6 +8,19 @@ type TestCase = {
   isValid: boolean;
 };
 
+const runTestCase = (testCase: TestCase) => {
+  const expectation = expect(
+    () => FnrSchema.parse(testCase.input),
+    `${testCase.description} (input: "${testCase.input}")`,
+  );
+
+  if (testCase.isValid) {
+    expectation.not.toThrow();
+  } else {
+    expectation.toThrow(ZodError);
+  }
+};
+
 const fnrSchemaTestCases: TestCase[] = [
   { input: "", description: "empty string", isValid: false },
   { input: "   ", description: "whitespace only", isValid: false },
@@ -43,12 +56,6 @@ const fnrSchemaTestCases: TestCase[] = [
 
 describe("FnrSchema", () => {
   it("should validate FNR inputs correctly", () => {
-    fnrSchemaTestCases.forEach(({ input, description, isValid }) => {
-      const expectation = expect(
-        () => FnrSchema.parse(input),
-        `${description} (input: "${input}")`,
-      );
-      isValid ? expectation.not.toThrow() : expectation.toThrow(ZodError);
-    });
+    fnrSchemaTestCases.forEach(runTestCase);
   });
 });
