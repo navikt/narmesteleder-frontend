@@ -1,5 +1,9 @@
 import { HttpResponse, http } from "msw";
-import { getLineManagerRequirementPath } from "@/server/apiPaths";
+import {
+  getLineManagerPostPath,
+  getLineManagerPutPath,
+  getLineManagerRequirementPath,
+} from "@/server/apiPaths";
 import { mockLineManagerRequirement } from "./data/mockLineManagerRequirement";
 
 export const handlers = [
@@ -8,5 +12,29 @@ export const handlers = [
       ...mockLineManagerRequirement,
       id: params.id,
     });
+  }),
+
+  http.put(
+    getLineManagerPutPath(":requirementId"),
+    async ({ params, request }) => {
+      const body = (await request.json()) as Record<string, unknown>;
+      return HttpResponse.json(
+        {
+          ...body,
+          id: params.requirementId,
+        },
+        { status: 202 },
+      );
+    },
+  ),
+
+  http.post(getLineManagerPostPath(), async ({ request }) => {
+    const body = (await request.json()) as Record<string, unknown>;
+    return HttpResponse.json(
+      {
+        ...body,
+      },
+      { status: 202 },
+    );
   }),
 ];
