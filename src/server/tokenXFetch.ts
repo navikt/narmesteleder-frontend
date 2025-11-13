@@ -5,6 +5,7 @@ import { logger } from "@navikt/next-logger";
 import { requestOboToken } from "@navikt/oasis";
 import { redirectToLogin } from "@/auth/redirectToLogin";
 import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
+import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import {
   TokenXTargetApi,
   getBackendRequestHeaders,
@@ -17,6 +18,9 @@ import {
 const validateAndGetIdPortenTokenOrRedirectToLogin = async (
   redirectAfterLoginUrl: string,
 ) => {
+  if (isLocalOrDemo) {
+    return "mock-token";
+  }
   const validationResult = await validateIdPortenToken();
 
   if (!validationResult.success) {
@@ -30,6 +34,9 @@ const validateAndGetIdPortenTokenOrRedirectToLogin = async (
  * Throws error if validation is unsuccessful.
  */
 const validateAndGetIdPortenToken = async () => {
+  if (isLocalOrDemo) {
+    return "mock-token";
+  }
   const validationResult = await validateIdPortenToken();
 
   if (!validationResult.success) {
