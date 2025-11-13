@@ -16,6 +16,7 @@ import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 
 export default function RegistrerNarmesteLederRelasjon() {
   const [actionError, setActionError] = useState(false);
+  const [submittedFormData, setSubmittedFormData] = useState(false);
 
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
@@ -25,10 +26,15 @@ export default function RegistrerNarmesteLederRelasjon() {
       const actionResult = await opprettNarmesteLeder(value);
       if (!actionResult.success) {
         setActionError(true);
+      } else {
+        setSubmittedFormData(true);
       }
-      return ThankYouAlert();
     },
   });
+
+  if (submittedFormData) {
+    return <ThankYouAlert />;
+  }
 
   return (
     <VStack gap="6">

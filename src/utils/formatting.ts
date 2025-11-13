@@ -6,3 +6,8 @@ export const formatFnr = (fnr: string): string => {
     ? `${cleanedFnr.slice(0, 6)} ${cleanedFnr.slice(6)}`
     : fnr;
 };
+
+export const joinNonEmpty = (
+  fields: Array<string | null | undefined>,
+  separator: string = " ",
+): string => fields.filter(Boolean).join(separator);

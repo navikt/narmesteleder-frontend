@@ -2,14 +2,13 @@ import "server-only";
 import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import {
-  EmployeeResponse,
   LineManagerReadResponse,
   lineManagerReadSchema,
 } from "@/schemas/lineManagerReadSchema";
 import { mockLineManagerRequirement } from "@/server/fetchData/demoMockData/mockLineManagerRequirement";
 import { TokenXTargetApi, withMockForLocalOrDemo } from "@/server/helpers";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
-import { formatFnr } from "@/utils/formatting";
+import { formatFnr, joinNonEmpty } from "@/utils/formatting";
 
 const getLineManagerRequirementPath = (id: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`;
@@ -28,15 +27,14 @@ const mapToLederInfo = (
       fornavn: sykmeldtInfoResponse.name.firstName,
       etternavn: sykmeldtInfoResponse.name.lastName,
       mellomnavn: sykmeldtInfoResponse.name.middleName,
-      fullnavn: getFullName(sykmeldtInfoResponse.name),
+      fullnavn: joinNonEmpty([
+        sykmeldtInfoResponse.name.firstName,
+        sykmeldtInfoResponse.name.middleName,
+        sykmeldtInfoResponse.name.lastName,
+      ]),
     },
   };
 };
-
-const getFullName = (employee: EmployeeResponse): string =>
-  [employee.firstName, employee.middleName, employee.lastName]
-    .filter(Boolean)
-    .join(" ");
 
 export type Navn = {
   fornavn: string;
