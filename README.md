@@ -1,25 +1,21 @@
 # Nærmeste leder frontend
 
-## Getting Started
+➡️ For å komme i gang med bygg og utvikling, les vår [dokumentasjon for Next.js-apper](https://github.com/navikt/syfodok/tree/master/eSYFO/content/technology-stack/next-js).
 
-### Prerequisites
+## Appens formål
 
-TODO We should link to eSYFO documentation about how to start with NextJS and what is required?
+Formålet med appen er å registrere nærmeste leder for en sykmeldt person. Appen tilbyr to innganger (paths).
 
-- [Node.js](https://nodejs.org/) (version 18 or later)
-- TODO link to PAT token
-- Run `npm install`
+## Helt tomt skjema for nærmeste leder
 
-### Running the development server
+Brukeren må fylle ut både den sykmeldte personen og nærmeste leder.
+Base path: `/arbeidsgiver/ansatte/narmesteleder`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Forhåndsutfylt sykmeldt-panel med skjema for nærmeste leder
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Brukeren får opp en spesifikk sykmeldt person som mangler nærmeste leder, sammen med skjema for å registrere eller oppdatere nærmeste leder.
+Base path: `/arbeidsgiver/ansatte/narmesteleder/{behovid}`.
+
+## Backend-API
+
+Frontend-appen kommuniserer med [Nærmeste leder backend](https://github.com/navikt/esyfo-narmesteleder).
