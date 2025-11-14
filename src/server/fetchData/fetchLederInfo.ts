@@ -49,7 +49,7 @@ export type LederInfo = {
   orgnummer: string;
   orgnavn: string | null;
   hovedenhetOrgnummer: string;
-  narmesteLederFnr: string;
+  narmesteLederFnr: string | null;
   sykmeldt: Navn;
 };
 
