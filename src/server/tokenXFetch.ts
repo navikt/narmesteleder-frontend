@@ -18,9 +18,6 @@ import {
 const validateAndGetIdPortenTokenOrRedirectToLogin = async (
   redirectAfterLoginUrl: string,
 ) => {
-  if (isLocalOrDemo) {
-    return "mock-token";
-  }
   const validationResult = await validateIdPortenToken();
 
   if (!validationResult.success) {
@@ -34,9 +31,6 @@ const validateAndGetIdPortenTokenOrRedirectToLogin = async (
  * Throws error if validation is unsuccessful.
  */
 const validateAndGetIdPortenToken = async () => {
-  if (isLocalOrDemo) {
-    return "mock-token";
-  }
   const validationResult = await validateIdPortenToken();
 
   if (!validationResult.success) {
@@ -85,6 +79,29 @@ async function logFailedFetchAndThrowError(
   logErrorMessageAndThrowError(errorMessage);
 }
 
+const mockToken = "mock-token-value-for-local-and-demo";
+
+const getOboTokenOrThrow = async (targetApi: TokenXTargetApi) => {
+  if (isLocalOrDemo) {
+    return mockToken;
+  }
+  const idPortenToken = await validateAndGetIdPortenToken();
+  return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
+};
+
+const getOboTokenOrRedirect = async (
+  redirectAfterLoginUrl: string,
+  targetApi: TokenXTargetApi,
+) => {
+  if (isLocalOrDemo) {
+    return mockToken;
+  }
+  const idPortenToken = await validateAndGetIdPortenTokenOrRedirectToLogin(
+    redirectAfterLoginUrl,
+  );
+  return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
+};
+
 export async function tokenXFetchGet<S extends z.ZodType>({
   targetApi,
   endpoint,
@@ -96,12 +113,8 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   responseDataSchema: S;
   redirectAfterLoginUrl: string;
 }): Promise<z.infer<S>> {
-  const idPortenToken = await validateAndGetIdPortenTokenOrRedirectToLogin(
+  const oboToken = await getOboTokenOrRedirect(
     redirectAfterLoginUrl,
-  );
-
-  const oboToken = await exchangeIdPortenTokenForTokenXOboToken(
-    idPortenToken,
     targetApi,
   );
 
@@ -140,12 +153,7 @@ export async function tokenXFetchUpdate({
   requestBody: unknown;
   method?: "POST" | "PUT" | "DELETE";
 }) {
-  const idPortenToken = await validateAndGetIdPortenToken();
-
-  const oboToken = await exchangeIdPortenTokenForTokenXOboToken(
-    idPortenToken,
-    targetApi,
-  );
+  const oboToken = await getOboTokenOrThrow(targetApi);
 
   const response = await fetch(endpoint, {
     method,
