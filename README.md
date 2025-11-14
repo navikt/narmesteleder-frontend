@@ -1,16 +1,21 @@
 # Nærmeste leder frontend
 
-➡️ For å komme i gang med bygg og utvikling les vår [Next.js apper dokumentasjon](https://github.com/navikt/syfodok/tree/master/eSYFO/content/technology-stack/next-js).
+➡️ For å komme i gang med bygg og utvikling, les vår [dokumentasjon for Next.js-apper](https://github.com/navikt/syfodok/tree/master/eSYFO/content/technology-stack/next-js).
 
 ## Appens formål
 
-Appen tilbyr to innganger. Et helt tom skjema for å opprette en nærmeste leder for en sykmeldt person og et foransutfyllt skjema med sykmeldt person.
+Formålet med appen er å registrere nærmeste leder for en sykmeldt person. Appen tilbyr to innganger (paths).
 
-Base path:
+## Helt tomt skjema for nærmeste leder
 
-- Tom nærmeste leder skjema: /arbeidsgiver/ansatte/narmesteleder
-- En sykmeldt person mangler nærmeste leder: /arbeidsgiver/ansatte/narmesteleder/{behovid}
+Brukeren må fylle ut både den sykmeldte personen og nærmeste leder.
+Base path: `/arbeidsgiver/ansatte/narmesteleder`.
 
-## Backend API
+## Forhåndsutfylt sykmeldt-panel med skjema for nærmeste leder
 
-Nærmeste leder app kommuniserer med [nærmeste leder backend](https://github.com/navikt/esyfo-narmesteleder).
+Brukeren får opp en spesifikk sykmeldt person som mangler nærmeste leder, sammen med skjema for å registrere eller oppdatere nærmeste leder.
+Base path: `/arbeidsgiver/ansatte/narmesteleder/{behovid}`.
+
+## Backend-API
+
+Frontend-appen kommuniserer med [Nærmeste leder backend](https://github.com/navikt/esyfo-narmesteleder).
