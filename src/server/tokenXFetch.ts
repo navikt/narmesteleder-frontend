@@ -1,4 +1,3 @@
-import { cache } from "react";
 import "server-only";
 import z from "zod";
 import { logger } from "@navikt/next-logger";
@@ -7,60 +6,10 @@ import { redirectToLogin } from "@/auth/redirectToLogin";
 import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
 import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import {
-  TokenXTargetApi,
-  getBackendRequestHeaders,
-  getClientIdForTokenXTargetApi,
-} from "./helpers";
-
-/**
- * Redirects users to login if validation is unsuccessful.
- */
-const validateAndGetIdPortenTokenOrRedirectToLogin = async (
-  redirectAfterLoginUrl: string,
-) => {
-  const validationResult = await validateIdPortenToken();
-
-  if (!validationResult.success) {
-    return redirectToLogin(redirectAfterLoginUrl);
-  }
-
-  return validationResult.token;
-};
-
-/**
- * Throws error if validation is unsuccessful.
- */
-const validateAndGetIdPortenToken = async () => {
-  const validationResult = await validateIdPortenToken();
-
-  if (!validationResult.success) {
-    const errorMessage = `IdPorten token validation failed: ${validationResult.reason}`;
-    logErrorMessageAndThrowError(errorMessage);
-  }
-
-  return validationResult.token;
-};
-
-const exchangeIdPortenTokenForTokenXOboToken = cache(
-  async (idPortenToken: string, targetApi: TokenXTargetApi) => {
-    const tokenXGrant = await requestOboToken(
-      idPortenToken,
-      getClientIdForTokenXTargetApi(targetApi),
-    );
-
-    if (!tokenXGrant.ok) {
-      const errorMessage = `Failed to exchange idporten token: ${tokenXGrant.error}`;
-      logErrorMessageAndThrowError(errorMessage);
-    }
-
-    return tokenXGrant.token;
-  },
-);
-
-function logErrorMessageAndThrowError(logMessage: string): never {
-  logger.error(logMessage);
-  throw new Error("Det oppstod en feil ved henting av data.");
-}
+  validateTokenAndGetTokenX,
+  validateTokenAndGetTokenXOrRedirect,
+} from "../utils/tokenX";
+import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
 
 async function logFailedFetchAndThrowError(
   response: Response,
