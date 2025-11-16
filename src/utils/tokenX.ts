@@ -2,6 +2,7 @@ import { cache } from "react";
 import { requestOboToken } from "@navikt/oasis";
 import { redirectToLogin } from "@/auth/redirectToLogin";
 import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
+import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import {
   TokenXTargetApi,
@@ -50,6 +51,9 @@ const exchangeIdPortenTokenForTokenXOboToken = cache(
 export const validateTokenAndGetTokenX = async (
   targetApi: TokenXTargetApi,
 ): Promise<string> => {
+  if (isLocalOrDemo) {
+    return "mock-token-for-local-or-demo";
+  }
   const idPortenToken = await validateAndGetIdPortenToken();
   return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
 };
@@ -58,6 +62,9 @@ export const validateTokenAndGetTokenXOrRedirect = async (
   redirectAfterLoginUrl: string,
   targetApi: TokenXTargetApi,
 ) => {
+  if (isLocalOrDemo) {
+    return "mock-token-for-local-or-demo";
+  }
   const idPortenToken = await validateAndGetIdPortenTokenOrRedirectToLogin(
     redirectAfterLoginUrl,
   );
