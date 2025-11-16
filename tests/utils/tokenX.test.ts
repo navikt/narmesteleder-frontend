@@ -3,12 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { logger } from "@navikt/next-logger";
 import { requestOboToken } from "@navikt/oasis";
 import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
-import { redirectToLogin } from "../auth/redirectToLogin";
-import { TokenXTargetApi } from "../server/helpers";
+import { redirectToLogin } from "../../src/auth/redirectToLogin";
+import { TokenXTargetApi } from "../../src/server/helpers";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
-} from "./tokenX";
+} from "../../src/utils/tokenX";
 
 // Mock logger
 vi.mock("@navikt/next-logger", () => ({
