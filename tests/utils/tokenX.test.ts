@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { logger } from "@navikt/next-logger";
 import { requestOboToken } from "@navikt/oasis";
 import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
-import { redirectToLogin } from "../../src/auth/redirectToLogin";
 import { TokenXTargetApi } from "../../src/server/helpers";
 import {
   validateTokenAndGetTokenX,
@@ -32,22 +31,15 @@ vi.mock("@navikt/oasis", () => ({
   requestOboToken: vi.fn(),
 }));
 
-vi.mock("../server/helpers", () => ({
-  TokenXTargetApi: { NARMESTELEDER_BACKEND: "NARMESTELEDER_BACKEND" },
-  getClientIdForTokenXTargetApi: vi.fn().mockReturnValue(""),
-}));
-
-vi.mock("../auth/redirectToLogin", () => ({
-  redirectToLogin: vi.fn(),
-}));
-
 const oboTokenMock = "obo-token-mock";
+
 const idPortenTokenMock = "idporten-token-mock";
 
 const successIdPortenValidation = {
   success: true as const,
   token: idPortenTokenMock,
 };
+
 const failIdPortenValidation = {
   success: false as const,
   reason: "invalid",
@@ -55,7 +47,6 @@ const failIdPortenValidation = {
 
 const validateIdPortenTokenMock = vi.mocked(validateIdPortenToken);
 const requestOboTokenMock = vi.mocked(requestOboToken);
-const redirectToLoginMock = vi.mocked(redirectToLogin);
 const redirectMock = vi.mocked(redirect);
 
 beforeEach(() => {
@@ -123,10 +114,6 @@ describe("validateTokenAndGetTokenXOrRedirect", () => {
     validateIdPortenTokenMock.mockResolvedValue(failIdPortenValidation);
     // It is weird to mock that, but since we have to mock redirect, will the logic continue
     requestOboTokenMock.mockResolvedValue({ ok: true, token: "obo-token" });
-    redirectToLoginMock.mockImplementation((redirectAfterLoginUrl) => {
-      const loginPath = `/oauth2/login?redirect=${encodeURIComponent(redirectAfterLoginUrl)}`;
-      redirect(loginPath);
-    });
 
     await validateTokenAndGetTokenXOrRedirect(
       "/dummy-redirect",
