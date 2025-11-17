@@ -31,8 +31,6 @@ export const narmesteLederFormSchema = object({
   fodselsnummer: FnrSchema,
   mobilnummer: string().nonempty(requireFieldErrorMessage),
   epost: email(invalidEmailErrorMessage).nonempty(requireFieldErrorMessage),
-  fornavn: string().nonempty(requireFieldErrorMessage),
-  etternavn: string().nonempty(requireFieldErrorMessage),
 });
 
 export type NarmesteLederForm = z.infer<typeof narmesteLederFormSchema>;
@@ -62,8 +60,6 @@ export const narmesteLederFormDefaults: NarmesteLederForm = {
   fodselsnummer: "",
   mobilnummer: "",
   epost: "",
-  fornavn: "",
-  etternavn: "",
 } satisfies NarmesteLederForm;
 
 export const narmesteLederInfoDefaults = {
