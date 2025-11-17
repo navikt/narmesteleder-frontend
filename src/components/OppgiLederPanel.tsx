@@ -7,11 +7,7 @@ export default function OppgiLederPanel({
   lederInfo: LederInfo;
 }) {
   return (
-    <GuidePanel>
-      <Heading size="medium" level="2" spacing>
-        Hei!
-      </Heading>
-
+    <GuidePanel poster={true}>
       <BodyLong spacing>
         <strong>
           {lederInfo.sykmeldt.fullnavn} ({lederInfo.sykmeldtFnr})
