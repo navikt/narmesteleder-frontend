@@ -1,6 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ZodError } from "zod";
 import { FnrSchema } from "@/schemas/nærmestelederFormSchema";
+
+vi.mock("@/env-variables/envHelpers", () => ({
+  // We want to test the production validation logic too
+  isNonProd: false,
+}));
 
 type TestCase = {
   input: string;

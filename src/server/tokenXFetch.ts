@@ -1,66 +1,11 @@
-import { cache } from "react";
 import "server-only";
 import z from "zod";
-import { logger } from "@navikt/next-logger";
-import { requestOboToken } from "@navikt/oasis";
-import { redirectToLogin } from "@/auth/redirectToLogin";
-import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
-import { isLocalOrDemo } from "@/env-variables/envHelpers";
+import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import {
-  TokenXTargetApi,
-  getBackendRequestHeaders,
-  getClientIdForTokenXTargetApi,
-} from "./helpers";
-
-/**
- * Redirects users to login if validation is unsuccessful.
- */
-const validateAndGetIdPortenTokenOrRedirectToLogin = async (
-  redirectAfterLoginUrl: string,
-) => {
-  const validationResult = await validateIdPortenToken();
-
-  if (!validationResult.success) {
-    return redirectToLogin(redirectAfterLoginUrl);
-  }
-
-  return validationResult.token;
-};
-
-/**
- * Throws error if validation is unsuccessful.
- */
-const validateAndGetIdPortenToken = async () => {
-  const validationResult = await validateIdPortenToken();
-
-  if (!validationResult.success) {
-    const errorMessage = `IdPorten token validation failed: ${validationResult.reason}`;
-    logErrorMessageAndThrowError(errorMessage);
-  }
-
-  return validationResult.token;
-};
-
-const exchangeIdPortenTokenForTokenXOboToken = cache(
-  async (idPortenToken: string, targetApi: TokenXTargetApi) => {
-    const tokenXGrant = await requestOboToken(
-      idPortenToken,
-      getClientIdForTokenXTargetApi(targetApi),
-    );
-
-    if (!tokenXGrant.ok) {
-      const errorMessage = `Failed to exchange idporten token: ${tokenXGrant.error}`;
-      logErrorMessageAndThrowError(errorMessage);
-    }
-
-    return tokenXGrant.token;
-  },
-);
-
-function logErrorMessageAndThrowError(logMessage: string): never {
-  logger.error(logMessage);
-  throw new Error("Det oppstod en feil ved henting av data.");
-}
+  validateTokenAndGetTokenX,
+  validateTokenAndGetTokenXOrRedirect,
+} from "@/utils/tokenX";
+import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
 
 async function logFailedFetchAndThrowError(
   response: Response,
@@ -79,29 +24,6 @@ async function logFailedFetchAndThrowError(
   logErrorMessageAndThrowError(errorMessage);
 }
 
-const mockToken = "mock-token-value-for-local-and-demo";
-
-const getOboTokenOrThrow = async (targetApi: TokenXTargetApi) => {
-  if (isLocalOrDemo) {
-    return mockToken;
-  }
-  const idPortenToken = await validateAndGetIdPortenToken();
-  return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
-};
-
-const getOboTokenOrRedirect = async (
-  redirectAfterLoginUrl: string,
-  targetApi: TokenXTargetApi,
-) => {
-  if (isLocalOrDemo) {
-    return mockToken;
-  }
-  const idPortenToken = await validateAndGetIdPortenTokenOrRedirectToLogin(
-    redirectAfterLoginUrl,
-  );
-  return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
-};
-
 export async function tokenXFetchGet<S extends z.ZodType>({
   targetApi,
   endpoint,
@@ -113,7 +35,7 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   responseDataSchema: S;
   redirectAfterLoginUrl: string;
 }): Promise<z.infer<S>> {
-  const oboToken = await getOboTokenOrRedirect(
+  const oboToken = await validateTokenAndGetTokenXOrRedirect(
     redirectAfterLoginUrl,
     targetApi,
   );
@@ -153,7 +75,7 @@ export async function tokenXFetchUpdate({
   requestBody: unknown;
   method?: "POST" | "PUT" | "DELETE";
 }) {
-  const oboToken = await getOboTokenOrThrow(targetApi);
+  const oboToken = await validateTokenAndGetTokenX(targetApi);
 
   const response = await fetch(endpoint, {
     method,
