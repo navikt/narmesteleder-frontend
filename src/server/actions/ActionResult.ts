@@ -1,3 +1,5 @@
+import "server-only";
+
 type ActionResult<T> =
   | (T extends void | undefined
       ? { success: true }
