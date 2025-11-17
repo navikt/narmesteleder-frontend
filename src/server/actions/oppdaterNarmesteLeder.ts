@@ -1,12 +1,12 @@
 "use server";
 
+import { toManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
   NarmesteLederForm,
   narmesteLederFormSchema,
 } from "@/schemas/nærmestelederFormSchema";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { withActionResult } from "@/server/actions/ActionResult";
-import { mapToManagerRequest } from "@/server/actions/requestHelper";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchUpdate } from "@/server/tokenXFetch";
 import { getLineManagerPutPath } from "../apiPaths";
@@ -23,6 +23,6 @@ export const oppdaterNarmesteLeder = async (
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
       endpoint: getLineManagerPutPath(requirementId),
       method: "PUT",
-      requestBody: mapToManagerRequest(narmesteLeder),
+      requestBody: toManagerRequest(narmesteLeder),
     });
   });
