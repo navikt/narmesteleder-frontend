@@ -16,7 +16,7 @@ import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 
 export default function RegistrerNarmesteLederRelasjon() {
   const [actionError, setActionError] = useState(false);
-  const [submittedFormData, setSubmittedFormData] = useState(false);
+  const [isSubmittedForm, setIsSubmittedForm] = useState(false);
 
   const form = useAppForm({
     defaultValues: narmesteLederInfoDefaults,
@@ -27,12 +27,12 @@ export default function RegistrerNarmesteLederRelasjon() {
       if (!actionResult.success) {
         setActionError(true);
       } else {
-        setSubmittedFormData(true);
+        setIsSubmittedForm(true);
       }
     },
   });
 
-  if (submittedFormData) {
+  if (isSubmittedForm) {
     return <ThankYouAlert />;
   }
 

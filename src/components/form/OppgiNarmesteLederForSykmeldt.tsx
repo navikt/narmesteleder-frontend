@@ -19,6 +19,7 @@ type props = {
 
 export default function OppgiNarmesteLederForSykmeldt({ behovId }: props) {
   const [actionError, setActionError] = useState(false);
+  const [isSubmittedForm, setIsSubmittedForm] = useState(false);
 
   const form = useAppForm({
     defaultValues: lederOnlyDefaults,
@@ -28,10 +29,15 @@ export default function OppgiNarmesteLederForSykmeldt({ behovId }: props) {
       const actionResult = await oppdaterNarmesteLeder(behovId, value.leder);
       if (!actionResult.success) {
         setActionError(true);
+      } else {
+        setIsSubmittedForm(true);
       }
-      return ThankYouAlert();
     },
   });
+
+  if (isSubmittedForm) {
+    return <ThankYouAlert />;
+  }
 
   return (
     <form
