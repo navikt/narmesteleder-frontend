@@ -1,4 +1,4 @@
-import { BodyLong, GuidePanel, Heading } from "@navikt/ds-react";
+import { BodyLong, GuidePanel } from "@navikt/ds-react";
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 
 export default function OppgiLederPanel({
