@@ -7,7 +7,7 @@ import { SykmeldtLederEditView } from "./SykmeldtLederEditView";
 import { SykmeldtLederSubmitView } from "./SykmeldtLederSubmitView";
 import { ViewControl } from "./ViewControl";
 
-export function SykmeldtLederFlowControl() {
+export function SykmeldtLederViewControl() {
   return (
     <ViewControl
       Provider={SykmeldtLederFlowProvider}
