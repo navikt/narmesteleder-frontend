@@ -6,18 +6,11 @@ import {
   useLederOnlyFlow,
 } from "@/context/LederOnlyFlowContext";
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
+import { FlowControl } from "./FlowControl";
 
 type LederOnlyFlowControlProps = {
   lederInfo: LederInfo;
   behovId: string;
-};
-
-const LederOnlyFlowContent = () => {
-  const { mode } = useLederOnlyFlow();
-  if (mode === "editing") {
-    return <LederOnlyEditView />;
-  }
-  return <LederOnlySubmitView />;
 };
 
 export function LederOnlyFlowControl({
@@ -25,8 +18,12 @@ export function LederOnlyFlowControl({
   behovId,
 }: LederOnlyFlowControlProps) {
   return (
-    <LederOnlyFlowProvider lederInfo={lederInfo} behovId={behovId}>
-      <LederOnlyFlowContent />
-    </LederOnlyFlowProvider>
+    <FlowControl
+      Provider={LederOnlyFlowProvider}
+      useFlow={useLederOnlyFlow}
+      EditView={LederOnlyEditView}
+      SubmitView={LederOnlySubmitView}
+      providerProps={{ lederInfo, behovId }}
+    />
   );
 }

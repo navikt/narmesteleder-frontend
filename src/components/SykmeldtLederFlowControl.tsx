@@ -3,21 +3,17 @@ import {
   SykmeldtLederFlowProvider,
   useSykmeldtLederFlow,
 } from "@/context/SykmeldtLederFlowContext";
+import { FlowControl } from "./FlowControl";
 import { SykmeldtLederEditView } from "./SykmeldtLederEditView";
 import { SykmeldtLederSubmitView } from "./SykmeldtLederSubmitView";
 
-const SykmeldtLederFlowContent = () => {
-  const { mode } = useSykmeldtLederFlow();
-  if (mode === "editing") {
-    return <SykmeldtLederEditView />;
-  }
-  return <SykmeldtLederSubmitView />;
-};
-
 export function SykmeldtLederFlowControl() {
   return (
-    <SykmeldtLederFlowProvider>
-      <SykmeldtLederFlowContent />
-    </SykmeldtLederFlowProvider>
+    <FlowControl
+      Provider={SykmeldtLederFlowProvider}
+      useFlow={useSykmeldtLederFlow}
+      EditView={SykmeldtLederEditView}
+      SubmitView={SykmeldtLederSubmitView}
+    />
   );
 }
