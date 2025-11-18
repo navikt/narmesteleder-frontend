@@ -1,11 +1,8 @@
-import { Heading, Page, VStack } from "@navikt/ds-react";
 import { logger } from "@navikt/next-logger";
 import notFound from "@/app/not-found";
-import OppgiLederPanel from "@/components/OppgiLederPanel";
-import SykmeldtBox from "@/components/SykmeldtBox";
-import OppgiNarmesteLederForSykmeldt from "@/components/form/OppgiNarmesteLederForSykmeldt";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
+import { LederOnlyFlowControl } from "./LederOnlyFlowControl";
 
 const isValidBehovId = (behovId: string) =>
   !requirementIdSchema.safeParse(behovId).success;
@@ -22,19 +19,5 @@ export default async function Home({
   }
   const lederInfo = await fetchLederInfo(behovId);
 
-  return (
-    <Page>
-      <Heading size="large" level="1" spacing>
-        Oppgi nærmeste leder for sykmeldt
-      </Heading>
-      <VStack gap="8">
-        <OppgiLederPanel lederInfo={lederInfo} />
-        <SykmeldtBox
-          fodselsnummer={lederInfo.sykmeldtFnr}
-          navn={lederInfo.sykmeldt.fullnavn}
-        />
-        <OppgiNarmesteLederForSykmeldt behovId={behovId} />
-      </VStack>
-    </Page>
-  );
+  return <LederOnlyFlowControl lederInfo={lederInfo} behovId={behovId} />;
 }
