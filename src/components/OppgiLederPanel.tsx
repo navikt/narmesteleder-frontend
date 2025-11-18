@@ -1,4 +1,4 @@
-import { BodyLong, GuidePanel, Heading } from "@navikt/ds-react";
+import { BodyLong, GuidePanel } from "@navikt/ds-react";
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 
 export default function OppgiLederPanel({
@@ -7,11 +7,7 @@ export default function OppgiLederPanel({
   lederInfo: LederInfo;
 }) {
   return (
-    <GuidePanel>
-      <Heading size="medium" level="2" spacing>
-        Hei!
-      </Heading>
-
+    <GuidePanel poster={true}>
       <BodyLong spacing>
         <strong>
           {lederInfo.sykmeldt.fullnavn} ({lederInfo.sykmeldtFnr})
