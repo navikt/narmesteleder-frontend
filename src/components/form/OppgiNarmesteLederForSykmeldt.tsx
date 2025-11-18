@@ -5,24 +5,17 @@ import { revalidateLogic } from "@tanstack/react-form";
 import { HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
-import ThankYouAlert from "@/components/form/ThankYouAlert";
 import { useAppForm } from "@/components/form/hooks/form";
-import {
-  lederOnlyDefaults,
-  lederOnlySchema,
-} from "@/schemas/nærmestelederFormSchema";
+import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
+import { lederOnlySchema } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 
-type props = {
-  behovId: string;
-};
-
-export default function OppgiNarmesteLederForSykmeldt({ behovId }: props) {
+export default function OppgiNarmesteLederForSykmeldt() {
   const [actionError, setActionError] = useState(false);
-  const [isSubmittedForm, setIsSubmittedForm] = useState(false);
+  const { submittedData, handleSuccess, behovId } = useLederOnlyFlow();
 
   const form = useAppForm({
-    defaultValues: lederOnlyDefaults,
+    defaultValues: submittedData,
     validationLogic: revalidateLogic(),
     validators: { onDynamic: lederOnlySchema },
     onSubmit: async ({ value }) => {
@@ -30,14 +23,10 @@ export default function OppgiNarmesteLederForSykmeldt({ behovId }: props) {
       if (!actionResult.success) {
         setActionError(true);
       } else {
-        setIsSubmittedForm(true);
+        handleSuccess(value);
       }
     },
   });
-
-  if (isSubmittedForm) {
-    return <ThankYouAlert />;
-  }
 
   return (
     <form

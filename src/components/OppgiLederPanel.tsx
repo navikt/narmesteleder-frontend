@@ -1,11 +1,8 @@
 import { BodyLong, GuidePanel } from "@navikt/ds-react";
-import { LederInfo } from "@/server/fetchData/fetchLederInfo";
+import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
 
-export default function OppgiLederPanel({
-  lederInfo,
-}: {
-  lederInfo: LederInfo;
-}) {
+export default function OppgiLederPanel() {
+  const { lederInfo } = useLederOnlyFlow();
   return (
     <GuidePanel poster={true}>
       <BodyLong spacing>
@@ -34,7 +31,7 @@ export default function OppgiLederPanel({
 
       <BodyLong>
         Den ansatte vil se hvem bedriften har meldt inn som leder på &quot;Ditt
-        sykefravær&quot; hos Nav
+        sykefravær&quot; hos Nav.
       </BodyLong>
     </GuidePanel>
   );
