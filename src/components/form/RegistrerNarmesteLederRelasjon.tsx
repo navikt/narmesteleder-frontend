@@ -7,7 +7,7 @@ import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
 import { useAppForm } from "@/components/form/hooks/form";
-import { useSykmeldtLederFlow } from "@/context/SykmeldtLederFlowContext";
+import { useSykmeldtLederFlow } from "@/context/sykmeldtLederFlowContext";
 import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 

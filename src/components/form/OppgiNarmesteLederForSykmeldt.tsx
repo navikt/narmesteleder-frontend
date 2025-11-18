@@ -6,7 +6,7 @@ import { HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { useAppForm } from "@/components/form/hooks/form";
-import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
+import { useLederOnlyFlow } from "@/context/lederOnlyFlowContext";
 import { lederOnlySchema } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 

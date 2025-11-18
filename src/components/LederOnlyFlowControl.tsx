@@ -4,7 +4,7 @@ import { LederOnlySubmitView } from "@/components/LederOnlySubmitView";
 import {
   LederOnlyFlowProvider,
   useLederOnlyFlow,
-} from "@/context/LederOnlyFlowContext";
+} from "@/context/lederOnlyFlowContext";
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 import { FlowControl } from "./FlowControl";
 

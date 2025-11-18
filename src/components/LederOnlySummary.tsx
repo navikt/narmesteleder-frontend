@@ -1,5 +1,5 @@
 import { FormSummary, Heading, VStack } from "@navikt/ds-react";
-import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
+import { useLederOnlyFlow } from "@/context/lederOnlyFlowContext";
 import { formatFnr } from "@/utils/formatting";
 
 export function LederOnlySummary() {

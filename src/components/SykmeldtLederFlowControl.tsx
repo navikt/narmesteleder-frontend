@@ -2,7 +2,7 @@
 import {
   SykmeldtLederFlowProvider,
   useSykmeldtLederFlow,
-} from "@/context/SykmeldtLederFlowContext";
+} from "@/context/sykmeldtLederFlowContext";
 import { FlowControl } from "./FlowControl";
 import { SykmeldtLederEditView } from "./SykmeldtLederEditView";
 import { SykmeldtLederSubmitView } from "./SykmeldtLederSubmitView";

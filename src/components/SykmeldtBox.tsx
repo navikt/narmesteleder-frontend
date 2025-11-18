@@ -6,7 +6,7 @@ import {
   Stack,
   VStack,
 } from "@navikt/ds-react";
-import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
+import { useLederOnlyFlow } from "@/context/lederOnlyFlowContext";
 
 export default function SykmeldtBox() {
   const { lederInfo } = useLederOnlyFlow();
