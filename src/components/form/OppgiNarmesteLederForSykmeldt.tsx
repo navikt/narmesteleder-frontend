@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { revalidateLogic } from "@tanstack/react-form";
 import { HStack, Heading, VStack } from "@navikt/ds-react";
+import ThankYouAlert from "@/components/ThankYouAlert";
 import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
-import ThankYouAlert from "@/components/form/ThankYouAlert";
 import { useAppForm } from "@/components/form/hooks/form";
 import {
   lederOnlyDefaults,
