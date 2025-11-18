@@ -10,12 +10,14 @@ type LederOnlyEditViewProps = {
   lederInfo: LederInfo;
   behovId: string;
   onSuccess: (data: LederOnly) => void;
+  initialData: LederOnly;
 };
 
 export function LederOnlyEditView({
   lederInfo,
   behovId,
   onSuccess,
+  initialData,
 }: LederOnlyEditViewProps) {
   return (
     <Page>
@@ -29,6 +31,7 @@ export function LederOnlyEditView({
         <OppgiNarmesteLederForSykmeldt
           behovId={behovId}
           onSuccess={onSuccess}
+          initialData={initialData}
         />
       </VStack>
     </Page>

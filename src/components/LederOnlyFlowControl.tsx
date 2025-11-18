@@ -2,7 +2,10 @@
 import { useState } from "react";
 import { LederOnlyEditView } from "@/components/LederOnlyEditView";
 import { LederOnlySubmitView } from "@/components/LederOnlySubmitView";
-import { LederOnly } from "@/schemas/nærmestelederFormSchema";
+import {
+  LederOnly,
+  lederOnlyDefaults,
+} from "@/schemas/nærmestelederFormSchema";
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 
 type LederOnlyFlowControlProps = {
@@ -11,7 +14,7 @@ type LederOnlyFlowControlProps = {
 };
 
 type LederFlowState =
-  | { mode: "editing"; submittedData: LederOnly | null }
+  | { mode: "editing"; submittedData: LederOnly }
   | { mode: "submitted"; submittedData: LederOnly };
 
 export function LederOnlyFlowControl({
@@ -20,11 +23,15 @@ export function LederOnlyFlowControl({
 }: LederOnlyFlowControlProps) {
   const [state, setState] = useState<LederFlowState>({
     mode: "editing",
-    submittedData: null,
+    submittedData: lederOnlyDefaults,
   });
 
   const handleSuccess = (data: LederOnly) => {
     setState({ mode: "submitted", submittedData: data });
+  };
+
+  const handleEdit = () => {
+    setState({ mode: "editing", submittedData: state.submittedData });
   };
 
   if (state.mode === "editing") {
@@ -33,6 +40,7 @@ export function LederOnlyFlowControl({
         lederInfo={lederInfo}
         behovId={behovId}
         onSuccess={handleSuccess}
+        initialData={state.submittedData}
       />
     );
   }
@@ -41,6 +49,7 @@ export function LederOnlyFlowControl({
     <LederOnlySubmitView
       lederFormData={state.submittedData}
       lederInfo={lederInfo}
+      onEdit={handleEdit}
     />
   );
 }

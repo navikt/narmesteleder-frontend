@@ -5,11 +5,13 @@ import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 type LederOnlySummaryProps = {
   lederFormData: LederOnly;
   lederInfo: LederInfo;
+  onEdit: () => void;
 };
 
 export function LederOnlySummary({
   lederFormData,
   lederInfo,
+  onEdit,
 }: LederOnlySummaryProps) {
   return (
     <FormSummary>
@@ -44,6 +46,9 @@ export function LederOnlySummary({
           </FormSummary.Value>
         </FormSummary.Answer>
       </FormSummary.Answers>
+      <FormSummary.Footer>
+        <FormSummary.EditLink onClick={onEdit} />
+      </FormSummary.Footer>
     </FormSummary>
   );
 }

@@ -10,11 +10,13 @@ import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 interface LederOnlySubmitViewProps {
   lederFormData: LederOnly;
   lederInfo: LederInfo;
+  onEdit: () => void;
 }
 
 export function LederOnlySubmitView({
   lederFormData,
   lederInfo,
+  onEdit,
 }: LederOnlySubmitViewProps) {
   return (
     <Page>
@@ -22,7 +24,11 @@ export function LederOnlySubmitView({
       <VStack gap="8">
         <ThankYouAlert />
         <LederInfoDescription />
-        <LederOnlySummary lederFormData={lederFormData} lederInfo={lederInfo} />
+        <LederOnlySummary
+          onEdit={onEdit}
+          lederFormData={lederFormData}
+          lederInfo={lederInfo}
+        />
         <HStack>
           <ExitButton />
         </HStack>

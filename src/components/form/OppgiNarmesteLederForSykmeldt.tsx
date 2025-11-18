@@ -6,26 +6,24 @@ import { HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { useAppForm } from "@/components/form/hooks/form";
-import {
-  LederOnly,
-  lederOnlyDefaults,
-  lederOnlySchema,
-} from "@/schemas/nærmestelederFormSchema";
+import { LederOnly, lederOnlySchema } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 
 type props = {
   behovId: string;
   onSuccess: (data: LederOnly) => void;
+  initialData: LederOnly;
 };
 
 export default function OppgiNarmesteLederForSykmeldt({
   behovId,
   onSuccess,
+  initialData,
 }: props) {
   const [actionError, setActionError] = useState(false);
 
   const form = useAppForm({
-    defaultValues: lederOnlyDefaults,
+    defaultValues: initialData,
     validationLogic: revalidateLogic(),
     validators: { onDynamic: lederOnlySchema },
     onSubmit: async ({ value }) => {
