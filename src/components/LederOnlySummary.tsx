@@ -1,9 +1,9 @@
 import { FormSummary, Heading, VStack } from "@navikt/ds-react";
-import { useLederOnlyFlow } from "@/context/lederOnlyFlowContext";
+import { useLederOnlyContextState } from "@/context/lederOnlyFlowContext";
 import { formatFnr } from "@/utils/formatting";
 
 export function LederOnlySummary() {
-  const { submittedData, handleEdit, lederInfo } = useLederOnlyFlow();
+  const { submittedData, handleEdit, lederInfo } = useLederOnlyContextState();
 
   return (
     <FormSummary>

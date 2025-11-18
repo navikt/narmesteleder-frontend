@@ -49,13 +49,13 @@ export function createFlowContext<T, P extends object = object>(
     );
   }
 
-  function useFlow() {
+  function useContextState() {
     const context = useContext(Context);
     if (!context) {
-      throw new Error("useFlow must be used within its Provider");
+      throw new Error("useContextState must be used within its Provider");
     }
     return context;
   }
 
-  return { Provider, useFlow };
+  return { Provider, useContextState };
 }

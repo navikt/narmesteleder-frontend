@@ -5,6 +5,6 @@ import {
 import { createFlowContext } from "./createFlowContext";
 
 export const {
-  Provider: SykmeldtLederFlowProvider,
-  useFlow: useSykmeldtLederFlow,
+  Provider: SykmeldtLederProvider,
+  useContextState: useSykmeldtLederContextState,
 } = createFlowContext<NarmesteLederInfo>(narmesteLederInfoDefaults);

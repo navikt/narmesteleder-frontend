@@ -3,7 +3,7 @@ import { LederOnlyEditView } from "@/components/LederOnlyEditView";
 import { LederOnlySubmitView } from "@/components/LederOnlySubmitView";
 import {
   LederOnlyFlowProvider,
-  useLederOnlyFlow,
+  useLederOnlyContextState,
 } from "@/context/lederOnlyFlowContext";
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 import { ViewControl } from "./ViewControl";
@@ -20,7 +20,7 @@ export function LederOnlyViewControl({
   return (
     <ViewControl
       Provider={LederOnlyFlowProvider}
-      useFlow={useLederOnlyFlow}
+      useFlow={useLederOnlyContextState}
       EditView={LederOnlyEditView}
       SubmitView={LederOnlySubmitView}
       providerProps={{ lederInfo, behovId }}

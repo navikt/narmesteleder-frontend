@@ -6,10 +6,10 @@ import {
   Stack,
   VStack,
 } from "@navikt/ds-react";
-import { useLederOnlyFlow } from "@/context/lederOnlyFlowContext";
+import { useLederOnlyContextState } from "@/context/lederOnlyFlowContext";
 
 export default function SykmeldtBox() {
-  const { lederInfo } = useLederOnlyFlow();
+  const { lederInfo } = useLederOnlyContextState();
   return (
     <Box padding="space-16" background="surface-subtle" borderRadius="large">
       <VStack gap="4">
