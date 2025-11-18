@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { revalidateLogic } from "@tanstack/react-form";
 import { HStack, Heading, VStack } from "@navikt/ds-react";
-import ThankYouAlert from "@/components/ThankYouAlert";
 import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { useAppForm } from "@/components/form/hooks/form";
 import {
+  LederOnly,
   lederOnlyDefaults,
   lederOnlySchema,
 } from "@/schemas/nærmestelederFormSchema";
@@ -15,11 +15,14 @@ import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 
 type props = {
   behovId: string;
+  onSuccess: (data: LederOnly) => void;
 };
 
-export default function OppgiNarmesteLederForSykmeldt({ behovId }: props) {
+export default function OppgiNarmesteLederForSykmeldt({
+  behovId,
+  onSuccess,
+}: props) {
   const [actionError, setActionError] = useState(false);
-  const [isSubmittedForm, setIsSubmittedForm] = useState(false);
 
   const form = useAppForm({
     defaultValues: lederOnlyDefaults,
@@ -30,14 +33,10 @@ export default function OppgiNarmesteLederForSykmeldt({ behovId }: props) {
       if (!actionResult.success) {
         setActionError(true);
       } else {
-        setIsSubmittedForm(true);
+        onSuccess(value);
       }
     },
   });
-
-  if (isSubmittedForm) {
-    return <ThankYouAlert />;
-  }
 
   return (
     <form
