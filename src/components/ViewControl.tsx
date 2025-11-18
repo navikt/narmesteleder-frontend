@@ -1,8 +1,9 @@
 import React from "react";
+import type { ViewMode } from "@/context/createContextState";
 
 interface ViewControlProps<T = unknown> {
   Provider: React.ComponentType<T & { children: React.ReactNode }>;
-  useMode: () => { mode: string };
+  useMode: () => { mode: ViewMode };
   EditView: React.ComponentType;
   SubmitView: React.ComponentType;
   providerProps?: T;
