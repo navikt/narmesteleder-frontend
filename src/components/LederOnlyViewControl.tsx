@@ -8,15 +8,15 @@ import {
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 import { ViewControl } from "./ViewControl";
 
-type LederOnlyFlowControlProps = {
+type LederOnlyViewControlProps = {
   lederInfo: LederInfo;
   behovId: string;
 };
 
-export function LederOnlyFlowControl({
+export function LederOnlyViewControl({
   lederInfo,
   behovId,
-}: LederOnlyFlowControlProps) {
+}: LederOnlyViewControlProps) {
   return (
     <ViewControl
       Provider={LederOnlyFlowProvider}
