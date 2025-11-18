@@ -31,7 +31,7 @@ export default function OppgiLederPanel() {
 
       <BodyLong>
         Den ansatte vil se hvem bedriften har meldt inn som leder på &quot;Ditt
-        sykefravær&quot; hos Nav
+        sykefravær&quot; hos Nav.
       </BodyLong>
     </GuidePanel>
   );
