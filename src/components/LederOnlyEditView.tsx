@@ -1,24 +1,13 @@
 import { Page, VStack } from "@navikt/ds-react";
-import { LederOnly } from "@/schemas/nærmestelederFormSchema";
-import { LederInfo } from "@/server/fetchData/fetchLederInfo";
+import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
 import { HeadingLeder } from "./HeadingLeder";
 import OppgiLederPanel from "./OppgiLederPanel";
 import SykmeldtBox from "./SykmeldtBox";
 import OppgiNarmesteLederForSykmeldt from "./form/OppgiNarmesteLederForSykmeldt";
 
-type LederOnlyEditViewProps = {
-  lederInfo: LederInfo;
-  behovId: string;
-  onSuccess: (data: LederOnly) => void;
-  initialData: LederOnly;
-};
-
-export function LederOnlyEditView({
-  lederInfo,
-  behovId,
-  onSuccess,
-  initialData,
-}: LederOnlyEditViewProps) {
+export function LederOnlyEditView() {
+  const { submittedData, handleSuccess, lederInfo, behovId } =
+    useLederOnlyFlow();
   return (
     <Page>
       <HeadingLeder />
@@ -30,8 +19,8 @@ export function LederOnlyEditView({
         />
         <OppgiNarmesteLederForSykmeldt
           behovId={behovId}
-          onSuccess={onSuccess}
-          initialData={initialData}
+          onSuccess={handleSuccess}
+          initialData={submittedData}
         />
       </VStack>
     </Page>
