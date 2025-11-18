@@ -39,7 +39,10 @@ export function LederOnlySummary() {
         </FormSummary.Answer>
       </FormSummary.Answers>
       <FormSummary.Footer>
-        <FormSummary.EditLink onClick={handleEdit} />
+        <FormSummary.EditLink
+          onClick={handleEdit}
+          style={{ cursor: "pointer" }}
+        />
       </FormSummary.Footer>
     </FormSummary>
   );
