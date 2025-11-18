@@ -3,13 +3,13 @@ import {
   SykmeldtLederFlowProvider,
   useSykmeldtLederFlow,
 } from "@/context/sykmeldtLederFlowContext";
-import { FlowControl } from "./FlowControl";
 import { SykmeldtLederEditView } from "./SykmeldtLederEditView";
 import { SykmeldtLederSubmitView } from "./SykmeldtLederSubmitView";
+import { ViewControl } from "./ViewControl";
 
 export function SykmeldtLederFlowControl() {
   return (
-    <FlowControl
+    <ViewControl
       Provider={SykmeldtLederFlowProvider}
       useFlow={useSykmeldtLederFlow}
       EditView={SykmeldtLederEditView}

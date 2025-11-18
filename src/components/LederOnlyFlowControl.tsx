@@ -6,7 +6,7 @@ import {
   useLederOnlyFlow,
 } from "@/context/lederOnlyFlowContext";
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
-import { FlowControl } from "./FlowControl";
+import { ViewControl } from "./ViewControl";
 
 type LederOnlyFlowControlProps = {
   lederInfo: LederInfo;
@@ -18,7 +18,7 @@ export function LederOnlyFlowControl({
   behovId,
 }: LederOnlyFlowControlProps) {
   return (
-    <FlowControl
+    <ViewControl
       Provider={LederOnlyFlowProvider}
       useFlow={useLederOnlyFlow}
       EditView={LederOnlyEditView}

@@ -8,7 +8,7 @@ interface FlowControlProps<T = unknown> {
   providerProps?: T;
 }
 
-export function FlowControl<T = unknown>({
+export function ViewControl<T = unknown>({
   Provider,
   useFlow,
   EditView,
