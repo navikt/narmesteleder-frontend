@@ -1,11 +1,13 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 
+type ViewMode = "editing" | "submitted";
+
 export function createFlowContext<T, P extends object = object>(
   defaults: T,
   extraProviderProps?: (props: P) => P,
 ) {
   type ContextType = {
-    mode: "editing" | "submitted";
+    mode: ViewMode;
     submittedData: T;
     handleSuccess: (data: T) => void;
     handleEdit: () => void;
@@ -15,7 +17,7 @@ export function createFlowContext<T, P extends object = object>(
 
   function Provider(props: { children: ReactNode } & P) {
     const [state, setState] = useState<{
-      mode: "editing" | "submitted";
+      mode: ViewMode;
       submittedData: T;
     }>({
       mode: "editing",
