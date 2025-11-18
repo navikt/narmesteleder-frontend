@@ -1,5 +1,5 @@
 import { BodyLong, GuidePanel } from "@navikt/ds-react";
-import { useLederOnlyContextState } from "@/context/lederOnlyFlowContext";
+import { useLederOnlyContextState } from "@/context/lederOnlyContextState";
 
 export default function OppgiLederPanel() {
   const { lederInfo } = useLederOnlyContextState();

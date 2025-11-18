@@ -2,7 +2,7 @@ import React from "react";
 
 interface ViewControlProps<T = unknown> {
   Provider: React.ComponentType<T & { children: React.ReactNode }>;
-  useFlow: () => { mode: string };
+  useMode: () => { mode: string };
   EditView: React.ComponentType;
   SubmitView: React.ComponentType;
   providerProps?: T;
@@ -10,13 +10,13 @@ interface ViewControlProps<T = unknown> {
 
 export function ViewControl<T = unknown>({
   Provider,
-  useFlow,
+  useMode: useMode,
   EditView,
   SubmitView,
   providerProps,
 }: ViewControlProps<T>) {
   const ViewContent = () => {
-    const { mode } = useFlow();
+    const { mode } = useMode();
     if (mode === "editing") {
       return <EditView />;
     }

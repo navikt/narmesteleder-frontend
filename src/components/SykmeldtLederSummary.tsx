@@ -1,5 +1,5 @@
 import { FormSummary } from "@navikt/ds-react";
-import { useSykmeldtLederContextState } from "@/context/sykmeldtLederFlowContext";
+import { useSykmeldtLederContextState } from "@/context/sykmeldtLederContextState";
 import { formatFnr } from "@/utils/formatting";
 
 export function SykmeldtLederSummary() {

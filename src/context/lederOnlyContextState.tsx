@@ -3,12 +3,12 @@ import {
   lederOnlyDefaults,
 } from "@/schemas/nærmestelederFormSchema";
 import { LederInfo } from "@/server/fetchData/fetchLederInfo";
-import { createFlowContext } from "./createFlowContext";
+import { createContextState } from "./createContextState";
 
 export const {
-  Provider: LederOnlyFlowProvider,
+  Provider: LederOnlyProvider,
   useContextState: useLederOnlyContextState,
-} = createFlowContext<LederOnly, { lederInfo: LederInfo; behovId: string }>(
+} = createContextState<LederOnly, { lederInfo: LederInfo; behovId: string }>(
   lederOnlyDefaults,
   (props: { lederInfo: LederInfo; behovId: string }) => ({
     lederInfo: props.lederInfo,

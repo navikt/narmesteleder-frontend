@@ -2,7 +2,7 @@ import { ReactNode, createContext, useContext, useState } from "react";
 
 type ViewMode = "editing" | "submitted";
 
-export function createFlowContext<T, P extends object = object>(
+export function createContextState<T, P extends object = object>(
   defaults: T,
   extraProviderProps?: (props: P) => P,
 ) {
