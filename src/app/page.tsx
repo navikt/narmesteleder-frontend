@@ -1,5 +1,5 @@
-import RegistrerNarmesteLederRelasjon from "@/components/form/RegistrerNarmesteLederRelasjon";
+import { SykmeldtLederFlowControl } from "@/components/SykmeldtLederFlowControl";
 
 export default async function Home() {
-  return <RegistrerNarmesteLederRelasjon />;
+  return <SykmeldtLederFlowControl />;
 }
