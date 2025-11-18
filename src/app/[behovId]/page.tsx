@@ -2,7 +2,7 @@ import { logger } from "@navikt/next-logger";
 import notFound from "@/app/not-found";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
-import { LederOnlyFlowControl } from "./LederOnlyFlowControl";
+import { LederOnlyFlowControl } from "../../components/LederOnlyFlowControl";
 
 const isValidBehovId = (behovId: string) =>
   !requirementIdSchema.safeParse(behovId).success;
