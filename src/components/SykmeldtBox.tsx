@@ -1,4 +1,5 @@
 import { BodyShort, Box, Heading, Label, VStack } from "@navikt/ds-react";
+import { Stack } from "@navikt/ds-react";
 
 type SykmeldtProps = {
   fodselsnummer: string;
@@ -12,18 +13,20 @@ export default function SykmeldtBox({ fodselsnummer, navn }: SykmeldtProps) {
         <Heading level="2" size="small">
           Sykmeldt
         </Heading>
-
-        <VStack gap="2">
-          <div>
-            <Label size="small">Navn</Label>
-            <BodyShort>{navn}</BodyShort>
-          </div>
-
-          <div>
-            <Label size="small">Fødselsnummer</Label>
-            <BodyShort>{fodselsnummer}</BodyShort>
-          </div>
-        </VStack>
+        <Stack direction="column" gap="4">
+          <Stack direction="row" gap="32">
+            <Label size="small" style={{ minWidth: "8rem" }}>
+              Navn
+            </Label>
+            <Label size="small" style={{ minWidth: "8rem" }}>
+              Fødselsnummer
+            </Label>
+          </Stack>
+          <Stack direction="row" gap="32">
+            <BodyShort style={{ minWidth: "8rem" }}>{navn}</BodyShort>
+            <BodyShort style={{ minWidth: "8rem" }}>{fodselsnummer}</BodyShort>
+          </Stack>
+        </Stack>
       </VStack>
     </Box>
   );
