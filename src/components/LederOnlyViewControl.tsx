@@ -20,7 +20,7 @@ export function LederOnlyViewControl({
   return (
     <ViewControl
       Provider={LederOnlyProvider}
-      useMode={useLederOnlyContextState}
+      useContextState={useLederOnlyContextState}
       EditView={LederOnlyEditView}
       SubmitView={LederOnlySubmitView}
       providerProps={{ lederInfo, behovId }}

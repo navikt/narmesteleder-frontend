@@ -1,29 +1,28 @@
 import React from "react";
 import type { ViewMode } from "@/context/createContextState";
 
-interface ViewControlProps<T = unknown> {
-  Provider: React.ComponentType<T & { children: React.ReactNode }>;
-  useMode: () => { mode: ViewMode };
+type ViewControlProps<T extends object> = {
+  Provider: React.ComponentType<{ children: React.ReactNode } & T>;
+  useContextState: () => { mode: ViewMode };
   EditView: React.ComponentType;
   SubmitView: React.ComponentType;
   providerProps?: T;
-}
+};
 
-export function ViewControl<T = unknown>({
+export function ViewControl<T extends object>({
   Provider,
-  useMode: useMode,
+  useContextState,
   EditView,
   SubmitView,
   providerProps,
 }: ViewControlProps<T>) {
   const ViewContent = () => {
-    const { mode } = useMode();
+    const { mode } = useContextState();
     if (mode === "editing") {
       return <EditView />;
     }
     return <SubmitView />;
   };
-
   return (
     <Provider {...(providerProps as T)}>
       <ViewContent />

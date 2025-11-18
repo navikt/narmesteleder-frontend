@@ -11,7 +11,7 @@ export function SykmeldtLederViewControl() {
   return (
     <ViewControl
       Provider={SykmeldtLederProvider}
-      useMode={useSykmeldtLederContextState}
+      useContextState={useSykmeldtLederContextState}
       EditView={SykmeldtLederEditView}
       SubmitView={SykmeldtLederSubmitView}
     />
