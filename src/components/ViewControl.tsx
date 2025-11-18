@@ -1,6 +1,6 @@
 import React from "react";
 
-interface FlowControlProps<T = unknown> {
+interface ViewControlProps<T = unknown> {
   Provider: React.ComponentType<T & { children: React.ReactNode }>;
   useFlow: () => { mode: string };
   EditView: React.ComponentType;
@@ -14,8 +14,8 @@ export function ViewControl<T = unknown>({
   EditView,
   SubmitView,
   providerProps,
-}: FlowControlProps<T>) {
-  const FlowContent = () => {
+}: ViewControlProps<T>) {
+  const ViewContent = () => {
     const { mode } = useFlow();
     if (mode === "editing") {
       return <EditView />;
@@ -25,7 +25,7 @@ export function ViewControl<T = unknown>({
 
   return (
     <Provider {...(providerProps as T)}>
-      <FlowContent />
+      <ViewContent />
     </Provider>
   );
 }
