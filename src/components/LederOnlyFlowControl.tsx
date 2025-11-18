@@ -12,13 +12,13 @@ type LederOnlyFlowControlProps = {
   behovId: string;
 };
 
-function LederOnlyFlowContent() {
+const LederOnlyFlowContent = () => {
   const { mode } = useLederOnlyFlow();
   if (mode === "editing") {
     return <LederOnlyEditView />;
   }
   return <LederOnlySubmitView />;
-}
+};
 
 export function LederOnlyFlowControl({
   lederInfo,

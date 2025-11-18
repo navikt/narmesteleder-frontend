@@ -1,12 +1,15 @@
-import { BodyShort, Box, Heading, Label, VStack } from "@navikt/ds-react";
-import { Stack } from "@navikt/ds-react";
+import {
+  BodyShort,
+  Box,
+  Heading,
+  Label,
+  Stack,
+  VStack,
+} from "@navikt/ds-react";
+import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
 
-type SykmeldtProps = {
-  fodselsnummer: string;
-  navn: string;
-};
-
-export default function SykmeldtBox({ fodselsnummer, navn }: SykmeldtProps) {
+export default function SykmeldtBox() {
+  const { lederInfo } = useLederOnlyFlow();
   return (
     <Box padding="space-16" background="surface-subtle" borderRadius="large">
       <VStack gap="4">
@@ -23,8 +26,12 @@ export default function SykmeldtBox({ fodselsnummer, navn }: SykmeldtProps) {
             </Label>
           </Stack>
           <Stack direction="row" gap="32">
-            <BodyShort style={{ minWidth: "8rem" }}>{navn}</BodyShort>
-            <BodyShort style={{ minWidth: "8rem" }}>{fodselsnummer}</BodyShort>
+            <BodyShort style={{ minWidth: "8rem" }}>
+              {lederInfo.sykmeldt.fullnavn}
+            </BodyShort>
+            <BodyShort style={{ minWidth: "8rem" }}>
+              {lederInfo.sykmeldtFnr}
+            </BodyShort>
           </Stack>
         </Stack>
       </VStack>

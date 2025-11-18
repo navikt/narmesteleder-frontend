@@ -1,18 +1,10 @@
 import { FormSummary, Heading, VStack } from "@navikt/ds-react";
-import { LederOnly } from "@/schemas/nærmestelederFormSchema";
-import { LederInfo } from "@/server/fetchData/fetchLederInfo";
+import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
+import { formatFnr } from "@/utils/formatting";
 
-type LederOnlySummaryProps = {
-  lederFormData: LederOnly;
-  lederInfo: LederInfo;
-  onEdit: () => void;
-};
+export function LederOnlySummary() {
+  const { submittedData, handleEdit, lederInfo } = useLederOnlyFlow();
 
-export function LederOnlySummary({
-  lederFormData,
-  lederInfo,
-  onEdit,
-}: LederOnlySummaryProps) {
   return (
     <FormSummary>
       <FormSummary.Header>
@@ -32,22 +24,22 @@ export function LederOnlySummary({
             Fødselsnummer til nærmeste leder
           </FormSummary.Label>
           <FormSummary.Value>
-            {lederFormData.leder.fodselsnummer}
+            {formatFnr(submittedData.leder.fodselsnummer)}
           </FormSummary.Value>
         </FormSummary.Answer>
         <FormSummary.Answer>
           <FormSummary.Label>Epost</FormSummary.Label>
-          <FormSummary.Value>{lederFormData.leder.epost}</FormSummary.Value>
+          <FormSummary.Value>{submittedData.leder.epost}</FormSummary.Value>
         </FormSummary.Answer>
         <FormSummary.Answer>
           <FormSummary.Label>Mobilnummer</FormSummary.Label>
           <FormSummary.Value>
-            {lederFormData.leder.mobilnummer}
+            {submittedData.leder.mobilnummer}
           </FormSummary.Value>
         </FormSummary.Answer>
       </FormSummary.Answers>
       <FormSummary.Footer>
-        <FormSummary.EditLink onClick={onEdit} />
+        <FormSummary.EditLink onClick={handleEdit} />
       </FormSummary.Footer>
     </FormSummary>
   );
