@@ -1,9 +1,9 @@
 import { FormSummary } from "@navikt/ds-react";
-import { useSykmeldtLederContextState } from "@/context/sykmeldtLederContextState";
+import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
 import { formatFnr } from "@/utils/formatting";
 
-export function SykmeldtLederSummary() {
-  const { submittedData, handleEdit } = useSykmeldtLederContextState();
+export function SykmeldtAndLederSummary() {
+  const { submittedData, handleEdit } = useSykmeldtAndLederContextState();
 
   return (
     <FormSummary>

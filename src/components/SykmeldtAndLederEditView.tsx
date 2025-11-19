@@ -2,7 +2,7 @@ import { Page, VStack } from "@navikt/ds-react";
 import { HeadingLeder } from "./HeadingLeder";
 import RegistrerNarmesteLederRelasjon from "./form/RegistrerNarmesteLederRelasjon";
 
-export function SykmeldtLederEditView() {
+export function SykmeldAndtLederEditView() {
   return (
     <Page>
       <HeadingLeder />

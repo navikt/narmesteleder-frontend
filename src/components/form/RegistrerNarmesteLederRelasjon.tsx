@@ -7,13 +7,13 @@ import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
 import { useAppForm } from "@/components/form/hooks/form";
-import { useSykmeldtLederContextState } from "@/context/sykmeldtLederContextState";
+import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
 import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 
 export default function RegistrerNarmesteLederRelasjon() {
   const [actionError, setActionError] = useState(false);
-  const { submittedData, handleSuccess } = useSykmeldtLederContextState();
+  const { submittedData, handleSuccess } = useSykmeldtAndLederContextState();
 
   const form = useAppForm({
     defaultValues: submittedData,

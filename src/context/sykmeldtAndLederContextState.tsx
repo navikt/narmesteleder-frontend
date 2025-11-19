@@ -5,6 +5,6 @@ import {
 import { createContextState } from "./createContextState";
 
 export const {
-  Provider: SykmeldtLederProvider,
-  useContextState: useSykmeldtLederContextState,
+  Provider: SykmeldtAndLederProvider,
+  useContextState: useSykmeldtAndLederContextState,
 } = createContextState<NarmesteLederInfo>(narmesteLederInfoDefaults);

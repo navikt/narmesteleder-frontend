@@ -3,16 +3,16 @@ import { ExitButton } from "@/components/ExitButton";
 import { HeadingLeder } from "@/components/HeadingLeder";
 import { LederInfoDescription } from "@/components/LederInfoDescription";
 import ThankYouAlert from "@/components/ThankYouAlert";
-import { SykmeldtLederSummary } from "./SykmeldtLederSummary";
+import { SykmeldtAndLederSummary } from "./SykmeldtAndLederSummary";
 
-export function SykmeldtLederSubmitView() {
+export function SykmeldtAndLederSubmitView() {
   return (
     <Page>
       <HeadingLeder />
       <VStack gap="8">
         <ThankYouAlert />
         <LederInfoDescription />
-        <SykmeldtLederSummary />
+        <SykmeldtAndLederSummary />
         <HStack>
           <ExitButton />
         </HStack>
