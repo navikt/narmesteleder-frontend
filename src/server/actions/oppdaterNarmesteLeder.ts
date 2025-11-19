@@ -1,5 +1,6 @@
 "use server";
 
+import { getServerEnv } from "@/env-variables/serverEnv";
 import { toManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
   NarmesteLederForm,
@@ -9,7 +10,9 @@ import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchUpdate } from "@/server/tokenXFetch";
-import { getLineManagerPutPath } from "../apiPaths";
+
+const getLineManagerPutPath = (requirementId: string) =>
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${requirementId}`;
 
 export const oppdaterNarmesteLeder = async (
   requirementId: string,

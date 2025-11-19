@@ -1,6 +1,7 @@
 "use server";
 
 import "server-only";
+import { getServerEnv } from "@/env-variables/serverEnv";
 import { toLineManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
   NarmesteLederInfo,
@@ -9,7 +10,9 @@ import {
 import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchUpdate } from "@/server/tokenXFetch";
-import { getLineManagerPostPath } from "../apiPaths";
+
+const getLineManagerPostPath = () =>
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`;
 
 export const opprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
   withActionResult(async () => {

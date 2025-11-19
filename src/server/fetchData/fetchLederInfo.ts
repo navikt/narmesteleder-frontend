@@ -1,5 +1,6 @@
 import "server-only";
 import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
+import { getServerEnv } from "@/env-variables/serverEnv";
 import { mockLineManagerRequirement } from "@/mocks/data/mockLineManagerRequirement";
 import {
   LineManagerReadResponse,
@@ -9,7 +10,9 @@ import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
 import { withBackendMode } from "@/utils/withBackendMode";
-import { getLineManagerRequirementPath } from "../apiPaths";
+
+const getLineManagerRequirementPath = (id: string) =>
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`;
 
 const mapToLederInfo = (
   sykmeldtInfoResponse: LineManagerReadResponse,
