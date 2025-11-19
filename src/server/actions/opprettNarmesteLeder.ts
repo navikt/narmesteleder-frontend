@@ -10,11 +10,12 @@ import {
 import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchUpdate } from "@/server/tokenXFetch";
+import { withBackendMode } from "@/utils/withBackendMode";
 
 const getLineManagerPostPath = () =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`;
 
-export const opprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
+const realOpprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
   withActionResult(async () => {
     narmesteLederInfoSchema.parse(narmesteLeder);
 
@@ -25,3 +26,13 @@ export const opprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
       requestBody: toLineManagerRequest(narmesteLeder),
     });
   });
+
+const fakeOpprettNarmesteLeder = async () =>
+  withActionResult(async () => {
+    return;
+  });
+
+export const opprettNarmesteLeder = withBackendMode({
+  real: realOpprettNarmesteLeder,
+  fake: fakeOpprettNarmesteLeder,
+});

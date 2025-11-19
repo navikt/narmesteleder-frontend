@@ -10,11 +10,12 @@ import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchUpdate } from "@/server/tokenXFetch";
+import { withBackendMode } from "@/utils/withBackendMode";
 
 const getLineManagerPutPath = (requirementId: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${requirementId}`;
 
-export const oppdaterNarmesteLeder = async (
+const realOppdaterNarmesteLeder = async (
   requirementId: string,
   narmesteLeder: NarmesteLederForm,
 ) =>
@@ -29,3 +30,13 @@ export const oppdaterNarmesteLeder = async (
       requestBody: toManagerRequest(narmesteLeder),
     });
   });
+
+const fakeOppdaterNarmesteLeder = async () =>
+  withActionResult(async () => {
+    return;
+  });
+
+export const oppdaterNarmesteLeder = withBackendMode({
+  real: realOppdaterNarmesteLeder,
+  fake: fakeOppdaterNarmesteLeder,
+});
