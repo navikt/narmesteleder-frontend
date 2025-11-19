@@ -1,5 +1,6 @@
 import "server-only";
 import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
+import { mockLineManagerRequirement } from "@/mocks/data/mockLineManagerRequirement";
 import {
   LineManagerReadResponse,
   lineManagerReadSchema,
@@ -7,6 +8,7 @@ import {
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
+import { withBackendMode } from "@/utils/withBackendMode";
 import { getLineManagerRequirementPath } from "../apiPaths";
 
 const mapToLederInfo = (
@@ -49,7 +51,7 @@ export type LederInfo = {
   sykmeldt: Navn;
 };
 
-export const fetchLederInfo = async (
+const realFetchLederInfo = async (
   requirementId: string,
 ): Promise<LederInfo> => {
   const result = await tokenXFetchGet({
@@ -60,3 +62,12 @@ export const fetchLederInfo = async (
   });
   return mapToLederInfo(result);
 };
+
+const fakeFetchLederInfo = async (): Promise<LederInfo> => {
+  return mapToLederInfo(mockLineManagerRequirement);
+};
+
+export const fetchLederInfo = withBackendMode({
+  real: realFetchLederInfo,
+  fake: fakeFetchLederInfo,
+});
