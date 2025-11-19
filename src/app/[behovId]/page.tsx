@@ -2,7 +2,7 @@ import { logger } from "@navikt/next-logger";
 import notFound from "@/app/not-found";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
-import { LederOnlyViewControl } from "../../components/LederOnlyViewControl";
+import { LederViewControl } from "../../components/LederViewControl";
 
 const isValidBehovId = (behovId: string) =>
   !requirementIdSchema.safeParse(behovId).success;
@@ -19,5 +19,5 @@ export default async function Home({
   }
   const lederInfo = await fetchLederInfo(behovId);
 
-  return <LederOnlyViewControl lederInfo={lederInfo} behovId={behovId} />;
+  return <LederViewControl lederInfo={lederInfo} behovId={behovId} />;
 }

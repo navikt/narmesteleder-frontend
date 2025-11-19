@@ -67,8 +67,8 @@ export const narmesteLederInfoDefaults = {
   leder: narmesteLederFormDefaults,
 } satisfies NarmesteLederInfo;
 
-export const lederOnlySchema = narmesteLederInfoSchema.pick({ leder: true });
-export type LederOnly = Pick<NarmesteLederInfo, "leder">;
-export const lederOnlyDefaults: LederOnly = {
+export const lederSchema = narmesteLederInfoSchema.pick({ leder: true });
+export type Leder = Pick<NarmesteLederInfo, "leder">;
+export const lederDefaults: Leder = {
   leder: narmesteLederFormDefaults,
 };

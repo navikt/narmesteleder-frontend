@@ -1,8 +1,8 @@
 import { BodyLong, GuidePanel } from "@navikt/ds-react";
-import { useLederOnlyContextState } from "@/context/lederOnlyContextState";
+import { useLederContextState } from "@/context/lederContextState";
 
 export default function OppgiLederPanel() {
-  const { lederInfo } = useLederOnlyContextState();
+  const { lederInfo } = useLederContextState();
   return (
     <GuidePanel poster={true}>
       <BodyLong spacing>

@@ -4,7 +4,7 @@ import OppgiLederPanel from "./OppgiLederPanel";
 import SykmeldtBox from "./SykmeldtBox";
 import OppgiNarmesteLederForSykmeldt from "./form/OppgiNarmesteLederForSykmeldt";
 
-export function LederOnlyEditView() {
+export function LederEditView() {
   return (
     <Page>
       <HeadingLeder />
