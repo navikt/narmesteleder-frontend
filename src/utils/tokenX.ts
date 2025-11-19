@@ -2,12 +2,12 @@ import { cache } from "react";
 import { requestOboToken } from "@navikt/oasis";
 import { redirectToLogin } from "@/auth/redirectToLogin";
 import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
-import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import {
   TokenXTargetApi,
   getClientIdForTokenXTargetApi,
 } from "../server/helpers";
+import { withBackendMode } from "./withBackendMode";
 
 const validateAndGetIdPortenToken = async () => {
   const validationResult = await validateIdPortenToken();
@@ -48,26 +48,32 @@ const exchangeIdPortenTokenForTokenXOboToken = cache(
   },
 );
 
-export const validateTokenAndGetTokenX = async (
+const realValidateTokenAndGetTokenX = async (
   targetApi: TokenXTargetApi,
 ): Promise<string> => {
-  if (isLocalOrDemo) {
-    return "mock-token-for-local-or-demo";
-  }
   const idPortenToken = await validateAndGetIdPortenToken();
   return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
 };
 
-export const validateTokenAndGetTokenXOrRedirect = async (
+const realValidateTokenAndGetTokenXOrRedirect = async (
   redirectAfterLoginUrl: string,
   targetApi: TokenXTargetApi,
 ) => {
-  if (isLocalOrDemo) {
-    return "mock-token-for-local-or-demo";
-  }
   const idPortenToken = await validateAndGetIdPortenTokenOrRedirectToLogin(
     redirectAfterLoginUrl,
   );
 
   return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
 };
+
+const mockToken = "mock-token-for-local-or-demo";
+
+export const validateTokenAndGetTokenX = withBackendMode({
+  real: realValidateTokenAndGetTokenX,
+  fake: async () => mockToken,
+});
+
+export const validateTokenAndGetTokenXOrRedirect = withBackendMode({
+  real: realValidateTokenAndGetTokenXOrRedirect,
+  fake: async () => mockToken,
+});
