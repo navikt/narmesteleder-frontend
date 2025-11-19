@@ -54,7 +54,7 @@ export default async function RootLayout({
     <html lang="no">
       <head>
         <Decorator.HeadAssets />
-        <title>Nærmeste leder</title>
+        <title>Oppgi nærmeste leder</title>
       </head>
       <body>
         <Providers>
