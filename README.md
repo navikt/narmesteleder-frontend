@@ -30,9 +30,7 @@ Brukeren får opp en spesifikk sykmeldt person som mangler nærmeste leder, og k
 
 Frontend-appen kommuniserer med [Nærmeste leder backend](https://github.com/navikt/esyfo-narmesteleder).
 
-Du finner API-dokumentasjon i [Swagger dev miljø](https://esyfo-narmesteleder.ekstern.dev.nav.no/swagger)
-
-### Brukte endepunkter
+Brukte endepunkter
 
 - **GET** `/api/v1/linemanager/requirement/{id}`
 - **POST** `/api/v1/linemanager`
