@@ -3,23 +3,20 @@
 import { useState } from "react";
 import { revalidateLogic } from "@tanstack/react-form";
 import { HStack, Heading, VStack } from "@navikt/ds-react";
-import ThankYouAlert from "@/components/ThankYouAlert";
 import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
 import { useAppForm } from "@/components/form/hooks/form";
-import {
-  narmesteLederInfoDefaults,
-  narmesteLederInfoSchema,
-} from "@/schemas/nærmestelederFormSchema";
+import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
+import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 
 export default function RegistrerNarmesteLederRelasjon() {
   const [actionError, setActionError] = useState(false);
-  const [isSubmittedForm, setIsSubmittedForm] = useState(false);
+  const { submittedData, handleSuccess } = useSykmeldtAndLederContextState();
 
   const form = useAppForm({
-    defaultValues: narmesteLederInfoDefaults,
+    defaultValues: submittedData,
     validationLogic: revalidateLogic(),
     validators: { onDynamic: narmesteLederInfoSchema },
     onSubmit: async ({ value }) => {
@@ -27,21 +24,13 @@ export default function RegistrerNarmesteLederRelasjon() {
       if (!actionResult.success) {
         setActionError(true);
       } else {
-        setIsSubmittedForm(true);
+        handleSuccess(value);
       }
     },
   });
 
-  if (isSubmittedForm) {
-    return <ThankYouAlert />;
-  }
-
   return (
     <VStack gap="6">
-      <Heading size="large" level="1">
-        Oppgi nærmeste leder
-      </Heading>
-
       <form
         onSubmit={async (e) => {
           e.preventDefault();

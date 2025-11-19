@@ -1,21 +1,17 @@
-import { FormSummary, Heading, VStack } from "@navikt/ds-react";
-import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
+import { FormSummary } from "@navikt/ds-react";
+import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
 import { formatFnr } from "@/utils/formatting";
 
-export function LederOnlySummary() {
-  const { submittedData, handleEdit, lederInfo } = useLederOnlyFlow();
+export function SykmeldtAndLederSummary() {
+  const { submittedData, handleEdit } = useSykmeldtAndLederContextState();
 
   return (
     <FormSummary>
       <FormSummary.Header>
-        <VStack gap="2">
-          <FormSummary.Heading level="3">
-            Nærmeste leder for
-          </FormSummary.Heading>
-          <Heading level="6" size="small">
-            {`${lederInfo.sykmeldt.fullnavn} (fødselsnummer ${lederInfo.sykmeldtFnr})`}
-          </Heading>
-        </VStack>
+        <FormSummary.Heading level="3">
+          Nærmeste leder for fødselsnummer{" "}
+          {submittedData.sykmeldt.fodselsnummer}
+        </FormSummary.Heading>
       </FormSummary.Header>
 
       <FormSummary.Answers>
