@@ -12,19 +12,19 @@
 
 ## Appens formål
 
-Denne appen brukes til å registrere nærmeste leder for en sykmeldt person. Den tilbyr to hovedfunksjoner:
+Denne appen brukes til å registrere nærmeste leder for en sykmeldt person. Den tilbyr to hovedfunksjoner.
 
-1. Registrering via tomt skjema
+### Registrering via tomt skjema
 
 Brukeren fyller ut informasjon om både den sykmeldte personen og nærmeste leder.
 
-- Base path: `/arbeidsgiver/ansatte/narmesteleder`
+**Base path** `/arbeidsgiver/ansatte/narmesteleder`
 
-2. Registrering via forhåndsutfylt skjema
+### Registrering via forhåndsutfylt skjema
 
 Brukeren får opp en spesifikk sykmeldt person som mangler nærmeste leder, og kan registrere eller oppdatere nærmeste leder.
 
-- Base path: `/arbeidsgiver/ansatte/narmesteleder/{behovid}`
+**Base path** `/arbeidsgiver/ansatte/narmesteleder/{behovid}`
 
 ## Backend-API
 
