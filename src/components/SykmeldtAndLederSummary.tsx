@@ -1,4 +1,4 @@
-import { FormSummary } from "@navikt/ds-react";
+import { FormSummary, VStack } from "@navikt/ds-react";
 import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
 import { formatFnr } from "@/utils/formatting";
 
@@ -8,10 +8,12 @@ export function SykmeldtAndLederSummary() {
   return (
     <FormSummary>
       <FormSummary.Header>
-        <FormSummary.Heading level="3">
-          Nærmeste leder for fødselsnummer{" "}
-          {submittedData.sykmeldt.fodselsnummer}
-        </FormSummary.Heading>
+        <VStack gap="2">
+          <p>Nærmeste leder for sykmeldt person med fødselsnummer</p>
+          <FormSummary.Heading level="3">
+            {formatFnr(submittedData.sykmeldt.fodselsnummer)}
+          </FormSummary.Heading>
+        </VStack>
       </FormSummary.Header>
 
       <FormSummary.Answers>
