@@ -7,13 +7,26 @@ export const LederGroup = withFieldGroup({
     return (
       <>
         <group.AppField name="fodselsnummer">
-          {(field) => <field.TextInputField label="Fødselsnummer (11 sifre)" />}
+          {(field) => (
+            <field.TextInputField
+              label="Fødselsnummer (11 sifre)"
+              maxLength={11}
+              minLength={11}
+            />
+          )}
         </group.AppField>
         <group.AppField name="epost">
-          {(field) => <field.TextInputField label="E-post" />}
+          {(field) => <field.TextInputField label="E-post" type="email" />}
         </group.AppField>
         <group.AppField name="mobilnummer">
-          {(field) => <field.TextInputField label="Mobilnummer" />}
+          {(field) => (
+            <field.TextInputField
+              label="Mobilnummer"
+              maxLength={8}
+              minLength={8}
+              type="tel"
+            />
+          )}
         </group.AppField>
       </>
     );
