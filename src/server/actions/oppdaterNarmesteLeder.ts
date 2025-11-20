@@ -10,7 +10,7 @@ import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchUpdate } from "@/server/tokenXFetch";
-import { withBackendMode } from "@/utils/withBackendMode";
+import { mockable } from "@/utils/mockable";
 
 const getLineManagerPutPath = (requirementId: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${requirementId}`;
@@ -36,7 +36,7 @@ const fakeOppdaterNarmesteLeder = async () =>
     return;
   });
 
-export const oppdaterNarmesteLeder = withBackendMode({
+export const oppdaterNarmesteLeder = mockable({
   real: realOppdaterNarmesteLeder,
-  fake: fakeOppdaterNarmesteLeder,
+  mock: fakeOppdaterNarmesteLeder,
 });

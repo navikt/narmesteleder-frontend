@@ -4,15 +4,15 @@ type Fn<TArgs extends unknown[], TResult> = (
   ...args: TArgs
 ) => Promise<TResult>;
 
-type BackendModeImpls<TArgs extends unknown[], TResult> = {
+type MockableImpls<TArgs extends unknown[], TResult> = {
   real: Fn<TArgs, TResult>;
-  fake: Fn<TArgs, TResult>;
+  mock: Fn<TArgs, TResult>;
 };
 
-export const withBackendMode = <TArgs extends unknown[], TResult>(
-  impls: BackendModeImpls<TArgs, TResult>,
+export const mockable = <TArgs extends unknown[], TResult>(
+  impls: MockableImpls<TArgs, TResult>,
 ): Fn<TArgs, TResult> => {
-  const impl = isLocalOrDemo ? impls.fake : impls.real;
+  const impl = isLocalOrDemo ? impls.mock : impls.real;
 
   if (typeof impl === "function") {
     return async (...args: TArgs) => impl(...args);

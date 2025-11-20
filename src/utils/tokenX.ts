@@ -7,7 +7,7 @@ import {
   TokenXTargetApi,
   getClientIdForTokenXTargetApi,
 } from "../server/helpers";
-import { withBackendMode } from "./withBackendMode";
+import { mockable } from "./mockable";
 
 const validateAndGetIdPortenToken = async () => {
   const validationResult = await validateIdPortenToken();
@@ -68,12 +68,12 @@ const realValidateTokenAndGetTokenXOrRedirect = async (
 
 const mockToken = "mock-token-for-local-or-demo";
 
-export const validateTokenAndGetTokenX = withBackendMode({
+export const validateTokenAndGetTokenX = mockable({
   real: realValidateTokenAndGetTokenX,
-  fake: async () => mockToken,
+  mock: async () => mockToken,
 });
 
-export const validateTokenAndGetTokenXOrRedirect = withBackendMode({
+export const validateTokenAndGetTokenXOrRedirect = mockable({
   real: realValidateTokenAndGetTokenXOrRedirect,
-  fake: async () => mockToken,
+  mock: async () => mockToken,
 });

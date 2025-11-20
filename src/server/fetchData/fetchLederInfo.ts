@@ -9,7 +9,7 @@ import {
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
-import { withBackendMode } from "@/utils/withBackendMode";
+import { mockable } from "@/utils/mockable";
 
 const getLineManagerRequirementPath = (id: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`;
@@ -70,7 +70,7 @@ const fakeFetchLederInfo = async (): Promise<LederInfo> => {
   return mapToLederInfo(mockLineManagerRequirement);
 };
 
-export const fetchLederInfo = withBackendMode({
+export const fetchLederInfo = mockable({
   real: realFetchLederInfo,
-  fake: fakeFetchLederInfo,
+  mock: fakeFetchLederInfo,
 });

@@ -10,7 +10,7 @@ import {
 import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchUpdate } from "@/server/tokenXFetch";
-import { withBackendMode } from "@/utils/withBackendMode";
+import { mockable } from "@/utils/mockable";
 
 const getLineManagerPostPath = () =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`;
@@ -32,7 +32,7 @@ const fakeOpprettNarmesteLeder = async () =>
     return;
   });
 
-export const opprettNarmesteLeder = withBackendMode({
+export const opprettNarmesteLeder = mockable({
   real: realOpprettNarmesteLeder,
-  fake: fakeOpprettNarmesteLeder,
+  mock: fakeOpprettNarmesteLeder,
 });
