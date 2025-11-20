@@ -4,11 +4,12 @@ import { isNonProd } from "@/env-variables/envHelpers";
 
 const requireFieldErrorMessage = "Feltet er påkrevd";
 const invalidEmailErrorMessage = "Ugyldig e-postadresse";
-const lengthOrgnummerMessage = "Organisasjonsnummer må være 9 siffer";
+const invalidOrgnummerMessage = "Organisasjonsnummer må være 9 siffer";
 const invalidFnrErrorMessage = "Fødselsnummeret er ikke gyldig";
 const requiredFnrErrorMessage = "Fødselsnummeret er påkrevd";
 const lengthAndNumberFnrErrorMessage =
   "Fødselsnummeret må være nøyaktig 11 siffer";
+const invalidMobilnummerErrorMessage = "Mobilnummeret må være 8 siffer";
 
 const validateFnr = (
   value: string,
@@ -29,7 +30,9 @@ export const FnrSchema = z
 
 export const narmesteLederFormSchema = object({
   fodselsnummer: FnrSchema,
-  mobilnummer: string().nonempty(requireFieldErrorMessage),
+  mobilnummer: string()
+    .nonempty(requireFieldErrorMessage)
+    .regex(/^\d{8}$/, invalidMobilnummerErrorMessage),
   epost: email(invalidEmailErrorMessage).nonempty(requireFieldErrorMessage),
 });
 
@@ -39,7 +42,7 @@ export const sykmeldtFormSchema = object({
   fodselsnummer: FnrSchema,
   orgnummer: string()
     .nonempty(requireFieldErrorMessage)
-    .length(9, lengthOrgnummerMessage),
+    .regex(/^\d{9}$/, invalidOrgnummerMessage),
 });
 
 export type SykmeldtForm = z.infer<typeof sykmeldtFormSchema>;

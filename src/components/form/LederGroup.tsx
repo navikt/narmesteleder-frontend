@@ -21,7 +21,7 @@ export const LederGroup = withFieldGroup({
         <group.AppField name="mobilnummer">
           {(field) => (
             <field.TextInputField
-              label="Mobilnummer"
+              label="Mobilnummer (8 sifre)"
               maxLength={8}
               minLength={8}
               type="tel"
