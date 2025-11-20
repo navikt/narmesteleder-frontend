@@ -19,8 +19,7 @@ const validateFnr = (
   fnr(value).status === "valid" ||
   dnr(value).status === "valid";
 
-export const FnrSchema = z
-  .string()
+export const FnrSchema = string()
   .trim()
   .nonempty(requiredFnrErrorMessage)
   .regex(/^\d{11}$/, lengthAndNumberFnrErrorMessage)
@@ -31,6 +30,7 @@ export const FnrSchema = z
 export const narmesteLederFormSchema = object({
   fodselsnummer: FnrSchema,
   mobilnummer: string()
+    .trim()
     .nonempty(requireFieldErrorMessage)
     .regex(/^\d{8}$/, invalidMobilnummerErrorMessage),
   epost: email(invalidEmailErrorMessage).nonempty(requireFieldErrorMessage),
@@ -41,6 +41,7 @@ export type NarmesteLederForm = z.infer<typeof narmesteLederFormSchema>;
 export const sykmeldtFormSchema = object({
   fodselsnummer: FnrSchema,
   orgnummer: string()
+    .trim()
     .nonempty(requireFieldErrorMessage)
     .regex(/^\d{9}$/, invalidOrgnummerMessage),
 });
