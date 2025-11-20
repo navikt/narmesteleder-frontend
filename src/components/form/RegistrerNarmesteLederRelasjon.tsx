@@ -30,7 +30,7 @@ export default function RegistrerNarmesteLederRelasjon() {
   });
 
   return (
-    <VStack gap="6">
+    <VStack gap="6" className="w-full max-w-md">
       <form
         onSubmit={async (e) => {
           e.preventDefault();

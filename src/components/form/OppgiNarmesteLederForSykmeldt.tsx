@@ -36,7 +36,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
         await form.handleSubmit();
       }}
     >
-      <VStack gap="4">
+      <VStack gap="4" className="w-full max-w-md">
         <Heading level="2" size="small">
           Nærmeste leder
         </Heading>
