@@ -16,13 +16,9 @@ type BackendModeImpls<TArgs extends unknown[], TResult> = {
 export const withBackendMode = <TArgs extends unknown[], TResult>(
   impls: BackendModeImpls<TArgs, TResult>,
 ): Fn<TArgs, TResult> => {
-  return (...args: TArgs) => {
-    const impl = isLocalOrDemo ? impls.fake : impls.real;
-    if (typeof impl === "function") {
-      return impl(...args);
-    }
-    throw new Error(
-      "Provided implementation does not contain a valid function.",
-    );
-  };
+  const impl = isLocalOrDemo ? impls.fake : impls.real;
+  if (typeof impl === "function") {
+    return impl;
+  }
+  throw new Error("Provided implementation does not contain a valid function.");
 };

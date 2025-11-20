@@ -29,12 +29,11 @@ describe("withBackendMode", () => {
     expect(realFn).not.toHaveBeenCalled();
   });
 
-  it("throws error if object impl does not contain a function", () => {
+  it("throws error if impl is not a function", () => {
     vi.spyOn(envHelpers, "isLocalOrDemo", "get").mockReturnValue(true);
 
     // @ts-expect-error purposely wrong for test
-    const fn = withBackendMode({ real: realFn, fake: { fn: null } });
-    expect(() => fn(5)).toThrow(
+    expect(() => withBackendMode({ real: realFn, fake: null })).toThrow(
       "Provided implementation does not contain a valid function.",
     );
   });
