@@ -4,12 +4,13 @@ import { useFieldContext } from "@/components/form/hooks/form-context";
 export type BoundTextFieldProps = {
   label: string;
   type?: TextFieldProps["type"];
+  className?: string;
 };
 
 export function BoundTextField({
   label,
-
   type,
+  className,
 }: BoundTextFieldProps) {
   const field = useFieldContext<string>();
 
@@ -21,6 +22,7 @@ export function BoundTextField({
       onBlur={field.handleBlur}
       error={field.state.meta.errors[0]?.message}
       type={type}
+      className={className}
     />
   );
 }
