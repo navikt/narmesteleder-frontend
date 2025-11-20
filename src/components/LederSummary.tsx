@@ -11,7 +11,7 @@ export function LederSummary() {
         <VStack gap="2">
           <p>Nærmeste leder for</p>
           <FormSummary.Heading level="3">
-            {`${formatFnr(lederInfo.sykmeldt.fullnavn)} (${lederInfo.sykmeldtFnr})`}
+            {`${lederInfo.sykmeldt.fullnavn} (${formatFnr(lederInfo.sykmeldtFnr)})`}
           </FormSummary.Heading>
         </VStack>
       </FormSummary.Header>
