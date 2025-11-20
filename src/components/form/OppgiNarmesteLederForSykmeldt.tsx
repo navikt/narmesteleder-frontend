@@ -6,18 +6,18 @@ import { HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/form/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { useAppForm } from "@/components/form/hooks/form";
-import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
-import { lederOnlySchema } from "@/schemas/nærmestelederFormSchema";
+import { useLederContextState } from "@/context/lederContextState";
+import { lederSchema } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 
 export default function OppgiNarmesteLederForSykmeldt() {
   const [actionError, setActionError] = useState(false);
-  const { submittedData, handleSuccess, behovId } = useLederOnlyFlow();
+  const { submittedData, handleSuccess, behovId } = useLederContextState();
 
   const form = useAppForm({
     defaultValues: submittedData,
     validationLogic: revalidateLogic(),
-    validators: { onDynamic: lederOnlySchema },
+    validators: { onDynamic: lederSchema },
     onSubmit: async ({ value }) => {
       const actionResult = await oppdaterNarmesteLeder(behovId, value.leder);
       if (!actionResult.success) {
@@ -36,7 +36,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
         await form.handleSubmit();
       }}
     >
-      <VStack gap="4">
+      <VStack gap="4" className="w-full max-w-md">
         <Heading level="2" size="small">
           Nærmeste leder
         </Heading>

@@ -28,12 +28,8 @@ const breadcrumbs = [
     url: publicEnv.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL,
   },
   {
-    title: "Dine sykmeldte",
-    url: publicEnv.NEXT_PUBLIC_DINE_SYKMELDTE_URL,
-  },
-  {
-    title: "Nærmeste leder",
-    analyticsTitle: "Nærmeste leder",
+    title: "Oppgi nærmeste leder",
+    analyticsTitle: "Oppgi nærmeste leder",
     url: "https://www.nav.no/arbeidsgiver/ansatte/narmesteleder",
   },
 ];
@@ -58,7 +54,7 @@ export default async function RootLayout({
     <html lang="no">
       <head>
         <Decorator.HeadAssets />
-        <title>Nærmeste leder</title>
+        <title>Oppgi nærmeste leder</title>
       </head>
       <body>
         <Providers>

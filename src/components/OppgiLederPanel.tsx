@@ -1,8 +1,8 @@
 import { BodyLong, GuidePanel } from "@navikt/ds-react";
-import { useLederOnlyFlow } from "@/context/LederOnlyFlowContext";
+import { useLederContextState } from "@/context/lederContextState";
 
 export default function OppgiLederPanel() {
-  const { lederInfo } = useLederOnlyFlow();
+  const { lederInfo } = useLederContextState();
   return (
     <GuidePanel poster={true}>
       <BodyLong spacing>
@@ -23,15 +23,15 @@ export default function OppgiLederPanel() {
         sykmeldte&quot; hos Nav.
       </BodyLong>
 
-      <BodyLong>
+      <BodyLong spacing>
         Vi har forhåndsutfylt skjemaet med navn og fødselsnummer til den
         ansatte. Du må legge inn kontaktinformasjonen til lederen som skal få
         tilgang.
       </BodyLong>
 
       <BodyLong>
-        Den ansatte vil se hvem bedriften har meldt inn som leder på &quot;Ditt
-        sykefravær&quot; hos Nav.
+        Den ansatte vil se hvem som er meldt inn som nærmeste leder på
+        &quot;Ditt sykefravær&quot; hos Nav.
       </BodyLong>
     </GuidePanel>
   );

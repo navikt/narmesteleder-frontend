@@ -1,5 +1,5 @@
-import RegistrerNarmesteLederRelasjon from "@/components/form/RegistrerNarmesteLederRelasjon";
+import { SykmeldAndtLederViewControl } from "@/components/SykmeldtAndLederViewControl";
 
 export default async function Home() {
-  return <RegistrerNarmesteLederRelasjon />;
+  return <SykmeldAndtLederViewControl />;
 }
