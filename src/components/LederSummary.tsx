@@ -1,4 +1,4 @@
-import { FormSummary, Heading, VStack } from "@navikt/ds-react";
+import { FormSummary, VStack } from "@navikt/ds-react";
 import { useLederContextState } from "@/context/lederContextState";
 import { formatFnr } from "@/utils/formatting";
 
@@ -9,12 +9,10 @@ export function LederSummary() {
     <FormSummary>
       <FormSummary.Header>
         <VStack gap="2">
+          <p>Nærmeste leder for</p>
           <FormSummary.Heading level="3">
-            Nærmeste leder for
+            {`${lederInfo.sykmeldt.fullnavn} (${formatFnr(lederInfo.sykmeldtFnr)})`}
           </FormSummary.Heading>
-          <Heading level="6" size="small">
-            {`${lederInfo.sykmeldt.fullnavn} (fødselsnummer ${lederInfo.sykmeldtFnr})`}
-          </Heading>
         </VStack>
       </FormSummary.Header>
 
@@ -28,7 +26,7 @@ export function LederSummary() {
           </FormSummary.Value>
         </FormSummary.Answer>
         <FormSummary.Answer>
-          <FormSummary.Label>Epost</FormSummary.Label>
+          <FormSummary.Label>E-post</FormSummary.Label>
           <FormSummary.Value>{submittedData.leder.epost}</FormSummary.Value>
         </FormSummary.Answer>
         <FormSummary.Answer>
