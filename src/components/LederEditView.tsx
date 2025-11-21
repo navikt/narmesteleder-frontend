@@ -8,7 +8,7 @@ export function LederEditView() {
   return (
     <Page>
       <HeadingLeder />
-      <VStack gap="8">
+      <VStack gap="space-32">
         <OppgiLederPanel />
         <SykmeldtBox />
         <OppgiNarmesteLederForSykmeldt />

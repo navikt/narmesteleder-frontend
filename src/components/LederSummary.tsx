@@ -8,7 +8,7 @@ export function LederSummary() {
   return (
     <FormSummary>
       <FormSummary.Header>
-        <VStack gap="2">
+        <VStack gap="space-8">
           <p>Nærmeste leder for</p>
           <FormSummary.Heading level="3">
             {`${lederInfo.sykmeldt.fullnavn} (${formatFnr(lederInfo.sykmeldtFnr)})`}
@@ -37,10 +37,7 @@ export function LederSummary() {
         </FormSummary.Answer>
       </FormSummary.Answers>
       <FormSummary.Footer>
-        <FormSummary.EditLink
-          onClick={handleEdit}
-          style={{ cursor: "pointer" }}
-        />
+        <FormSummary.EditLink onClick={handleEdit} className="cursor-pointer" />
       </FormSummary.Footer>
     </FormSummary>
   );

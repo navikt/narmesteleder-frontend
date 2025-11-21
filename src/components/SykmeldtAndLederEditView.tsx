@@ -7,7 +7,7 @@ export function SykmeldAndtLederEditView() {
   return (
     <Page>
       <HeadingLeder />
-      <VStack gap="8">
+      <VStack gap="space-32">
         <SykmeldtAndLederInfoPanel />
         <RegistrerNarmesteLederRelasjon />
       </VStack>

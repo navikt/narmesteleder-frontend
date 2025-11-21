@@ -36,13 +36,13 @@ export default function OppgiNarmesteLederForSykmeldt() {
         await form.handleSubmit();
       }}
     >
-      <VStack gap="4" className="w-full max-w-md">
+      <VStack gap="space-16" className="w-full max-w-md">
         <Heading level="2" size="small">
           Nærmeste leder
         </Heading>
 
         <form.AppForm>
-          <VStack gap="4">
+          <VStack gap="space-16">
             <LederGroup form={form} fields="leder" />
           </VStack>
         </form.AppForm>

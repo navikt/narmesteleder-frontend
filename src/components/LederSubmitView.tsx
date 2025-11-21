@@ -9,7 +9,7 @@ export function LederSubmitView() {
   return (
     <Page>
       <HeadingLeder />
-      <VStack gap="8">
+      <VStack gap="space-32">
         <ThankYouAlert />
         <LederInfoDescription />
         <LederSummary />

@@ -1,6 +1,6 @@
 import {
   BodyShort,
-  Box,
+  BoxNew,
   Heading,
   Label,
   Stack,
@@ -11,30 +11,28 @@ import { useLederContextState } from "@/context/lederContextState";
 export default function SykmeldtBox() {
   const { lederInfo } = useLederContextState();
   return (
-    <Box padding="space-16" background="surface-subtle" borderRadius="large">
-      <VStack gap="4">
+    <BoxNew padding="space-16" background="accent-soft" borderRadius="8">
+      <VStack gap="space-16">
         <Heading level="2" size="small">
           Sykmeldt
         </Heading>
-        <Stack direction="column" gap="4">
-          <Stack direction="row" gap="32">
-            <Label size="small" style={{ minWidth: "8rem" }}>
+        <Stack direction="column" gap="space-16">
+          <Stack direction="row" gap="space-128">
+            <Label size="small" className="min-w-32">
               Navn
             </Label>
-            <Label size="small" style={{ minWidth: "8rem" }}>
+            <Label size="small" className="min-w-32">
               Fødselsnummer
             </Label>
           </Stack>
-          <Stack direction="row" gap="32">
-            <BodyShort style={{ minWidth: "8rem" }}>
+          <Stack direction="row" gap="space-128">
+            <BodyShort className="min-w-32">
               {lederInfo.sykmeldt.fullnavn}
             </BodyShort>
-            <BodyShort style={{ minWidth: "8rem" }}>
-              {lederInfo.sykmeldtFnr}
-            </BodyShort>
+            <BodyShort className="min-w-32">{lederInfo.sykmeldtFnr}</BodyShort>
           </Stack>
         </Stack>
       </VStack>
-    </Box>
+    </BoxNew>
   );
 }
