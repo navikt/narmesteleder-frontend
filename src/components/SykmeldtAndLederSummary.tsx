@@ -6,7 +6,7 @@ export function SykmeldtAndLederSummary() {
   const { submittedData, handleEdit } = useSykmeldtAndLederContextState();
 
   return (
-    <VStack gap="8">
+    <VStack gap="space-32">
       <FormSummary>
         <FormSummary.Header>
           <FormSummary.Heading level="3">Sykmeldt</FormSummary.Heading>
@@ -29,7 +29,7 @@ export function SykmeldtAndLederSummary() {
         <FormSummary.Footer>
           <FormSummary.EditLink
             onClick={handleEdit}
-            style={{ cursor: "pointer" }}
+            className="cursor-pointer"
           />
         </FormSummary.Footer>
       </FormSummary>
@@ -59,7 +59,7 @@ export function SykmeldtAndLederSummary() {
         <FormSummary.Footer>
           <FormSummary.EditLink
             onClick={handleEdit}
-            style={{ cursor: "pointer" }}
+            className="cursor-pointer"
           />
         </FormSummary.Footer>
       </FormSummary>

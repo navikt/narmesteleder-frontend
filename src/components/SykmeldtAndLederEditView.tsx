@@ -1,16 +1,14 @@
-import { Page, VStack } from "@navikt/ds-react";
+import { VStack } from "@navikt/ds-react";
 import { HeadingLeder } from "./HeadingLeder";
 import SykmeldtAndLederInfoPanel from "./SykmeldtAndLederInfoPanel";
 import RegistrerNarmesteLederRelasjon from "./form/RegistrerNarmesteLederRelasjon";
 
 export function SykmeldAndtLederEditView() {
   return (
-    <Page>
+    <VStack gap="space-32">
       <HeadingLeder />
-      <VStack gap="8">
-        <SykmeldtAndLederInfoPanel />
-        <RegistrerNarmesteLederRelasjon />
-      </VStack>
-    </Page>
+      <SykmeldtAndLederInfoPanel />
+      <RegistrerNarmesteLederRelasjon />
+    </VStack>
   );
 }

@@ -30,7 +30,7 @@ export default function RegistrerNarmesteLederRelasjon() {
   });
 
   return (
-    <VStack gap="6" className="w-full max-w-md">
+    <VStack gap="space-24" className="w-full max-w-md">
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -39,15 +39,15 @@ export default function RegistrerNarmesteLederRelasjon() {
         }}
       >
         <form.AppForm>
-          <VStack gap="6">
-            <VStack gap="4">
+          <VStack gap="space-24">
+            <VStack gap="space-16">
               <Heading size="medium" level="2">
                 Sykmeldt
               </Heading>
               <SykmeldtGroup form={form} fields="sykmeldt" />
             </VStack>
 
-            <VStack gap="4">
+            <VStack gap="space-16">
               <Heading size="medium" level="2">
                 Nærmeste leder
               </Heading>

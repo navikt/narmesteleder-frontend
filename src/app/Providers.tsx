@@ -1,6 +1,7 @@
 "use client";
 
 import { PropsWithChildren } from "react";
+import { Theme } from "@navikt/ds-react/Theme";
 import { configureLogger } from "@navikt/next-logger";
 import { BASE_PATH } from "../../next.config";
 
@@ -9,5 +10,5 @@ configureLogger({
 });
 
 export default function Providers({ children }: PropsWithChildren) {
-  return children;
+  return <Theme>{children}</Theme>;
 }

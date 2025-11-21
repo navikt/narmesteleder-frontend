@@ -2,7 +2,7 @@ import React from "react";
 import { BugIcon } from "@navikt/aksel-icons";
 import {
   BodyShort,
-  Box,
+  BoxNew,
   Button,
   Heading,
   Link,
@@ -14,9 +14,9 @@ import { PageBlock } from "@navikt/ds-react/Page";
 
 const NotFound = async () => (
   <PageBlock as="main" width="xl" gutters>
-    <Box paddingBlock="20 16" data-aksel-template="404-v2">
-      <VStack gap="16">
-        <VStack gap="12" align="start">
+    <BoxNew paddingBlock="space-80 space-64" data-aksel-template="404-v2">
+      <VStack gap="space-64">
+        <VStack gap="space-48" align="start">
           <div>
             <Heading level="1" size="large" spacing>
               Beklager, vi fant ikke siden
@@ -52,7 +52,7 @@ const NotFound = async () => (
           </BodyShort>
         </div>
       </VStack>
-    </Box>
+    </BoxNew>
   </PageBlock>
 );
 
