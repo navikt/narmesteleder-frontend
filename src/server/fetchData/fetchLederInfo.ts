@@ -1,5 +1,7 @@
 import "server-only";
 import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
+import { getServerEnv } from "@/env-variables/serverEnv";
+import { mockLineManagerRequirement } from "@/mocks/data/mockLineManagerRequirement";
 import {
   LineManagerReadResponse,
   lineManagerReadSchema,
@@ -7,7 +9,10 @@ import {
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
-import { getLineManagerRequirementPath } from "../apiPaths";
+import { mockable } from "@/utils/mockable";
+
+const getLineManagerRequirementPath = (id: string) =>
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`;
 
 const mapToLederInfo = (
   sykmeldtInfoResponse: LineManagerReadResponse,
@@ -49,7 +54,7 @@ export type LederInfo = {
   sykmeldt: Navn;
 };
 
-export const fetchLederInfo = async (
+const realFetchLederInfo = async (
   requirementId: string,
 ): Promise<LederInfo> => {
   const result = await tokenXFetchGet({
@@ -60,3 +65,12 @@ export const fetchLederInfo = async (
   });
   return mapToLederInfo(result);
 };
+
+const fakeFetchLederInfo = async (): Promise<LederInfo> => {
+  return mapToLederInfo(mockLineManagerRequirement);
+};
+
+export const fetchLederInfo = mockable({
+  real: realFetchLederInfo,
+  mock: fakeFetchLederInfo,
+});

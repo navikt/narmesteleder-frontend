@@ -1,6 +1,7 @@
 "use server";
 
 import "server-only";
+import { getServerEnv } from "@/env-variables/serverEnv";
 import { toLineManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
   NarmesteLederInfo,
@@ -9,9 +10,12 @@ import {
 import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchUpdate } from "@/server/tokenXFetch";
-import { getLineManagerPostPath } from "../apiPaths";
+import { mockable } from "@/utils/mockable";
 
-export const opprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
+const getLineManagerPostPath = () =>
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`;
+
+const realOpprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
   withActionResult(async () => {
     narmesteLederInfoSchema.parse(narmesteLeder);
 
@@ -22,3 +26,13 @@ export const opprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
       requestBody: toLineManagerRequest(narmesteLeder),
     });
   });
+
+const fakeOpprettNarmesteLeder = async () =>
+  withActionResult(async () => {
+    return;
+  });
+
+export const opprettNarmesteLeder = mockable({
+  real: realOpprettNarmesteLeder,
+  mock: fakeOpprettNarmesteLeder,
+});
