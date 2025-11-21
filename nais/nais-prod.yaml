@@ -1,0 +1,67 @@
+apiVersion: 'nais.io/v1alpha1'
+kind: 'Application'
+metadata:
+  name: narmesteleder-frontend
+  namespace: team-esyfo
+  labels:
+    team: team-esyfo
+spec:
+  image: {{image}}
+  replicas:
+    min: 2
+    max: 4
+    cpuThresholdPercentage: 90
+  port: 3000
+  tokenx:
+    enabled: true
+  idporten:
+    enabled: true
+    sidecar:
+      enabled: true
+      autoLogin: true
+      level: Level4
+      autoLoginIgnorePaths:
+        - /arbeidsgiver/ansatte/narmesteleder/api/internal/isAlive
+        - /arbeidsgiver/ansatte/narmesteleder/api/internal/isReady
+  liveness:
+    path: /arbeidsgiver/ansatte/narmesteleder/api/internal/isAlive
+    initialDelay: 20
+    timeout: 5
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: /arbeidsgiver/ansatte/narmesteleder/api/internal/isReady
+    initialDelay: 20
+    periodSeconds: 5
+    timeout: 5
+  prometheus:
+    enabled: true
+    path: actuator/metrics
+  observability:
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
+    autoInstrumentation:
+      enabled: true
+      runtime: nodejs
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  ingresses:
+    - 'https://www.nav.no/arbeidsgiver/ansatte/narmesteleder'
+  env:
+    - name: NARMESTELEDER_BACKEND_HOST
+      value: http://esyfo-narmesteleder
+    - name: NARMESTELEDER_BACKEND_CLIENT_ID
+      value: "prod-gcp:team-esyfo:esyfo-narmesteleder"
+  accessPolicy:
+    outbound:
+      rules:
+        - application: nav-dekoratoren
+          namespace: personbruker
+        - application: esyfo-narmesteleder
