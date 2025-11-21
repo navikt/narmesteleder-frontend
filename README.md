@@ -14,6 +14,12 @@
 
 Denne appen brukes til å registrere nærmeste leder for en sykmeldt person. Den tilbyr to hovedfunksjoner.
 
+```mermaid
+graph TD
+    Dialogporten[Dialogporten] -->|"/arbeidsgiver/ansatte/narmesteleder/{behovid}"| App[Nærmeste leder frontend]
+    MinSide[Min side - arbeidsgiver] -->|"/arbeidsgiver/ansatte/narmesteleder"| App
+```
+
 ### Registrering via tomt skjema
 
 Brukeren fyller ut informasjon om både den sykmeldte personen og nærmeste leder.
