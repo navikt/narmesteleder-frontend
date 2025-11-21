@@ -1,4 +1,4 @@
-import { HStack, Page, VStack } from "@navikt/ds-react";
+import { HStack, VStack } from "@navikt/ds-react";
 import { ExitButton } from "@/components/ExitButton";
 import { HeadingLeder } from "@/components/HeadingLeder";
 import { LederInfoDescription } from "@/components/LederInfoDescription";
@@ -7,16 +7,14 @@ import ThankYouAlert from "@/components/ThankYouAlert";
 
 export function LederSubmitView() {
   return (
-    <Page>
+    <VStack gap="space-32">
       <HeadingLeder />
-      <VStack gap="space-32">
-        <ThankYouAlert />
-        <LederInfoDescription />
-        <LederSummary />
-        <HStack>
-          <ExitButton />
-        </HStack>
-      </VStack>
-    </Page>
+      <ThankYouAlert />
+      <LederInfoDescription />
+      <LederSummary />
+      <HStack>
+        <ExitButton />
+      </HStack>
+    </VStack>
   );
 }
