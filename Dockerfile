@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/nodejs24-debian12@sha256:ac05a8febf24b547f09068149fcd6a071f69629cb2148b6f707a157e7f4c6306 AS runtime
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:24-slim
 
 WORKDIR /app
 
