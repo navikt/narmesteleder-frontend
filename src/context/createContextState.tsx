@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useState } from "react";
+import { ComponentType, createContext, useContext, useState } from "react";
 
 export type ViewMode = "editing" | "submitted";
 
@@ -15,7 +15,22 @@ export function createContextState<T, P extends object = object>(
 
   const Context = createContext<ContextType | undefined>(undefined);
 
-  function Provider(props: { children: ReactNode } & P) {
+  function useContextState() {
+    const context = useContext(Context);
+    if (!context) {
+      throw new Error("useContextState must be used within its Provider");
+    }
+    return context;
+  }
+
+  function ViewControl({
+    EditView,
+    SubmitView,
+    ...props
+  }: {
+    EditView: ComponentType;
+    SubmitView: ComponentType;
+  } & P) {
     const [state, setState] = useState<{
       mode: ViewMode;
       submittedData: T;
@@ -32,6 +47,8 @@ export function createContextState<T, P extends object = object>(
       setState({ mode: "editing", submittedData: state.submittedData });
     };
 
+    const CurrentView = state.mode === "editing" ? EditView : SubmitView;
+
     return (
       <Context.Provider
         value={
@@ -44,18 +61,10 @@ export function createContextState<T, P extends object = object>(
           } as ContextType
         }
       >
-        {props.children}
+        <CurrentView />
       </Context.Provider>
     );
   }
 
-  function useContextState() {
-    const context = useContext(Context);
-    if (!context) {
-      throw new Error("useContextState must be used within its Provider");
-    }
-    return context;
-  }
-
-  return { Provider, useContextState };
+  return { ViewControl, useContextState };
 }

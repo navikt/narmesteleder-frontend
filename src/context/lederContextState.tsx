@@ -3,8 +3,8 @@ import { LederInfo } from "@/server/fetchData/fetchLederInfo";
 import { createContextState } from "./createContextState";
 
 export const {
-  Provider: LederProvider,
   useContextState: useLederContextState,
+  ViewControl: LederViewControl,
 } = createContextState<Leder, { lederInfo: LederInfo; behovId: string }>(
   lederDefaults,
   (props: { lederInfo: LederInfo; behovId: string }) => ({
