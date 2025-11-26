@@ -12,7 +12,7 @@
 
 ## Purpose of the app
 
-This app is used to register a **nærmesteleder** for a person on sick leave. It offers two main functions.
+This app is used to register a **line manager** (nærmesteleder) for a person on sick leave. It offers two main functions.
 
 ```mermaid
 graph TD
@@ -22,13 +22,13 @@ graph TD
 
 ### Registration via empty form
 
-The entry point to the empty form is the app `Min side - arbeidsgiver`. The user fills out information about both the person on sick leave and the **nærmesteleder**.
+The entry point to the empty form is the app `Min side - arbeidsgiver`. The user fills out information about both the person on sick leave and **line manager** (nærmesteleder).
 
 **Base path** `/arbeidsgiver/ansatte/narmesteleder`
 
 ### Registration via pre-filled form
 
-The entry point to the pre-filled form is the platform `Dialogporten`. The user is presented with a specific person on sick leave who is missing a **nærmesteleder**, and can register or update the **nærmesteleder**.
+The entry point to the pre-filled form is the platform `Dialogporten`. The user is presented with a specific person on sick leave who is missing a **line manager** (nærmesteleder) and can register or update the **line manager** (nærmesteleder).
 
 **Base path** `/arbeidsgiver/ansatte/narmesteleder/{behovid}`
 
