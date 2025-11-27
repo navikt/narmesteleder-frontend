@@ -1,4 +1,4 @@
-# Nærmeste leder frontend
+# Nærmesteleder frontend app
 
 [![Build Status](https://github.com/navikt/narmesteleder-frontend/actions/workflows/build-and-deploy.yaml/badge.svg)](https://github.com/navikt/narmesteleder-frontend/actions/workflows/build-and-deploy.yaml)
 
@@ -8,11 +8,11 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
 
-**Viktig:** For å komme i gang med bygg og utvikling, les vår [dokumentasjon for Next.js-apper](https://github.com/navikt/syfodok/tree/master/eSYFO/content/technology-stack/next-js).
+**Important:** To get started with building and running the app, read our [wiki for Next.js apps](https://github.com/navikt/esyfo-dev-tools/wiki/nextjs-build-run).
 
-## Appens formål
+## Purpose of the app
 
-Denne appen brukes til å registrere nærmeste leder for en sykmeldt person. Den tilbyr to hovedfunksjoner.
+This app is used to register a **line manager** (nærmeste leder) for a person on sick leave. It offers two main functions.
 
 ```mermaid
 graph TD
@@ -20,23 +20,23 @@ graph TD
     MinSide[Min side - arbeidsgiver] -->|"/arbeidsgiver/ansatte/narmesteleder"| App
 ```
 
-### Registrering via tomt skjema
+### Registration via empty form
 
-Brukeren fyller ut informasjon om både den sykmeldte personen og nærmeste leder.
+The entry point to the empty form is the app `Min side - arbeidsgiver`. The user fills out information about both the person on sick leave and **line manager** (nærmeste leder).
 
 **Base path** `/arbeidsgiver/ansatte/narmesteleder`
 
-### Registrering via forhåndsutfylt skjema
+### Registration via pre-filled form
 
-Brukeren får opp en spesifikk sykmeldt person som mangler nærmeste leder, og kan registrere eller oppdatere nærmeste leder.
+The entry point to the pre-filled form is the platform `Dialogporten`. The user is presented with a specific person on sick leave who is missing a **line manager** (nærmeste leder) and can register or update the **line manager** (nærmeste leder).
 
 **Base path** `/arbeidsgiver/ansatte/narmesteleder/{behovid}`
 
-## Backend-API
+## Backend API
 
-Frontend-appen kommuniserer med [Nærmeste leder backend](https://github.com/navikt/esyfo-narmesteleder).
+The frontend app communicates with [Nærmesteleder backend](https://github.com/navikt/esyfo-narmesteleder).
 
-Brukte endepunkter
+Used endpoints
 
 - **GET** `/api/v1/linemanager/requirement/{id}`
 - **POST** `/api/v1/linemanager`
