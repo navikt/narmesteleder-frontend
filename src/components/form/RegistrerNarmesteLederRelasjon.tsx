@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { revalidateLogic } from "@tanstack/react-form";
 import { HStack, Heading, VStack } from "@navikt/ds-react";
-import ErrorAlert from "@/components/form/ErrorAlert";
+import ErrorAlert from "@/components/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
 import { useAppForm } from "@/components/form/hooks/form";
