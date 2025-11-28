@@ -11,6 +11,10 @@ updates:
     directory: '/'
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
+      exclude:
+        - 'navikt/teamesyfo-github-actions-workflows'
 
   - package-ecosystem: npm
     directory: '/'
@@ -18,10 +22,12 @@ updates:
       interval: daily
       time: '14:30'
       timezone: Europe/Oslo
+    cooldown:
+      default-days: 7
+      exclude:
+        - '@navikt/*'
     open-pull-requests-limit: 20
     registries: '*'
-    reviewers:
-      - ''
     groups:
       aksel-dependencies:
         patterns:
