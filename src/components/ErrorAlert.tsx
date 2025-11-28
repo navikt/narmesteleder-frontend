@@ -1,14 +1,16 @@
-import { Alert, Heading } from "@navikt/ds-react";
+import { LocalAlert } from "@navikt/ds-react";
 
 export default function ErrorAlert() {
   return (
-    <>
-      <Alert className="mb-space-8 max-w-2xl" variant="error" role="alert">
-        <Heading size="small" level="2">
+    <LocalAlert status="error">
+      <LocalAlert.Header>
+        <LocalAlert.Title>
           Beklager! Det har oppstått en uventet feil
-        </Heading>
+        </LocalAlert.Title>
+      </LocalAlert.Header>
+      <LocalAlert.Content>
         Vi klarte ikke å sende inn svarene dine. Prøv igjen om litt.
-      </Alert>
-    </>
+      </LocalAlert.Content>
+    </LocalAlert>
   );
 }
