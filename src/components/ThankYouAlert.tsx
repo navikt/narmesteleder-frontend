@@ -1,11 +1,14 @@
-import { Alert, Heading } from "@navikt/ds-react";
+import { LocalAlert } from "@navikt/ds-react";
 
 export default function ThankYouAlert() {
   return (
-    <Alert variant="success">
-      <Heading size="small" level="2">
+    <LocalAlert status="success">
+      <LocalAlert.Header>
+        <LocalAlert.Title>Nærmeste leder er registrert</LocalAlert.Title>
+      </LocalAlert.Header>
+      <LocalAlert.Content>
         Takk, du har sendt inn svarene dine til Nav.
-      </Heading>
-    </Alert>
+      </LocalAlert.Content>
+    </LocalAlert>
   );
 }
