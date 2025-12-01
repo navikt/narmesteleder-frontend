@@ -1,16 +1,6 @@
-import { BugIcon } from "@navikt/aksel-icons";
-import {
-  BodyShort,
-  BoxNew,
-  Button,
-  Heading,
-  Link,
-  List,
-  VStack,
-} from "@navikt/ds-react";
-import { ListItem } from "@navikt/ds-react/List";
+import { BodyShort, BoxNew, Heading, VStack } from "@navikt/ds-react";
 import { PageBlock } from "@navikt/ds-react/Page";
-import { publicEnv } from "@/env-variables/publicEnv";
+import { ButtonMinSideArbeidsgiver } from "@/components/ButtonMinSideArbeidsgiver";
 
 const NotFound = async () => (
   <PageBlock as="main" width="xl" gutters>
@@ -26,13 +16,7 @@ const NotFound = async () => (
               lenken.
             </BodyShort>
           </div>
-          <Button
-            as="a"
-            href={publicEnv.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL}
-            variant="primary"
-          >
-            Gå til Min side arbeidsgiver
-          </Button>
+          <ButtonMinSideArbeidsgiver />
         </VStack>
 
         <VStack gap="space-24" align="start">
@@ -40,13 +24,7 @@ const NotFound = async () => (
             Page not found
           </Heading>
           <BodyShort spacing>The page you requested cannot be found.</BodyShort>
-          <Button
-            as="a"
-            href={publicEnv.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL}
-            variant="primary"
-          >
-            Go to page Min side arbeidsgiver
-          </Button>
+          <ButtonMinSideArbeidsgiver text="Go to employer page" />
         </VStack>
       </VStack>
     </BoxNew>
