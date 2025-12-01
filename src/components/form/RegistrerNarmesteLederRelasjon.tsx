@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { revalidateLogic } from "@tanstack/react-form";
-import { HStack, Heading, VStack } from "@navikt/ds-react";
+import { BoxNew, HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
@@ -30,7 +30,7 @@ export default function RegistrerNarmesteLederRelasjon() {
   });
 
   return (
-    <VStack gap="space-24" className="w-full max-w-md">
+    <VStack gap="space-24">
       <form
         onSubmit={async (e) => {
           e.preventDefault();
@@ -40,19 +40,30 @@ export default function RegistrerNarmesteLederRelasjon() {
       >
         <form.AppForm>
           <VStack gap="space-32">
-            <VStack gap="space-16">
-              <Heading size="medium" level="2">
-                Sykmeldt
-              </Heading>
-              <SykmeldtGroup form={form} fields="sykmeldt" />
-            </VStack>
-
-            <VStack gap="space-16">
-              <Heading size="medium" level="2">
-                Nærmeste leder
-              </Heading>
-              <LederGroup form={form} fields="leder" />
-            </VStack>
+            <BoxNew
+              padding="space-16"
+              background="accent-soft"
+              borderRadius="8"
+            >
+              <VStack gap="space-24" className="w-full max-w-md">
+                <Heading size="medium" level="2">
+                  Sykmeldt
+                </Heading>
+                <SykmeldtGroup form={form} fields="sykmeldt" />
+              </VStack>
+            </BoxNew>
+            <BoxNew
+              padding="space-16"
+              background="accent-soft"
+              borderRadius="8"
+            >
+              <VStack gap="space-24" className="w-full max-w-md">
+                <Heading size="medium" level="2">
+                  Nærmeste leder
+                </Heading>
+                <LederGroup form={form} fields="leder" />
+              </VStack>
+            </BoxNew>
             {actionError && <ErrorAlert />}
             <HStack className="mt-0">
               <form.BoundSubmitButton label="Send inn" />
