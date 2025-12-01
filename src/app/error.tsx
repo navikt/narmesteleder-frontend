@@ -4,7 +4,6 @@ import React, { ReactElement, useEffect } from "react";
 import {
   BodyShort,
   BoxNew,
-  Button,
   HGrid,
   Heading,
   Link,
@@ -13,6 +12,7 @@ import {
   VStack,
 } from "@navikt/ds-react";
 import { logger } from "@navikt/next-logger";
+import { ButtonMinSideArbeidsgiver } from "@/components/ButtonMinSideArbeidsgiver";
 import { CONTACT_NAV_URL } from "@/constants";
 
 type Props = {
@@ -69,7 +69,7 @@ export default function Error({ error }: Props): ReactElement {
                 </BodyShort>
               </div>
 
-              <Button>Gå til Min side</Button>
+              <ButtonMinSideArbeidsgiver />
             </VStack>
 
             <div>
