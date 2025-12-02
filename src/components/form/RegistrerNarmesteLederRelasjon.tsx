@@ -46,7 +46,7 @@ export default function RegistrerNarmesteLederRelasjon() {
               borderRadius="8"
             >
               <VStack gap="space-24" className="w-full max-w-md">
-                <Heading size="medium" level="2">
+                <Heading className="mt-2" size="medium" level="2">
                   Sykmeldt
                 </Heading>
                 <SykmeldtGroup form={form} fields="sykmeldt" />
@@ -58,7 +58,7 @@ export default function RegistrerNarmesteLederRelasjon() {
               borderRadius="8"
             >
               <VStack gap="space-24" className="w-full max-w-md">
-                <Heading size="medium" level="2">
+                <Heading className="mt-2" size="medium" level="2">
                   Nærmeste leder
                 </Heading>
                 <LederGroup form={form} fields="leder" />
