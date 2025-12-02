@@ -29,6 +29,7 @@ export const FnrSchema = string()
 
 export const narmesteLederFormSchema = object({
   fodselsnummer: FnrSchema,
+  etternavn: string().trim().nonempty(requireFieldErrorMessage),
   mobilnummer: string()
     .trim()
     .nonempty(requireFieldErrorMessage)
@@ -40,6 +41,7 @@ export type NarmesteLederForm = z.infer<typeof narmesteLederFormSchema>;
 
 export const sykmeldtFormSchema = object({
   fodselsnummer: FnrSchema,
+  etternavn: string().trim().nonempty(requireFieldErrorMessage),
   orgnummer: string()
     .trim()
     .nonempty(requireFieldErrorMessage)
@@ -57,11 +59,13 @@ export type NarmesteLederInfo = z.infer<typeof narmesteLederInfoSchema>;
 
 export const sykmeldtFormDefaults: SykmeldtForm = {
   fodselsnummer: "",
+  etternavn: "",
   orgnummer: "",
 } satisfies SykmeldtForm;
 
 export const narmesteLederFormDefaults: NarmesteLederForm = {
   fodselsnummer: "",
+  etternavn: "",
   mobilnummer: "",
   epost: "",
 } satisfies NarmesteLederForm;

@@ -14,6 +14,9 @@ export const LederGroup = withFieldGroup({
             />
           )}
         </group.AppField>
+        <group.AppField name="etternavn">
+          {(field) => <field.TextInputField label="Etternavn" />}
+        </group.AppField>
         <group.AppField name="epost">
           {(field) => <field.TextInputField label="E-post" type="email" />}
         </group.AppField>
