@@ -62,7 +62,7 @@ export default function RegistrerNarmesteLederRelasjon() {
                 <LederGroup form={form} fields="leder" />
               </VStack>
             </BoxNew>
-            {error && <ErrorAlert detail={error} />}
+            {error && <ErrorAlert>{error}</ErrorAlert>}
             <HStack className="mt-0">
               <form.BoundSubmitButton label="Send inn" />
             </HStack>

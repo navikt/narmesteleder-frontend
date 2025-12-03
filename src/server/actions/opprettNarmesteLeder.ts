@@ -14,7 +14,7 @@ import {
   tokenXFetchUpdate,
 } from "@/server/tokenXFetch";
 import { mockable } from "@/utils/mockable";
-import { NARMESTE_LEDER_FALLBACK_ERROR_DETAIL } from "../narmesteLederErrorUtils";
+import { NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE } from "../narmesteLederErrors";
 
 const getLineManagerPostPath = () =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`;
@@ -22,11 +22,12 @@ const getLineManagerPostPath = () =>
 const realOpprettNarmesteLeder = async (
   narmesteLeder: NarmesteLederInfo,
 ): Promise<TokenXFetchUpdateResult> => {
+  logger.info(narmesteLeder);
   const validationResult = narmesteLederInfoSchema.safeParse(narmesteLeder);
   if (!validationResult.success) {
     return {
       success: false,
-      errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+      translatedErrorMessage: NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
     };
   }
 

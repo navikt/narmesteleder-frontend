@@ -44,7 +44,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
             <LederGroup form={form} fields="leder" />
           </VStack>
         </form.AppForm>
-        {error && <ErrorAlert detail={error} />}
+        {error && <ErrorAlert>{error}</ErrorAlert>}
         <HStack className="mt-0">
           <form.AppForm>
             <form.BoundSubmitButton label="Send inn" />

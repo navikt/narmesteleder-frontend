@@ -1,5 +1,6 @@
 "use server";
 
+import { logger } from "@navikt/next-logger";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
@@ -13,7 +14,7 @@ import {
   tokenXFetchUpdate,
 } from "@/server/tokenXFetch";
 import { mockable } from "@/utils/mockable";
-import { NARMESTE_LEDER_FALLBACK_ERROR_DETAIL } from "../narmesteLederErrorUtils";
+import { NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE } from "../narmesteLederErrors";
 
 const getLineManagerPutPath = (requirementId: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${requirementId}`;
@@ -28,9 +29,10 @@ const realOppdaterNarmesteLeder = async (
   if (!validatedRequirementId.success || !validatedForm.success) {
     return {
       success: false,
-      errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+      translatedErrorMessage: NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
     };
   }
+  logger.info(toManagerRequest(validatedForm.data));
   return await tokenXFetchUpdate({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
     endpoint: getLineManagerPutPath(validatedRequirementId.data),

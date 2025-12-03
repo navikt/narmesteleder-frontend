@@ -7,11 +7,7 @@ import {
   validateTokenAndGetTokenXOrRedirect,
 } from "@/utils/tokenX";
 import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
-import {
-  ErrorDetail,
-  toFrontendError,
-  toFrontendErrorResponse,
-} from "./narmesteLederErrorUtils";
+import { toFrontendError } from "./narmesteLederErrors";
 
 const readJsonBody = async (
   response: Response,
@@ -85,7 +81,7 @@ export type TokenXFetchUpdateResult =
   | { success: true }
   | {
       success: false;
-      errorDetail: ErrorDetail;
+      translatedErrorMessage: string;
     };
 
 export async function tokenXFetchUpdate({
@@ -119,14 +115,14 @@ export async function tokenXFetchUpdate({
     );
   }
 
-  const frontendErrorResponse = await toFrontendErrorResponse(response);
+  const frontendError = await toFrontendError(response);
 
   logger.error(
-    `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendErrorResponse?.type}`,
+    `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendError?.type}`,
   );
 
   return {
     success: false,
-    errorDetail: frontendErrorResponse.errorDetail,
+    translatedErrorMessage: frontendError.translatedMessage,
   };
 }

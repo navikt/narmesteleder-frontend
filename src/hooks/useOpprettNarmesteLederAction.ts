@@ -1,42 +1,52 @@
 import { startTransition, useActionState } from "react";
 import { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
-import { ErrorDetail } from "@/server/narmesteLederErrorUtils";
 
-const initialState = { error: null as ErrorDetail | null };
+type OpprettState = {
+  error: string | null;
+};
 
-const action = async (
-  _prev: typeof initialState,
-  {
-    values,
-    onSuccess,
-    onSettled,
-  }: {
-    values: NarmesteLederInfo;
-    onSuccess?: () => void;
-    onSettled?: (state: typeof initialState) => void;
-  },
-) => {
-  const result = await opprettNarmesteLeder(values);
-  const nextState = { error: result.success ? null : result.errorDetail };
-  if (result.success) onSuccess?.();
-  onSettled?.(nextState);
+type OpprettInput = {
+  values: NarmesteLederInfo;
+  onSuccess?: () => void;
+  onSettled?: (state: OpprettState) => void;
+};
+
+const initialOpprettState: OpprettState = { error: null };
+
+const innerOpprettAction = async (
+  _previousState: OpprettState,
+  action: OpprettInput,
+): Promise<OpprettState> => {
+  const result = await opprettNarmesteLeder(action.values);
+
+  let nextState: OpprettState;
+
+  if (result.success) {
+    action.onSuccess?.();
+    nextState = { error: null };
+  } else {
+    nextState = { error: result.translatedErrorMessage };
+  }
+
+  action.onSettled?.(nextState);
   return nextState;
 };
 
 export const useOpprettNarmesteLederAction = () => {
-  const [{ error }, runAction, isPending] = useActionState(
-    action,
-    initialState,
+  const [{ error }, opprettAction, isPending] = useActionState(
+    innerOpprettAction,
+    initialOpprettState,
   );
 
   const startOpprettNarmesteLeder = (
     values: NarmesteLederInfo,
     options?: { onSuccess?: () => void },
-  ) =>
+  ): Promise<OpprettState> =>
+    // Provide a promise so forms can keep `isSubmitting` in sync with the action lifecycle.
     new Promise((resolve) => {
       startTransition(() =>
-        runAction({
+        opprettAction({
           values,
           onSuccess: options?.onSuccess,
           onSettled: resolve,
@@ -44,5 +54,9 @@ export const useOpprettNarmesteLederAction = () => {
       );
     });
 
-  return { startOpprettNarmesteLeder, isPending, error } as const;
+  return {
+    startOpprettNarmesteLeder,
+    isPending,
+    error,
+  } as const;
 };
