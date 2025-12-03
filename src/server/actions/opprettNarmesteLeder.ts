@@ -1,36 +1,48 @@
 "use server";
 
 import "server-only";
+import { logger } from "@navikt/next-logger";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toLineManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
   NarmesteLederInfo,
   narmesteLederInfoSchema,
 } from "@/schemas/nærmestelederFormSchema";
-import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
-import { tokenXFetchUpdate } from "@/server/tokenXFetch";
+import {
+  TokenXFetchUpdateResult,
+  tokenXFetchUpdate,
+} from "@/server/tokenXFetch";
 import { mockable } from "@/utils/mockable";
+import { NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE } from "../narmesteLederErrors";
 
 const getLineManagerPostPath = () =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager`;
 
-const realOpprettNarmesteLeder = async (narmesteLeder: NarmesteLederInfo) =>
-  withActionResult(async () => {
-    narmesteLederInfoSchema.parse(narmesteLeder);
+const realOpprettNarmesteLeder = async (
+  narmesteLeder: NarmesteLederInfo,
+): Promise<TokenXFetchUpdateResult> => {
+  logger.info(narmesteLeder);
+  const validationResult = narmesteLederInfoSchema.safeParse(narmesteLeder);
+  if (!validationResult.success) {
+    return {
+      success: false,
+      translatedErrorMessage: NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
+    };
+  }
 
-    await tokenXFetchUpdate({
-      targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      endpoint: getLineManagerPostPath(),
-      method: "POST",
-      requestBody: toLineManagerRequest(narmesteLeder),
-    });
+  return tokenXFetchUpdate({
+    targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+    endpoint: getLineManagerPostPath(),
+    requestBody: toLineManagerRequest(validationResult.data),
+    method: "POST",
   });
+};
 
-const fakeOpprettNarmesteLeder = async () =>
-  withActionResult(async () => {
-    return;
-  });
+const fakeOpprettNarmesteLeder = async (): Promise<TokenXFetchUpdateResult> => {
+  await new Promise((resolve) => setTimeout(resolve, 600));
+  return { success: true };
+};
 
 export const opprettNarmesteLeder = mockable({
   real: realOpprettNarmesteLeder,

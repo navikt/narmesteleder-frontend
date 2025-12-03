@@ -1,5 +1,6 @@
 "use server";
 
+import { logger } from "@navikt/next-logger";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
@@ -7,10 +8,13 @@ import {
   narmesteLederFormSchema,
 } from "@/schemas/nærmestelederFormSchema";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
-import { withActionResult } from "@/server/actions/ActionResult";
 import { TokenXTargetApi } from "@/server/helpers";
-import { tokenXFetchUpdate } from "@/server/tokenXFetch";
+import {
+  TokenXFetchUpdateResult,
+  tokenXFetchUpdate,
+} from "@/server/tokenXFetch";
 import { mockable } from "@/utils/mockable";
+import { NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE } from "../narmesteLederErrors";
 
 const getLineManagerPutPath = (requirementId: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${requirementId}`;
@@ -18,23 +22,30 @@ const getLineManagerPutPath = (requirementId: string) =>
 const realOppdaterNarmesteLeder = async (
   requirementId: string,
   narmesteLeder: NarmesteLederForm,
-) =>
-  withActionResult(async () => {
-    narmesteLederFormSchema.parse(narmesteLeder);
-    requirementIdSchema.parse(requirementId);
+): Promise<TokenXFetchUpdateResult> => {
+  const validatedRequirementId = requirementIdSchema.safeParse(requirementId);
+  const validatedForm = narmesteLederFormSchema.safeParse(narmesteLeder);
 
-    return await tokenXFetchUpdate({
-      targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      endpoint: getLineManagerPutPath(requirementId),
-      method: "PUT",
-      requestBody: toManagerRequest(narmesteLeder),
-    });
+  if (!validatedRequirementId.success || !validatedForm.success) {
+    return {
+      success: false,
+      translatedErrorMessage: NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
+    };
+  }
+  logger.info(toManagerRequest(validatedForm.data));
+  return await tokenXFetchUpdate({
+    targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+    endpoint: getLineManagerPutPath(validatedRequirementId.data),
+    requestBody: toManagerRequest(validatedForm.data),
+    method: "PUT",
   });
+};
 
-const fakeOppdaterNarmesteLeder = async () =>
-  withActionResult(async () => {
-    return;
-  });
+const fakeOppdaterNarmesteLeder =
+  async (): Promise<TokenXFetchUpdateResult> => {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    return { success: true };
+  };
 
 export const oppdaterNarmesteLeder = mockable({
   real: realOppdaterNarmesteLeder,

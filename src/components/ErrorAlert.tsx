@@ -1,6 +1,11 @@
+import { type ReactNode } from "react";
 import { LocalAlert } from "@navikt/ds-react";
 
-export default function ErrorAlert() {
+type ErrorAlertProps = {
+  children?: ReactNode;
+};
+
+export default function ErrorAlert({ children }: ErrorAlertProps) {
   return (
     <LocalAlert status="error">
       <LocalAlert.Header>
@@ -9,7 +14,8 @@ export default function ErrorAlert() {
         </LocalAlert.Title>
       </LocalAlert.Header>
       <LocalAlert.Content>
-        Vi klarte ikke å sende inn svarene dine. Prøv igjen om litt.
+        {children ??
+          "Vi klarte ikke å sende inn svarene dine. Prøv igjen om litt."}
       </LocalAlert.Content>
     </LocalAlert>
   );
