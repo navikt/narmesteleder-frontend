@@ -1,31 +1,29 @@
 "use client";
 
-import { useState } from "react";
 import { revalidateLogic } from "@tanstack/react-form";
 import { HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { useAppForm } from "@/components/form/hooks/form";
 import { useLederContextState } from "@/context/lederContextState";
+import { useOppdaterNarmesteLederAction } from "@/hooks/useOppdaterNarmesteLederAction";
 import { lederSchema } from "@/schemas/nærmestelederFormSchema";
-import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 
 export default function OppgiNarmesteLederForSykmeldt() {
-  const [actionError, setActionError] = useState(false);
   const { submittedData, handleSuccess, behovId } = useLederContextState();
+  const { error: error, startOppdaterNarmesteLeder } =
+    useOppdaterNarmesteLederAction();
 
   const form = useAppForm({
     defaultValues: submittedData,
     validationLogic: revalidateLogic(),
     validators: { onDynamic: lederSchema },
-    onSubmit: async ({ value }) => {
-      const actionResult = await oppdaterNarmesteLeder(behovId, value.leder);
-      if (!actionResult.success) {
-        setActionError(true);
-      } else {
-        handleSuccess(value);
-      }
-    },
+    onSubmit: ({ value }) =>
+      startOppdaterNarmesteLeder(behovId, value.leder, {
+        onSuccess() {
+          handleSuccess(value);
+        },
+      }),
   });
 
   return (
@@ -46,7 +44,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
             <LederGroup form={form} fields="leder" />
           </VStack>
         </form.AppForm>
-        {actionError && <ErrorAlert />}
+        {error && <ErrorAlert>{error}</ErrorAlert>}
         <HStack className="mt-0">
           <form.AppForm>
             <form.BoundSubmitButton label="Send inn" />

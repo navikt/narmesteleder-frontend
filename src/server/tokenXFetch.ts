@@ -1,11 +1,13 @@
 import "server-only";
 import z from "zod";
+import { logger } from "@navikt/next-logger";
 import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
 } from "@/utils/tokenX";
 import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
+import { toFrontendError } from "./narmesteLederErrors";
 
 async function logFailedFetchAndThrowError(
   response: Response,
@@ -64,6 +66,13 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   }
 }
 
+export type TokenXFetchUpdateResult =
+  | { success: true }
+  | {
+      success: false;
+      translatedErrorMessage: string;
+    };
+
 export async function tokenXFetchUpdate({
   targetApi,
   endpoint,
@@ -74,18 +83,35 @@ export async function tokenXFetchUpdate({
   endpoint: string;
   requestBody: unknown;
   method?: "POST" | "PUT" | "DELETE";
-}) {
+}): Promise<TokenXFetchUpdateResult> {
   const oboToken = await validateTokenAndGetTokenX(targetApi);
 
-  const response = await fetch(endpoint, {
-    method,
-    body: JSON.stringify(requestBody),
-    headers: getBackendRequestHeaders(oboToken),
-  });
-
-  if (!response.ok) {
-    await logFailedFetchAndThrowError(response, endpoint, method);
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      method,
+      body: JSON.stringify(requestBody),
+      headers: getBackendRequestHeaders(oboToken),
+    });
+    if (response.ok) {
+      return { success: true };
+    }
+  } catch (error) {
+    logErrorMessageAndThrowError(
+      `Fetch failed: method=${method} endpoint=${endpoint} - network error: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
   }
 
-  return true;
+  const frontendError = await toFrontendError(response);
+
+  logger.error(
+    `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendError?.type}`,
+  );
+
+  return {
+    success: false,
+    translatedErrorMessage: frontendError.translatedMessage,
+  };
 }
