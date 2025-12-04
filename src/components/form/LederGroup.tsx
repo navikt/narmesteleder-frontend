@@ -9,8 +9,8 @@ export const LederGroup = withFieldGroup({
         <group.AppField name="fodselsnummer">
           {(field) => (
             <field.TextInputField
-              label="Fødselsnummer (11 sifre)"
-              className="w-60"
+              label="Fødselsnummer (11 siffer)"
+              className="w-66"
             />
           )}
         </group.AppField>
@@ -23,7 +23,7 @@ export const LederGroup = withFieldGroup({
         <group.AppField name="mobilnummer">
           {(field) => (
             <field.TextInputField
-              label="Mobilnummer (8 sifre)"
+              label="Mobilnummer (8 siffer)"
               type="tel"
               className="w-48"
             />
