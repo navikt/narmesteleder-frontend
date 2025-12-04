@@ -14,6 +14,9 @@ export const SykmeldtGroup = withFieldGroup({
             />
           )}
         </group.AppField>
+        <group.AppField name="etternavn">
+          {(field) => <field.TextInputField label="Etternavn" />}
+        </group.AppField>
         <group.AppField name="orgnummer">
           {(field) => (
             <field.TextInputField
