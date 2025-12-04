@@ -7,7 +7,7 @@ import {
   validateTokenAndGetTokenXOrRedirect,
 } from "@/utils/tokenX";
 import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
-import { toFrontendError } from "./narmesteLederErrors";
+import { ErrorDetail, toFrontendError } from "./narmesteLederErrors";
 
 async function logFailedFetchAndThrowError(
   response: Response,
@@ -70,7 +70,7 @@ export type TokenXFetchUpdateResult =
   | { success: true }
   | {
       success: false;
-      translatedErrorMessage: string;
+      errorDetail: ErrorDetail;
     };
 
 export async function tokenXFetchUpdate({
@@ -112,6 +112,6 @@ export async function tokenXFetchUpdate({
 
   return {
     success: false,
-    translatedErrorMessage: frontendError.translatedMessage,
+    errorDetail: frontendError.errorDetail,
   };
 }
