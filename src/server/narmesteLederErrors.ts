@@ -6,6 +6,7 @@ enum BackendErrorType {
   FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS = "FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS",
   BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER = "BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER",
   BAD_REQUEST_NAME_NIN_MISMATCH_EMPLOYEE = "BAD_REQUEST_NAME_NIN_MISMATCH_EMPLOYEE",
+  BAD_REQUEST_NO_ACTIVE_SICK_LEAVE = "BAD_REQUEST_NO_ACTIVE_SICK_LEAVE",
 }
 
 const NO_ACCESS_TO_FORM_MESSAGE =
@@ -31,6 +32,11 @@ const typeToMessage: Record<BackendErrorType, ErrorDetail> = {
     title: "Kombinasjonen av etternavn og fødselsnummer er feil",
     message:
       "Etternavnet du har fylt inn  for den sykmeldte stemmer ikke overens med oppgitt fødselsnummer. Sjekk at du har fylt inn riktig og prøv igjen.",
+  },
+  [BackendErrorType.BAD_REQUEST_NO_ACTIVE_SICK_LEAVE]: {
+    title: "Den ansatte er ikke sykmeldt",
+    message:
+      "For å kunne oppgi nærmeste leder for en ansatt må den ansatte være sykmeldt, og ha en aktiv sykmelding.",
   },
 };
 
