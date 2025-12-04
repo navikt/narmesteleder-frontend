@@ -9,8 +9,8 @@ export const SykmeldtGroup = withFieldGroup({
         <group.AppField name="fodselsnummer">
           {(field) => (
             <field.TextInputField
-              label="Fødselsnummer (11 sifre)"
-              className="w-60"
+              label="Fødselsnummer (11 siffer)"
+              className="w-66"
             />
           )}
         </group.AppField>
@@ -20,8 +20,8 @@ export const SykmeldtGroup = withFieldGroup({
         <group.AppField name="orgnummer">
           {(field) => (
             <field.TextInputField
-              label="Organisasjonsnummer (9 sifre)"
-              className="w-60"
+              label="Organisasjonsnummer (9 siffer)"
+              className="w-66"
             />
           )}
         </group.AppField>
