@@ -1,7 +1,9 @@
 import { type Mock, beforeEach, describe, expect, it, vi } from "vitest";
 import { logger } from "@navikt/next-logger";
 import {
+  BackendErrorType,
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+  errorTypeToDetail,
   toFrontendError,
 } from "./narmesteLederErrors";
 
@@ -13,30 +15,39 @@ vi.mock("@navikt/next-logger", () => ({
 
 const loggerErrorMock = logger.error as unknown as Mock;
 
+const backendErrorTypes = Object.values(BackendErrorType) as BackendErrorType[];
+
 beforeEach(() => {
   loggerErrorMock.mockClear();
 });
 
 describe("toFrontendError", () => {
-  it("returns mapped message for known backend error types", async () => {
-    const payload = {
-      status: { value: 403, description: "Forbidden" },
-      type: "BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER",
-      message: "Last name mismatch",
-    };
-    const response = new Response(JSON.stringify(payload), {
-      status: 403,
-      headers: { "Content-Type": "application/json" },
-    });
+  for (const backendType of backendErrorTypes) {
+    it(`returns translated error detail for backend type ${backendType}`, async () => {
+      const payload = {
+        status: { value: 403, description: "Forbidden" },
+        type: backendType,
+        message: "Some message",
+      };
+      const response = new Response(JSON.stringify(payload), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
 
-    const result = await toFrontendError(response);
+      const result = await toFrontendError(response);
 
-    expect(result.type).toBe("BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER");
-    expect(result.errorDetail).toEqual({
-      title: "Kombinasjonen av etternavn og fødselsnummer er feil",
-      message:
-        "Etternavnet du har fylt inn  for nærmeste leder stemmer ikke overens med oppgitt fødselsnummer. Sjekk at du har fylt inn riktig og prøv igjen.",
+      const expectedDetail = errorTypeToDetail[backendType];
+      expect(expectedDetail).toBeDefined();
+
+      expect(result.type).toBe(backendType);
+      expect(result.errorDetail).toEqual(expectedDetail);
     });
+  }
+
+  it("has translations for every backend error type", () => {
+    expect(new Set(Object.keys(errorTypeToDetail))).toEqual(
+      new Set(backendErrorTypes),
+    );
   });
 
   it("falls back to generic message when payload type is wrong or unknown", async () => {
