@@ -1,6 +1,5 @@
 "use server";
 
-import { logger } from "@navikt/next-logger";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
