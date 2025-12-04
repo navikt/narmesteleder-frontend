@@ -46,6 +46,43 @@ const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
   return validateResponse(responseData, endpoint, responseDataSchema);
 };
 
+const readJsonBody = async (
+  response: Response,
+  endpoint: string,
+): Promise<unknown> => {
+  try {
+    return await response.json();
+  } catch (error) {
+    logErrorMessageAndThrowError(
+      `Failed to parse response as JSON from ${endpoint}: ${error}`,
+    );
+  }
+};
+
+const validateResponse = <S extends z.ZodTypeAny>(
+  responseData: unknown,
+  endpoint: string,
+  responseDataSchema: S,
+): z.infer<S> => {
+  try {
+    return responseDataSchema.parse(responseData);
+  } catch (error) {
+    logErrorMessageAndThrowError(
+      `Failed to parse response data with zod schema from ${endpoint}: ${error}`,
+    );
+  }
+};
+
+const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
+  response: Response,
+  endpoint: string,
+  responseDataSchema: S,
+): Promise<z.infer<S>> => {
+  const responseData = await readJsonBody(response, endpoint);
+
+  return validateResponse(responseData, endpoint, responseDataSchema);
+};
+
 export async function tokenXFetchGet<S extends z.ZodType>({
   targetApi,
   endpoint,
