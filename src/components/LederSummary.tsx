@@ -26,6 +26,10 @@ export function LederSummary() {
           </FormSummary.Value>
         </FormSummary.Answer>
         <FormSummary.Answer>
+          <FormSummary.Label>Etternavn</FormSummary.Label>
+          <FormSummary.Value>{submittedData.leder.etternavn}</FormSummary.Value>
+        </FormSummary.Answer>
+        <FormSummary.Answer>
           <FormSummary.Label>E-post</FormSummary.Label>
           <FormSummary.Value>{submittedData.leder.epost}</FormSummary.Value>
         </FormSummary.Answer>

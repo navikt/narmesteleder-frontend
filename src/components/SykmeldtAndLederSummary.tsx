@@ -20,6 +20,12 @@ export function SykmeldtAndLederSummary() {
             </FormSummary.Value>
           </FormSummary.Answer>
           <FormSummary.Answer>
+            <FormSummary.Label>Etternavn</FormSummary.Label>
+            <FormSummary.Value>
+              {submittedData.sykmeldt.etternavn}
+            </FormSummary.Value>
+          </FormSummary.Answer>
+          <FormSummary.Answer>
             <FormSummary.Label>Organisasjonsnummer</FormSummary.Label>
             <FormSummary.Value>
               {submittedData.sykmeldt.orgnummer}
@@ -43,6 +49,12 @@ export function SykmeldtAndLederSummary() {
             <FormSummary.Label>Fødselsnummer</FormSummary.Label>
             <FormSummary.Value>
               {formatFnr(submittedData.leder.fodselsnummer)}
+            </FormSummary.Value>
+          </FormSummary.Answer>
+          <FormSummary.Answer>
+            <FormSummary.Label>Etternavn</FormSummary.Label>
+            <FormSummary.Value>
+              {submittedData.leder.etternavn}
             </FormSummary.Value>
           </FormSummary.Answer>
           <FormSummary.Answer>
