@@ -1,7 +1,7 @@
 import { type Mock, beforeEach, describe, expect, it, vi } from "vitest";
 import { logger } from "@navikt/next-logger";
 import {
-  NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   toFrontendError,
 } from "./narmesteLederErrors";
 
@@ -32,9 +32,11 @@ describe("toFrontendError", () => {
     const result = await toFrontendError(response);
 
     expect(result.type).toBe("BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER");
-    expect(result.translatedMessage).toBe(
-      "Etternavn av nærmeste leder stemmer ikke overens med registrert fødselsnummer.",
-    );
+    expect(result.errorDetail).toEqual({
+      title: "Kombinasjonen av etternavn og fødselsnummer er feil",
+      message:
+        "Etternavnet du har fylt inn  for nærmeste leder stemmer ikke overens med oppgitt fødselsnummer. Sjekk at du har fylt inn riktig og prøv igjen.",
+    });
   });
 
   it("falls back to generic message when payload type is wrong or unknown", async () => {
@@ -54,9 +56,7 @@ describe("toFrontendError", () => {
     const result = await toFrontendError(response);
 
     expect(result.type).toBeUndefined();
-    expect(result.translatedMessage).toBe(
-      NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
-    );
+    expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
   });
 
   it("falls back when response body was already consumed", async () => {
@@ -76,9 +76,7 @@ describe("toFrontendError", () => {
     const result = await toFrontendError(response);
 
     expect(result.type).toBeUndefined();
-    expect(result.translatedMessage).toBe(
-      NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
-    );
+    expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
     expect(loggerErrorMock).toHaveBeenCalledWith(
       expect.stringContaining("Failed to parse backend error response as JSON"),
     );
@@ -95,9 +93,7 @@ describe("toFrontendError", () => {
     const result = await toFrontendError(brokenResponse);
 
     expect(result.type).toBeUndefined();
-    expect(result.translatedMessage).toBe(
-      NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
-    );
+    expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
     expect(loggerErrorMock).toHaveBeenCalledWith(
       expect.stringContaining("Failed to parse backend error response as JSON"),
     );

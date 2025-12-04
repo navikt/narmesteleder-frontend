@@ -1,9 +1,10 @@
 import { startTransition, useActionState } from "react";
 import { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
+import { ErrorDetail } from "@/server/narmesteLederErrors";
 
 type OpprettState = {
-  error: string | null;
+  error: ErrorDetail | null;
 };
 
 type OpprettInput = {
@@ -26,7 +27,7 @@ const innerOpprettAction = async (
     action.onSuccess?.();
     nextState = { error: null };
   } else {
-    nextState = { error: result.translatedErrorMessage };
+    nextState = { error: result.errorDetail };
   }
 
   action.onSettled?.(nextState);

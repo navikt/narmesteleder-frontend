@@ -1,9 +1,10 @@
 import { startTransition, useActionState } from "react";
 import { NarmesteLederForm } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
+import { ErrorDetail } from "@/server/narmesteLederErrors";
 
 type OppdaterState = {
-  error: string | null;
+  error: ErrorDetail | null;
 };
 
 type OppdaterInput = {
@@ -30,7 +31,7 @@ const innerOppdaterAction = async (
     action.onSuccess?.();
     nextState = { error: null };
   } else {
-    nextState = { error: result.translatedErrorMessage };
+    nextState = { error: result.errorDetail };
   }
 
   action.onSettled?.(nextState);
