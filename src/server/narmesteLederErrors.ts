@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { logger } from "@navikt/next-logger";
 
-enum BackendErrorType {
+export enum BackendErrorType {
   FORBIDDEN_LACKS_ORG_ACCESS = "FORBIDDEN_LACKS_ORG_ACCESS",
   FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS = "FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS",
   BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER = "BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER",
@@ -12,7 +12,7 @@ enum BackendErrorType {
 const NO_ACCESS_TO_FORM_MESSAGE =
   "Du har ikke tilgang til å åpne dette skjemaet";
 
-const typeToMessage: Record<BackendErrorType, ErrorDetail> = {
+export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
   [BackendErrorType.FORBIDDEN_LACKS_ORG_ACCESS]: {
     title: NO_ACCESS_TO_FORM_MESSAGE,
     message:
@@ -40,12 +40,7 @@ const typeToMessage: Record<BackendErrorType, ErrorDetail> = {
   },
 };
 
-const backendErrorTypeSchema = z.union([
-  z.literal(BackendErrorType.FORBIDDEN_LACKS_ORG_ACCESS),
-  z.literal(BackendErrorType.FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS),
-  z.literal(BackendErrorType.BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER),
-  z.literal(BackendErrorType.BAD_REQUEST_NAME_NIN_MISMATCH_EMPLOYEE),
-]);
+const backendErrorTypeSchema = z.enum(BackendErrorType);
 
 const backendErrorSchema = z.object({
   type: backendErrorTypeSchema.optional(),
@@ -102,7 +97,7 @@ function toTranslatedError(payload?: BackendErrorPayload): ErrorDetail {
   }
 
   const { type } = payload;
-  return type ? typeToMessage[type] : NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
+  return type ? errorTypeToDetail[type] : NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
 }
 
 export async function toFrontendError(
