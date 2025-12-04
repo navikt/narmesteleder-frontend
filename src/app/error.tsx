@@ -21,7 +21,7 @@ type Props = {
 
 export default function Error({ error }: Props): ReactElement {
   useEffect(() => {
-    logger.warn(`Displaying 500-page.`);
+    logger.error(`Displaying 500-page.`);
   }, [error]);
 
   return (
