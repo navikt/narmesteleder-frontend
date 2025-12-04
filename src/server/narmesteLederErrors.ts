@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { logger } from "@navikt/next-logger";
 
+const NO_ACCESS_TO_FORM_MESSAGE =
+  "Du har ikke tilgang til å åpne dette skjemaet";
+
 export enum BackendErrorType {
   FORBIDDEN_LACKS_ORG_ACCESS = "FORBIDDEN_LACKS_ORG_ACCESS",
   FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS = "FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS",
@@ -8,9 +11,6 @@ export enum BackendErrorType {
   BAD_REQUEST_NAME_NIN_MISMATCH_EMPLOYEE = "BAD_REQUEST_NAME_NIN_MISMATCH_EMPLOYEE",
   BAD_REQUEST_NO_ACTIVE_SICK_LEAVE = "BAD_REQUEST_NO_ACTIVE_SICK_LEAVE",
 }
-
-const NO_ACCESS_TO_FORM_MESSAGE =
-  "Du har ikke tilgang til å åpne dette skjemaet";
 
 export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
   [BackendErrorType.FORBIDDEN_LACKS_ORG_ACCESS]: {
@@ -67,9 +67,18 @@ export type FrontendError = {
   errorDetail: ErrorDetail;
 };
 
-async function parseBackendErrorPayload(
+const toTranslatedError = (payload?: BackendErrorPayload): ErrorDetail => {
+  if (!payload) {
+    return NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
+  }
+
+  const { type } = payload;
+  return type ? errorTypeToDetail[type] : NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
+};
+
+const parseBackendErrorPayload = async (
   response: Response,
-): Promise<BackendErrorPayload | undefined> {
+): Promise<BackendErrorPayload | undefined> => {
   let rawBody = "";
   try {
     const clonedResponse = response.clone();
@@ -89,24 +98,15 @@ async function parseBackendErrorPayload(
   }
 
   return undefined;
-}
+};
 
-function toTranslatedError(payload?: BackendErrorPayload): ErrorDetail {
-  if (!payload) {
-    return NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
-  }
-
-  const { type } = payload;
-  return type ? errorTypeToDetail[type] : NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
-}
-
-export async function toFrontendError(
+export const toFrontendError = async (
   response: Response,
-): Promise<FrontendError> {
+): Promise<FrontendError> => {
   const backendErrorPayload = await parseBackendErrorPayload(response);
 
   return {
     type: backendErrorPayload?.type,
     errorDetail: toTranslatedError(backendErrorPayload),
   };
-}
+};
