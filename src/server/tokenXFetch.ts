@@ -11,7 +11,7 @@ import {
   ErrorDetail,
   toFrontendError,
   toFrontendErrorResponse,
-} from "./narmesteLederErrors";
+} from "./narmesteLederErrorUtils";
 
 const readJsonBody = async (
   response: Response,
