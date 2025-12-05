@@ -1,7 +1,7 @@
 import { startTransition, useActionState } from "react";
 import { NarmesteLederForm } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
-import { ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import { ErrorDetail } from "@/server/backendErrorAdapter";
 
 const initialState = { error: null as ErrorDetail | null };
 

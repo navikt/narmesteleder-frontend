@@ -9,9 +9,9 @@ import {
 import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
 import {
   ErrorDetail,
-  toFrontendError,
-  toFrontendErrorResponse,
-} from "./narmesteLederErrorUtils";
+  adaptBackendErrorToFrontendError,
+  adaptBackendErrorToErrorResponse,
+} from "./backendErrorAdapter";
 
 const readJsonBody = async (
   response: Response,
@@ -71,7 +71,7 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   });
 
   if (!response.ok) {
-    const frontendError = await toFrontendError(response);
+    const frontendError = await adaptBackendErrorToFrontendError(response);
     logErrorMessageAndThrowError(
       `Fetch failed: method=GET endpoint=${endpoint} status=${response.status} ${response.statusText}`,
       frontendError,
@@ -119,7 +119,9 @@ export async function tokenXFetchUpdate({
     );
   }
 
-  const frontendErrorResponse = await toFrontendErrorResponse(response);
+  const frontendErrorResponse = await adaptBackendErrorToErrorResponse(
+    response,
+  );
 
   logger.error(
     `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendErrorResponse?.type}`,

@@ -1,3 +1,11 @@
+/**
+ * Backend Error Adapter
+ *
+ * This module is responsible for:
+ * - Parsing backend error responses
+ * - Mapping backend error types to user-friendly messages
+ * - Adapting backend errors to frontend error structures
+ */
 import { z } from "zod";
 import { logger } from "@navikt/next-logger";
 
@@ -52,6 +60,9 @@ export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
   },
 };
 
+/**
+ * Schema for backend error responses
+ */
 const backendErrorTypeSchema = z.enum(BackendErrorType);
 
 const backendErrorSchema = z.object({
@@ -59,6 +70,32 @@ const backendErrorSchema = z.object({
   message: z.string().optional(),
 });
 
+export type BackendErrorPayload = z.infer<typeof backendErrorSchema>;
+
+/**
+ * User-facing error detail with title and message
+ */
+export type ErrorDetail = {
+  title: string;
+  message: string;
+};
+
+/**
+ * Frontend error response containing error type and details
+ */
+export type FrontendErrorResponse = {
+  type?: BackendErrorType;
+  errorDetail: ErrorDetail;
+};
+
+/**
+ * Frontend error object with error details attached
+ */
+export type FrontendError = Error & { errorDetail: ErrorDetail };
+
+/**
+ * Fallback error detail for unknown or unparseable errors
+ */
 const NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE =
   "Vi klarte ikke å gjennomføre handlingen. Prøv igjen senere.";
 
@@ -67,20 +104,9 @@ export const NARMESTE_LEDER_FALLBACK_ERROR_DETAIL: ErrorDetail = {
   message: NARMESTE_LEDER_FALLBACK_ERROR_MESSAGE,
 };
 
-export type BackendErrorPayload = z.infer<typeof backendErrorSchema>;
-
-export type ErrorDetail = {
-  title: string;
-  message: string;
-};
-
-export type FrontendErrorResponse = {
-  type?: BackendErrorType;
-  errorDetail: ErrorDetail;
-};
-
-export type FrontendError = Error & { errorDetail: ErrorDetail };
-
+/**
+ * Creates a FrontendError with error details attached
+ */
 const createFrontendError = (errorDetail: ErrorDetail): FrontendError => {
   const error = new Error(errorDetail.message) as FrontendError;
   error.name = "FrontendError";
@@ -88,10 +114,18 @@ const createFrontendError = (errorDetail: ErrorDetail): FrontendError => {
   return error;
 };
 
+/**
+ * Type guard to check if an error is a FrontendError
+ */
 export const isFrontendError = (error: unknown): error is FrontendError =>
   error instanceof Error && error.name === "FrontendError";
 
-const toTranslatedError = (payload?: BackendErrorPayload): ErrorDetail => {
+/**
+ * Maps backend error type to user-friendly error details
+ */
+const mapBackendErrorToDetail = (
+  payload?: BackendErrorPayload,
+): ErrorDetail => {
   if (!payload) {
     return NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
   }
@@ -100,6 +134,10 @@ const toTranslatedError = (payload?: BackendErrorPayload): ErrorDetail => {
   return type ? errorTypeToDetail[type] : NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
 };
 
+/**
+ * Parses backend error response payload from HTTP response
+ * Returns undefined if parsing fails or response is invalid
+ */
 const parseBackendErrorPayload = async (
   response: Response,
 ): Promise<BackendErrorPayload | undefined> => {
@@ -113,6 +151,10 @@ const parseBackendErrorPayload = async (
     if (parsed.success) {
       return parsed.data;
     }
+
+    logger.warn(
+      `Backend error response did not match expected schema - body=${rawBody.slice(0, 200)}`,
+    );
   } catch (error) {
     logger.error(
       `Failed to parse backend error response as JSON: ${
@@ -124,24 +166,39 @@ const parseBackendErrorPayload = async (
   return undefined;
 };
 
-export const toFrontendError = async (
+/**
+ * Adapts backend error response to FrontendError
+ * Always returns a FrontendError with error details for proper UI feedback
+ */
+export const adaptBackendErrorToFrontendError = async (
   response: Response,
-): Promise<FrontendError | Error> => {
+): Promise<FrontendError> => {
   const backendErrorPayload = await parseBackendErrorPayload(response);
-
-  if (!backendErrorPayload?.type) {
-    return new Error("Det oppstod en feil.");
-  }
-  return createFrontendError(toTranslatedError(backendErrorPayload));
+  const errorDetail = mapBackendErrorToDetail(backendErrorPayload);
+  return createFrontendError(errorDetail);
 };
 
-export const toFrontendErrorResponse = async (
+/**
+ * Adapts backend error response to FrontendErrorResponse
+ * Returns error type (if available) and error details for UI display
+ */
+export const adaptBackendErrorToErrorResponse = async (
   response: Response,
 ): Promise<FrontendErrorResponse> => {
   const backendErrorPayload = await parseBackendErrorPayload(response);
 
   return {
     type: backendErrorPayload?.type,
-    errorDetail: toTranslatedError(backendErrorPayload),
+    errorDetail: mapBackendErrorToDetail(backendErrorPayload),
   };
 };
+
+/**
+ * @deprecated Use adaptBackendErrorToFrontendError instead
+ */
+export const toFrontendError = adaptBackendErrorToFrontendError;
+
+/**
+ * @deprecated Use adaptBackendErrorToErrorResponse instead
+ */
+export const toFrontendErrorResponse = adaptBackendErrorToErrorResponse;

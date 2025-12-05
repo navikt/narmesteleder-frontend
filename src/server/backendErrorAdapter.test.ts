@@ -4,24 +4,28 @@ import {
   BackendErrorType,
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   errorTypeToDetail,
-  toFrontendErrorResponse,
-} from "./narmesteLederErrorUtils";
+  adaptBackendErrorToErrorResponse,
+  adaptBackendErrorToFrontendError,
+} from "./backendErrorAdapter";
 
 vi.mock("@navikt/next-logger", () => ({
   logger: {
     error: vi.fn(),
+    warn: vi.fn(),
   },
 }));
 
 const loggerErrorMock = logger.error as unknown as Mock;
+const loggerWarnMock = logger.warn as unknown as Mock;
 
 const backendErrorTypes = Object.values(BackendErrorType) as BackendErrorType[];
 
 beforeEach(() => {
   loggerErrorMock.mockClear();
+  loggerWarnMock.mockClear();
 });
 
-describe("toFrontendErrorResponse", () => {
+describe("adaptBackendErrorToErrorResponse", () => {
   for (const backendType of backendErrorTypes) {
     it(`returns translated error detail for backend type ${backendType}`, async () => {
       const payload = {
@@ -34,7 +38,7 @@ describe("toFrontendErrorResponse", () => {
         headers: { "Content-Type": "application/json" },
       });
 
-      const result = await toFrontendErrorResponse(response);
+      const result = await adaptBackendErrorToErrorResponse(response);
 
       const expectedDetail = errorTypeToDetail[backendType];
       expect(expectedDetail).toBeDefined();
@@ -64,7 +68,7 @@ describe("toFrontendErrorResponse", () => {
       headers: { "Content-Type": "application/json" },
     });
 
-    const result = await toFrontendErrorResponse(response);
+    const result = await adaptBackendErrorToErrorResponse(response);
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
@@ -84,7 +88,7 @@ describe("toFrontendErrorResponse", () => {
     // Simulate a previous reader consuming the body
     await response.text();
 
-    const result = await toFrontendErrorResponse(response);
+    const result = await adaptBackendErrorToErrorResponse(response);
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
@@ -101,12 +105,48 @@ describe("toFrontendErrorResponse", () => {
         }) as Response,
     } as unknown as Response;
 
-    const result = await toFrontendErrorResponse(brokenResponse);
+    const result = await adaptBackendErrorToErrorResponse(brokenResponse);
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
     expect(loggerErrorMock).toHaveBeenCalledWith(
       expect.stringContaining("Failed to parse backend error response as JSON"),
     );
+  });
+});
+
+describe("adaptBackendErrorToFrontendError", () => {
+  it("returns FrontendError with error details for valid backend error", async () => {
+    const payload = {
+      type: BackendErrorType.BAD_REQUEST_LINEMANAGER_NAME_NIN_MISMATCH,
+      message: "Some message",
+    };
+    const response = new Response(JSON.stringify(payload), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const result = await adaptBackendErrorToFrontendError(response);
+
+    expect(result).toBeInstanceOf(Error);
+    expect(result.name).toBe("FrontendError");
+    expect(result.errorDetail).toEqual(
+      errorTypeToDetail[
+        BackendErrorType.BAD_REQUEST_LINEMANAGER_NAME_NIN_MISMATCH
+      ],
+    );
+  });
+
+  it("returns FrontendError with fallback details for unparseable error", async () => {
+    const response = new Response("Not JSON", {
+      status: 500,
+      headers: { "Content-Type": "text/plain" },
+    });
+
+    const result = await adaptBackendErrorToFrontendError(response);
+
+    expect(result).toBeInstanceOf(Error);
+    expect(result.name).toBe("FrontendError");
+    expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
   });
 });

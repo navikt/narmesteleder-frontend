@@ -1,6 +1,6 @@
 "use client";
 import { HStack, VStack } from "@navikt/ds-react";
-import { ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import { ErrorDetail } from "@/server/backendErrorAdapter";
 import { ButtonMinSideArbeidsgiver } from "./ButtonMinSideArbeidsgiver";
 import ErrorAlert from "./ErrorAlert";
 import { HeadingLeder } from "./HeadingLeder";
