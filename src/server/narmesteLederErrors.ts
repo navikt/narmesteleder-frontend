@@ -76,6 +76,9 @@ const createFrontendError = (errorDetail: ErrorDetail): FrontendError => {
   return error;
 };
 
+export const isFrontendError = (error: unknown): error is FrontendError =>
+  error instanceof Error && error.name === "FrontendError";
+
 const toTranslatedError = (payload?: BackendErrorPayload): ErrorDetail => {
   if (!payload) {
     return NARMESTE_LEDER_FALLBACK_ERROR_DETAIL;
