@@ -71,11 +71,11 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   });
 
   if (!response.ok) {
-    logger.error(
-      `Fetch failed: method=GET endpoint=${endpoint} status=${response.status} ${response.statusText}`,
-    );
     const frontendError = await toFrontendError(response);
-    throw frontendError;
+    logErrorMessageAndThrowError(
+      `Fetch failed: method=GET endpoint=${endpoint} status=${response.status} ${response.statusText}`,
+      frontendError,
+    );
   }
 
   return parseAndValidateResponse(response, endpoint, responseDataSchema);
