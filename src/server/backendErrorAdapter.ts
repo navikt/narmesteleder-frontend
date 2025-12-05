@@ -63,7 +63,7 @@ export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
 /**
  * Schema for backend error responses
  */
-const backendErrorTypeSchema = z.enum(BackendErrorType);
+const backendErrorTypeSchema = z.nativeEnum(BackendErrorType);
 
 const backendErrorSchema = z.object({
   type: backendErrorTypeSchema.optional(),
@@ -121,7 +121,9 @@ export const isFrontendError = (error: unknown): error is FrontendError =>
   error instanceof Error && error.name === "FrontendError";
 
 /**
- * Maps backend error type to user-friendly error details
+ * Maps backend error payload to user-friendly error details
+ * Returns appropriate translated error message based on error type,
+ * or fallback message if type is missing or unknown
  */
 const mapBackendErrorToDetail = (
   payload?: BackendErrorPayload,
