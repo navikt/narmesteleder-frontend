@@ -1,4 +1,3 @@
-import { mock } from "node:test";
 import "server-only";
 import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
 import { getServerEnv } from "@/env-variables/serverEnv";
