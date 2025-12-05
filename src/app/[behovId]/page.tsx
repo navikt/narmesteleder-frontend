@@ -21,8 +21,9 @@ const LederInfoContent = async ({ behovId }: { behovId: string }) => {
   } catch (error) {
     if (isFrontendError(error)) {
       errorDetail = error.errorDetail;
+    } else {
+      throw error;
     }
-    throw error;
   }
 
   if (errorDetail) {
