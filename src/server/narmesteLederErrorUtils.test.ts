@@ -45,9 +45,10 @@ describe("toFrontendErrorResponse", () => {
   }
 
   it("has translations for every backend error type", () => {
-    expect(new Set(Object.keys(errorTypeToDetail))).toEqual(
-      new Set(backendErrorTypes),
+    const mappedKeys = new Set(
+      Object.keys(errorTypeToDetail) as BackendErrorType[],
     );
+    expect(mappedKeys).toEqual(new Set(backendErrorTypes));
   });
 
   it("falls back to generic message when payload type is wrong or unknown", async () => {
