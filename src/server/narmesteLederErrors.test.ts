@@ -4,7 +4,7 @@ import {
   BackendErrorType,
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   errorTypeToDetail,
-  toFrontendError,
+  toFrontendErrorResponse,
 } from "./narmesteLederErrors";
 
 vi.mock("@navikt/next-logger", () => ({
@@ -21,7 +21,7 @@ beforeEach(() => {
   loggerErrorMock.mockClear();
 });
 
-describe("toFrontendError", () => {
+describe("toFrontendErrorResponse", () => {
   for (const backendType of backendErrorTypes) {
     it(`returns translated error detail for backend type ${backendType}`, async () => {
       const payload = {
@@ -34,7 +34,7 @@ describe("toFrontendError", () => {
         headers: { "Content-Type": "application/json" },
       });
 
-      const result = await toFrontendError(response);
+      const result = await toFrontendErrorResponse(response);
 
       const expectedDetail = errorTypeToDetail[backendType];
       expect(expectedDetail).toBeDefined();
@@ -64,7 +64,7 @@ describe("toFrontendError", () => {
       headers: { "Content-Type": "application/json" },
     });
 
-    const result = await toFrontendError(response);
+    const result = await toFrontendErrorResponse(response);
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
@@ -84,7 +84,7 @@ describe("toFrontendError", () => {
     // Simulate a previous reader consuming the body
     await response.text();
 
-    const result = await toFrontendError(response);
+    const result = await toFrontendErrorResponse(response);
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
@@ -101,7 +101,7 @@ describe("toFrontendError", () => {
         }) as Response,
     } as unknown as Response;
 
-    const result = await toFrontendError(brokenResponse);
+    const result = await toFrontendErrorResponse(brokenResponse);
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);

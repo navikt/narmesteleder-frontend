@@ -62,9 +62,18 @@ export type ErrorDetail = {
   message: string;
 };
 
-export type FrontendError = {
+export type FrontendErrorResponse = {
   type?: BackendErrorType;
   errorDetail: ErrorDetail;
+};
+
+export type FrontendError = Error & { errorDetail: ErrorDetail };
+
+const createFrontendError = (errorDetail: ErrorDetail): FrontendError => {
+  const error = new Error(errorDetail.message) as FrontendError;
+  error.name = "FrontendError";
+  error.errorDetail = errorDetail;
+  return error;
 };
 
 const toTranslatedError = (payload?: BackendErrorPayload): ErrorDetail => {
@@ -102,7 +111,18 @@ const parseBackendErrorPayload = async (
 
 export const toFrontendError = async (
   response: Response,
-): Promise<FrontendError> => {
+): Promise<FrontendError | Error> => {
+  const backendErrorPayload = await parseBackendErrorPayload(response);
+
+  if (!backendErrorPayload?.type) {
+    return new Error("Det oppstod en feil.");
+  }
+  return createFrontendError(toTranslatedError(backendErrorPayload));
+};
+
+export const toFrontendErrorResponse = async (
+  response: Response,
+): Promise<FrontendErrorResponse> => {
   const backendErrorPayload = await parseBackendErrorPayload(response);
 
   return {

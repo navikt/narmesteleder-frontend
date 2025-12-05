@@ -7,44 +7,11 @@ import {
   validateTokenAndGetTokenXOrRedirect,
 } from "@/utils/tokenX";
 import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
-import { ErrorDetail, toFrontendError } from "./narmesteLederErrors";
-
-const readJsonBody = async (
-  response: Response,
-  endpoint: string,
-): Promise<unknown> => {
-  try {
-    return await response.json();
-  } catch (error) {
-    logErrorMessageAndThrowError(
-      `Failed to parse response as JSON from ${endpoint}: ${error}`,
-    );
-  }
-};
-
-const validateResponse = <S extends z.ZodTypeAny>(
-  responseData: unknown,
-  endpoint: string,
-  responseDataSchema: S,
-): z.infer<S> => {
-  try {
-    return responseDataSchema.parse(responseData);
-  } catch (error) {
-    logErrorMessageAndThrowError(
-      `Failed to parse response data with zod schema from ${endpoint}: ${error}`,
-    );
-  }
-};
-
-const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
-  response: Response,
-  endpoint: string,
-  responseDataSchema: S,
-): Promise<z.infer<S>> => {
-  const responseData = await readJsonBody(response, endpoint);
-
-  return validateResponse(responseData, endpoint, responseDataSchema);
-};
+import {
+  ErrorDetail,
+  toFrontendError,
+  toFrontendErrorResponse,
+} from "./narmesteLederErrors";
 
 const readJsonBody = async (
   response: Response,
@@ -104,11 +71,11 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   });
 
   if (!response.ok) {
-    const frontendError = await toFrontendError(response);
-    logErrorMessageAndThrowError(
+    logger.error(
       `Fetch failed: method=GET endpoint=${endpoint} status=${response.status} ${response.statusText}`,
-      frontendError,
     );
+    const frontendError = await toFrontendError(response);
+    throw frontendError;
   }
 
   return parseAndValidateResponse(response, endpoint, responseDataSchema);
@@ -152,14 +119,14 @@ export async function tokenXFetchUpdate({
     );
   }
 
-  const frontendError = await toFrontendError(response);
+  const frontendErrorResponse = await toFrontendErrorResponse(response);
 
   logger.error(
-    `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendError?.type}`,
+    `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendErrorResponse?.type}`,
   );
 
   return {
     success: false,
-    errorDetail: frontendError.errorDetail,
+    errorDetail: frontendErrorResponse.errorDetail,
   };
 }
