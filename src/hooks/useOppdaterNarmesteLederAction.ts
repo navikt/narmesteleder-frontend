@@ -3,57 +3,44 @@ import { NarmesteLederForm } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 import { ErrorDetail } from "@/server/narmesteLederErrors";
 
-type OppdaterState = {
-  error: ErrorDetail | null;
-};
+const initialState = { error: null as ErrorDetail | null };
 
-type OppdaterInput = {
-  requirementId: string;
-  values: NarmesteLederForm;
-  onSuccess?: () => void;
-  onSettled?: (state: OppdaterState) => void;
-};
-
-const initialOppdaterState: OppdaterState = { error: null };
-
-const innerOppdaterAction = async (
-  _previousState: OppdaterState,
-  action: OppdaterInput,
-): Promise<OppdaterState> => {
-  const result = await oppdaterNarmesteLeder(
-    action.requirementId,
-    action.values,
-  );
-
-  let nextState: OppdaterState;
-
-  if (result.success) {
-    action.onSuccess?.();
-    nextState = { error: null };
-  } else {
-    nextState = { error: result.errorDetail };
-  }
-
-  action.onSettled?.(nextState);
+const action = async (
+  _prev: typeof initialState,
+  {
+    behovId,
+    values,
+    onSuccess,
+    onSettled,
+  }: {
+    behovId: string;
+    values: NarmesteLederForm;
+    onSuccess?: () => void;
+    onSettled?: (state: typeof initialState) => void;
+  },
+) => {
+  const result = await oppdaterNarmesteLeder(behovId, values);
+  const nextState = { error: result.success ? null : result.errorDetail };
+  if (result.success) onSuccess?.();
+  onSettled?.(nextState);
   return nextState;
 };
 
 export const useOppdaterNarmesteLederAction = () => {
-  const [{ error }, oppdaterAction, isPending] = useActionState(
-    innerOppdaterAction,
-    initialOppdaterState,
+  const [{ error }, runAction, isPending] = useActionState(
+    action,
+    initialState,
   );
 
   const startOppdaterNarmesteLeder = (
-    requirementId: string,
+    behovId: string,
     values: NarmesteLederForm,
     options?: { onSuccess?: () => void },
-  ): Promise<OppdaterState> =>
-    // Provide a promise so forms can keep `isSubmitting` in sync with the action lifecycle.
+  ) =>
     new Promise((resolve) => {
       startTransition(() =>
-        oppdaterAction({
-          requirementId,
+        runAction({
+          behovId,
           values,
           onSuccess: options?.onSuccess,
           onSettled: resolve,
@@ -61,9 +48,5 @@ export const useOppdaterNarmesteLederAction = () => {
       );
     });
 
-  return {
-    startOppdaterNarmesteLeder,
-    isPending,
-    error,
-  } as const;
+  return { startOppdaterNarmesteLeder, isPending, error } as const;
 };
