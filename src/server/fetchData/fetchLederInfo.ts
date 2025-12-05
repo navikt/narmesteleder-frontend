@@ -67,6 +67,7 @@ const realFetchLederInfo = async (
 };
 
 const fakeFetchLederInfo = async (): Promise<LederInfo> => {
+  await new Promise((resolve) => setTimeout(resolve, 600));
   return mapToLederInfo(mockLineManagerRequirement);
 };
 

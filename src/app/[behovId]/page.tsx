@@ -1,11 +1,41 @@
+import { Suspense } from "react";
 import { logger } from "@navikt/next-logger";
 import notFound from "@/app/not-found";
+import LederInfoError from "@/components/LederInfoError";
+import { LederInfoSpinner } from "@/components/LederInfoSpinner";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
-import { fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
+import { LederInfo, fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
+import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import { isFrontendError } from "@/server/narmesteLederErrorUtils";
 import { LederViewControl } from "../../components/LederViewControl";
 
 const isValidBehovId = (behovId: string) =>
   !requirementIdSchema.safeParse(behovId).success;
+
+const LederInfoContent = async ({ behovId }: { behovId: string }) => {
+  let lederInfo: LederInfo | null = null;
+  let errorDetail: ErrorDetail | undefined;
+
+  try {
+    lederInfo = await fetchLederInfo(behovId);
+  } catch (error) {
+    if (isFrontendError(error)) {
+      errorDetail = error.errorDetail;
+    } else {
+      throw error;
+    }
+  }
+
+  if (errorDetail) {
+    return <LederInfoError detail={errorDetail} />;
+  }
+
+  if (!lederInfo) {
+    return notFound();
+  }
+
+  return <LederViewControl lederInfo={lederInfo} behovId={behovId} />;
+};
 
 export default async function Home({
   params,
@@ -17,7 +47,10 @@ export default async function Home({
     logger.warn(`Invalid behovId format: ${behovId}`);
     return notFound();
   }
-  const lederInfo = await fetchLederInfo(behovId);
 
-  return <LederViewControl lederInfo={lederInfo} behovId={behovId} />;
+  return (
+    <Suspense fallback={<LederInfoSpinner />}>
+      <LederInfoContent behovId={behovId} />
+    </Suspense>
+  );
 }
