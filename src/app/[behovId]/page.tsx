@@ -1,11 +1,12 @@
 import { Suspense } from "react";
 import { logger } from "@navikt/next-logger";
 import notFound from "@/app/not-found";
-import ErrorAlert from "@/components/ErrorAlert";
+import LederInfoError from "@/components/LederInfoError";
 import { LederInfoSpinner } from "@/components/LederInfoSpinner";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { LederInfo, fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
 import type { ErrorDetail } from "@/server/narmesteLederErrors";
+import { isFrontendError } from "@/server/narmesteLederErrors";
 import { LederViewControl } from "../../components/LederViewControl";
 
 const isValidBehovId = (behovId: string) =>
@@ -16,37 +17,19 @@ const LederInfoContent = async ({ behovId }: { behovId: string }) => {
   let errorDetail: ErrorDetail | undefined;
 
   try {
-    logger.info(`Fetching lederInfo for behovId=${behovId}`);
     lederInfo = await fetchLederInfo(behovId);
   } catch (error) {
-    logger.error(`Error fetching lederInfo for behovId=${behovId}: ${error}`);
-    // if (isFrontendError(error)) {
-    //   logger.info(`FrontendError while fetching leder info for behovId=${behovId}: ${error.message}`);
-    //   errorDetail = error.errorDetail;
-    // } else {
-    errorDetail = {
-      title: "Noe gikk galt",
-      message:
-        "Det oppstod en uventet feil ved henting av informasjon om nærmeste leder. Vennligst prøv igjen senere.",
-      // };
-    };
-    logger.error(
-      `ErrorDetail for behovId=${behovId}: ${errorDetail.title} - ${errorDetail.message}`,
-    );
+    if (isFrontendError(error)) {
+      errorDetail = error.errorDetail;
+    }
+    throw error;
   }
 
-  logger.info("here i am");
   if (errorDetail) {
-    logger.error(
-      `Error fetching lederInfo for behovId=${behovId}: ${errorDetail.title} - ${errorDetail.message}`,
-    );
-
-    return <ErrorAlert detail={errorDetail} />;
+    return <LederInfoError detail={errorDetail} />;
   }
 
   if (!lederInfo) {
-    logger.error(`No lederInfo found for behovId=${behovId}`);
-
     return notFound();
   }
 
