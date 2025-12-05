@@ -73,5 +73,5 @@ const fakeFetchLederInfo = async (): Promise<LederInfo> => {
 
 export const fetchLederInfo = mockable({
   real: realFetchLederInfo,
-  mock: fakeFetchLederInfo,
+  mock: realFetchLederInfo,
 });
