@@ -5,30 +5,32 @@ const NO_ACCESS_TO_FORM_MESSAGE =
   "Du har ikke tilgang til å åpne dette skjemaet";
 
 export enum BackendErrorType {
-  FORBIDDEN_LACKS_ORG_ACCESS = "FORBIDDEN_LACKS_ORG_ACCESS",
-  FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS = "FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS",
-  BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER = "BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER",
-  BAD_REQUEST_NAME_NIN_MISMATCH_EMPLOYEE = "BAD_REQUEST_NAME_NIN_MISMATCH_EMPLOYEE",
-  BAD_REQUEST_NO_ACTIVE_SICK_LEAVE = "BAD_REQUEST_NO_ACTIVE_SICK_LEAVE",
+  FORBIDDEN_MISSING_ORG_ACCESS,
+  FORBIDDEN_MISSING_ALITINN_RESOURCE_ACCESS,
+  BAD_REQUEST_LINEMANAGER_NAME_NIN_MISMATCH,
+  BAD_REQUEST_EMPLOYEE_NAME_NIN_MISMATCH,
+  BAD_REQUEST_NO_ACTIVE_SICK_LEAVE,
+  BAD_REQUEST_EMPLOYEE_MISSING_EMPLOYMENT_IN_ORG,
+  BAD_REQUEST_LINEMANAGER_MISSING_EMPLOYMENT_IN_ORG,
 }
 
 export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
-  [BackendErrorType.FORBIDDEN_LACKS_ORG_ACCESS]: {
+  [BackendErrorType.FORBIDDEN_MISSING_ORG_ACCESS]: {
     title: NO_ACCESS_TO_FORM_MESSAGE,
     message:
       "Du har ikke tilgang til denne organisasjonen. For å få tilgang må du ta kontakt med daglig leder eller HR.",
   },
-  [BackendErrorType.FORBIDDEN_LACKS_ALITINN_RESOURCE_ACCESS]: {
+  [BackendErrorType.FORBIDDEN_MISSING_ALITINN_RESOURCE_ACCESS]: {
     title: NO_ACCESS_TO_FORM_MESSAGE,
     message:
       'For å få tilgang må  du ta kontakt med daglig leder eller HR. Du trenger ressursen "Oppgi nærmeste leder for sykmeldt ansatt".',
   },
-  [BackendErrorType.BAD_REQUEST_NAME_NIN_MISMATCH_LINEMANAGER]: {
+  [BackendErrorType.BAD_REQUEST_LINEMANAGER_NAME_NIN_MISMATCH]: {
     title: "Kombinasjonen av etternavn og fødselsnummer er feil",
     message:
       "Etternavnet du har fylt inn  for nærmeste leder stemmer ikke overens med oppgitt fødselsnummer. Sjekk at du har fylt inn riktig og prøv igjen.",
   },
-  [BackendErrorType.BAD_REQUEST_NAME_NIN_MISMATCH_EMPLOYEE]: {
+  [BackendErrorType.BAD_REQUEST_EMPLOYEE_NAME_NIN_MISMATCH]: {
     title: "Kombinasjonen av etternavn og fødselsnummer er feil",
     message:
       "Etternavnet du har fylt inn  for den sykmeldte stemmer ikke overens med oppgitt fødselsnummer. Sjekk at du har fylt inn riktig og prøv igjen.",
@@ -37,6 +39,16 @@ export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
     title: "Den ansatte er ikke sykmeldt",
     message:
       "For å kunne oppgi nærmeste leder for en ansatt må den ansatte være sykmeldt, og ha en aktiv sykmelding.",
+  },
+  [BackendErrorType.BAD_REQUEST_EMPLOYEE_MISSING_EMPLOYMENT_IN_ORG]: {
+    title: "Den ansatte har ikke gyldig ansettelse i organisasjonen",
+    message:
+      "For å kunne oppgi nærmeste leder for en ansatt må den ansatte ha en gyldig ansettelse i organisasjonen.",
+  },
+  [BackendErrorType.BAD_REQUEST_LINEMANAGER_MISSING_EMPLOYMENT_IN_ORG]: {
+    title: "Nærmeste leder har ikke gyldig ansettelse i organisasjonen",
+    message:
+      "For å kunne oppgi nærmeste leder for en ansatt må nærmeste leder ha en gyldig ansettelse i organisasjonen.",
   },
 };
 
