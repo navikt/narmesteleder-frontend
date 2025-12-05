@@ -5,7 +5,7 @@ import {
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   errorTypeToDetail,
   toFrontendErrorResponse,
-} from "./narmesteLederErrors";
+} from "./narmesteLederErrorUtils";
 
 vi.mock("@navikt/next-logger", () => ({
   logger: {
