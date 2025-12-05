@@ -7,24 +7,11 @@ import {
   validateTokenAndGetTokenXOrRedirect,
 } from "@/utils/tokenX";
 import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
-import { ErrorDetail, toFrontendError } from "./narmesteLederErrors";
-
-async function logFailedFetchAndThrowError(
-  response: Response,
-  calledEndpoint: string,
-  calledMethod: string = "GET",
-): Promise<never> {
-  let bodySnippet: string | undefined;
-  try {
-    const text = await response.text();
-    bodySnippet = text.slice(0, 500);
-  } catch {
-    /* ignore */
-  }
-
-  const errorMessage = `Fetch failed: method=${calledMethod} endpoint=${calledEndpoint} status=${response.status} ${response.statusText}${bodySnippet ? ` body=${bodySnippet}` : ""}`;
-  logErrorMessageAndThrowError(errorMessage);
-}
+import {
+  ErrorDetail,
+  toFrontendError,
+  toFrontendErrorResponse,
+} from "./narmesteLederErrors";
 
 const readJsonBody = async (
   response: Response,
@@ -84,7 +71,11 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   });
 
   if (!response.ok) {
-    await logFailedFetchAndThrowError(response, endpoint);
+    logger.error(
+      `Fetch failed: method=GET endpoint=${endpoint} status=${response.status} ${response.statusText}`,
+    );
+    const frontendError = await toFrontendError(response);
+    throw frontendError;
   }
 
   return parseAndValidateResponse(response, endpoint, responseDataSchema);
@@ -128,14 +119,14 @@ export async function tokenXFetchUpdate({
     );
   }
 
-  const frontendError = await toFrontendError(response);
+  const frontendErrorResponse = await toFrontendErrorResponse(response);
 
   logger.error(
-    `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendError?.type}`,
+    `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendErrorResponse?.type}`,
   );
 
   return {
     success: false,
-    errorDetail: frontendError.errorDetail,
+    errorDetail: frontendErrorResponse.errorDetail,
   };
 }
