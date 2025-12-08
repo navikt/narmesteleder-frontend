@@ -41,14 +41,14 @@ export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
       "For å kunne oppgi nærmeste leder for en ansatt må den ansatte være sykmeldt, og ha en aktiv sykmelding.",
   },
   [BackendErrorType.EMPLOYEE_MISSING_EMPLOYMENT_IN_ORG]: {
-    title: "Den ansatte har ikke gyldig ansettelse i organisasjonen",
+    title: "Den sykmeldte tilhører ikke organisasjonen",
     message:
-      "For å kunne oppgi nærmeste leder for en ansatt må den ansatte ha en gyldig ansettelse i organisasjonen.",
+      "Den sykmeldte er ikke ansatt i oppgitt organisasjon. Kontroller at du har fylt inn riktig kombinasjon.",
   },
   [BackendErrorType.LINEMANAGER_MISSING_EMPLOYMENT_IN_ORG]: {
-    title: "Nærmeste leder har ikke gyldig ansettelse i organisasjonen",
+    title: "Nærmeste leder tilhører ikke organisasjonen",
     message:
-      "For å kunne oppgi nærmeste leder for en ansatt må nærmeste leder ha en gyldig ansettelse i organisasjonen.",
+      "Personen som oppgis som nærmeste leder må tilhøre samme organisasjon som den sykmeldte.",
   },
 };
 
