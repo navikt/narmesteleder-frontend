@@ -7,8 +7,7 @@ const invalidEmailErrorMessage = "Ugyldig e-postadresse";
 const invalidOrgnummerMessage = "Organisasjonsnummer må være 9 siffer";
 const invalidFnrErrorMessage = "Fødselsnummeret er ikke gyldig";
 const requiredFnrErrorMessage = "Fødselsnummeret er påkrevd";
-const lengthAndNumberFnrErrorMessage =
-  "Fødselsnummeret er ufullstendig. Et fødselsnummer består av fødselsdato (6 siffer) og personnummer (5 siffer).";
+const lengthAndNumberFnrErrorMessage = "Fødselsnummeret må være 11 siffer";
 const invalidMobilnummerErrorMessage = "Mobilnummeret må være 8 siffer";
 
 const validateFnr = (
