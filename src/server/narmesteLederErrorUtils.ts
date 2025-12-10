@@ -52,7 +52,7 @@ export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
   },
 };
 
-const backendErrorTypeSchema = z.nativeEnum(BackendErrorType);
+const backendErrorTypeSchema = z.enum(BackendErrorType);
 
 const backendErrorSchema = z.object({
   type: backendErrorTypeSchema.optional(),
