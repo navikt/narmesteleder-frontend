@@ -28,7 +28,7 @@ Inngangen til det tomme skjemaet er appen `Min side - arbeidsgiver`. Brukeren fy
 
 ### Registrering via forhåndsutfylt skjema
 
-Inngangen til det forhåndsutfylte skjemaet er plattformen `Dialogporten`. Brukeren får presentert en bestemt sykmeldt som mangler **nærmeste leder**, og kan registrere eller oppdatere **nærmeste leder**.
+Inngangen til det forhåndsutfylte skjemaet er plattformen `Dialogporten`. Brukeren får presentert en bestemt sykmeldt som mangler **nærmeste leder**, og kan registrere eller oppdatere **nærmeste leder**. Hvis `behovid` ikke er en gyldig GUID, sendes brukeren til not-found-siden.
 
 **basePath**[^basepath] `/arbeidsgiver/ansatte/narmesteleder/{behovid}`
 

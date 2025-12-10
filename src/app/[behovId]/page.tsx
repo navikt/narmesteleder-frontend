@@ -1,8 +1,9 @@
+import { Suspense } from "react";
 import { logger } from "@navikt/next-logger";
 import notFound from "@/app/not-found";
+import { LederInfoLoader } from "@/components/LederInfoLoader";
+import { LederInfoSpinner } from "@/components/LederInfoSpinner";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
-import { fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
-import { LederViewControl } from "../../components/LederViewControl";
 
 const isValidBehovId = (behovId: string) =>
   !requirementIdSchema.safeParse(behovId).success;
@@ -17,7 +18,10 @@ export default async function Home({
     logger.warn(`Invalid behovId format: ${behovId}`);
     return notFound();
   }
-  const lederInfo = await fetchLederInfo(behovId);
 
-  return <LederViewControl lederInfo={lederInfo} behovId={behovId} />;
+  return (
+    <Suspense fallback={<LederInfoSpinner />}>
+      <LederInfoLoader behovId={behovId} />
+    </Suspense>
+  );
 }
