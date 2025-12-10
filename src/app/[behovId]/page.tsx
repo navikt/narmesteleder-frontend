@@ -14,20 +14,15 @@ const isValidBehovId = (behovId: string) =>
 
 const LederInfoContent = async ({ behovId }: { behovId: string }) => {
   let lederInfo: LederInfo | null = null;
-  let errorDetail: ErrorDetail | undefined;
 
   try {
     lederInfo = await fetchLederInfo(behovId);
   } catch (error) {
     if (isFrontendError(error)) {
-      errorDetail = error.errorDetail;
+      return <LederInfoError detail={error.errorDetail} />;
     } else {
       throw error;
     }
-  }
-
-  if (errorDetail) {
-    return <LederInfoError detail={errorDetail} />;
   }
 
   if (!lederInfo) {
