@@ -5,7 +5,6 @@ import LederInfoError from "@/components/LederInfoError";
 import { LederInfoSpinner } from "@/components/LederInfoSpinner";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { LederInfo, fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
-import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
 import { LederViewControl } from "../../components/LederViewControl";
 
