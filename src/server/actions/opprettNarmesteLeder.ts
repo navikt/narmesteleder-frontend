@@ -22,7 +22,6 @@ const getLineManagerPostPath = () =>
 const realOpprettNarmesteLeder = async (
   narmesteLeder: NarmesteLederInfo,
 ): Promise<TokenXFetchUpdateResult> => {
-  logger.info(narmesteLeder);
   const validationResult = narmesteLederInfoSchema.safeParse(narmesteLeder);
   if (!validationResult.success) {
     return {
