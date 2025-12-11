@@ -1,10 +1,11 @@
 import { BodyLong, GuidePanel } from "@navikt/ds-react";
 import { useLederContextState } from "@/context/lederContextState";
+import { TestId } from "@/utils/testIds";
 
 export default function OppgiLederPanel() {
   const { lederInfo } = useLederContextState();
   return (
-    <GuidePanel poster={true}>
+    <GuidePanel poster={true} data-testid={TestId.OppgiLederPanel}>
       <BodyLong spacing>
         <strong>
           {lederInfo.sykmeldt.fullnavn} ({lederInfo.sykmeldtFnr})

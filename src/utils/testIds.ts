@@ -15,4 +15,8 @@ export enum TestId {
   SykmeldtFodselsnummer = "sykmeldtFodselsnummer",
   ThankYouAlert = "thankYouAlert",
   RegistrerNarmesteLederRelasjonForm = "registrerNarmesteLederRelasjonForm",
+  OppgiLederPanel = "oppgiLederPanel",
+  SykmeldtBox = "sykmeldtBox",
+  OppiNarmesteLederForSykmeldt = "oppiNarmesteLederForSykmeldt",
+  SykmeldtAndLederInfoPanel = "sykmeldtAndLederInfoPanel",
 }

@@ -29,6 +29,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
 
   return (
     <form
+      data-testid={TestId.OppiNarmesteLederForSykmeldt}
       onSubmit={async (e) => {
         e.preventDefault();
         e.stopPropagation();

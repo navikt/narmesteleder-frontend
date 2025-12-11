@@ -31,13 +31,14 @@ export default function RegistrerNarmesteLederRelasjon() {
   return (
     <VStack gap="space-24">
       <form
+        data-testid={TestId.RegistrerNarmesteLederRelasjonForm}
         onSubmit={async (e) => {
           e.preventDefault();
           e.stopPropagation();
           await form.handleSubmit();
         }}
       >
-        <form.AppForm data-testid={TestId.RegistrerNarmesteLederRelasjonForm}>
+        <form.AppForm>
           <VStack gap="space-32">
             <BoxNew
               padding="space-16"
