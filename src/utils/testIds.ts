@@ -1,11 +1,18 @@
 // Shared enum for test IDs used in components and e2e tests
 export enum TestId {
+  Epost = "epost",
+  ExitButton = "exitButton",
+  HeadingLeder = "headingLeder",
+  LederInfoDescription = "lederInfoDescription",
   LederFodselsnummer = "lederFodselsnummer",
   LederEtternavn = "lederEtternavn",
+  LederSummary = "lederSummary",
   Mobilnummer = "mobilnummer",
-  Epost = "epost",
   Organisasjonsnummer = "organisasjonsnummer",
-  SykmeldtFodselsnummer = "sykmeldtFodselsnummer",
-  SykmeldtEtternavn = "sykmeldtEtternavn",
   SendInn = "sendInn",
+  SykmeldtAndLederSummary = "sykmeldtAndLederSummary",
+  SykmeldtEtternavn = "sykmeldtEtternavn",
+  SykmeldtFodselsnummer = "sykmeldtFodselsnummer",
+  ThankYouAlert = "thankYouAlert",
+  RegistrerNarmesteLederRelasjonForm = "registrerNarmesteLederRelasjonForm",
 }

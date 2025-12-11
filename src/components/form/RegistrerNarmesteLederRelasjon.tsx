@@ -37,7 +37,7 @@ export default function RegistrerNarmesteLederRelasjon() {
           await form.handleSubmit();
         }}
       >
-        <form.AppForm>
+        <form.AppForm data-testid={TestId.RegistrerNarmesteLederRelasjonForm}>
           <VStack gap="space-32">
             <BoxNew
               padding="space-16"

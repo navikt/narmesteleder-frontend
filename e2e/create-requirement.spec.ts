@@ -1,5 +1,6 @@
 import { Page, expect, test } from "@playwright/test";
 import { TestId } from "@/utils/testIds";
+import { ValidationMessages } from "@/utils/validationMessages";
 import { validTestData } from "./fixtures/validTestData";
 import { fillFormByTestId, getByTestId } from "./utils";
 
@@ -11,13 +12,23 @@ test.describe("Create Line Manager Requirement", () => {
   });
 
   test("should display submit button of the form", async ({ page }) => {
+    await expect(getByTestId(page, TestId.HeadingLeder)).toBeVisible();
+    await expect(
+      getByTestId(page, TestId.RegistrerNarmesteLederRelasjonForm),
+    ).toBeVisible();
     await expect(getSubmitButton(page)).toBeVisible();
   });
 
   test("should show validation errors for empty fields", async ({ page }) => {
     await getSubmitButton(page).click();
 
-    await expect(page.getByText("Feltet er påkrevd")).toHaveCount(4);
+    await expect(page.getByText(ValidationMessages.RequireField)).toHaveCount(
+      4,
+    );
+    await expect(page.getByText(ValidationMessages.RequiredFnr)).toHaveCount(2);
+    await expect(page.getByText(ValidationMessages.InvalidEmail)).toHaveCount(
+      1,
+    );
   });
 
   test("should submit form with valid data", async ({ page }) => {
@@ -35,10 +46,14 @@ test.describe("Create Line Manager Requirement", () => {
     ];
     await fillFormByTestId(page, fields);
 
-    // Submit the form
     await getSubmitButton(page).click();
 
-    // Wait for success response (mocked by fake server action)
-    await expect(page.locator("text=Takk")).toBeVisible({ timeout: 5000 });
+    await expect(getByTestId(page, TestId.HeadingLeder)).toBeVisible();
+    await expect(getByTestId(page, TestId.ThankYouAlert)).toBeVisible();
+    await expect(getByTestId(page, TestId.LederInfoDescription)).toBeVisible();
+    await expect(
+      getByTestId(page, TestId.SykmeldtAndLederSummary),
+    ).toBeVisible();
+    await expect(getByTestId(page, TestId.ExitButton)).toBeVisible();
   });
 });

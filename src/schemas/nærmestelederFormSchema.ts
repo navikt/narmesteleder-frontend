@@ -1,14 +1,7 @@
 import { email, object, string, z } from "zod";
 import { dnr, fnr } from "@navikt/fnrvalidator";
 import { isNonProd } from "@/env-variables/envHelpers";
-
-const requireFieldErrorMessage = "Feltet er påkrevd";
-const invalidEmailErrorMessage = "Ugyldig e-postadresse";
-const invalidOrgnummerMessage = "Organisasjonsnummer må være 9 siffer";
-const invalidFnrErrorMessage = "Fødselsnummeret er ikke gyldig";
-const requiredFnrErrorMessage = "Fødselsnummeret er påkrevd";
-const lengthAndNumberFnrErrorMessage = "Fødselsnummeret må være 11 siffer";
-const invalidMobilnummerErrorMessage = "Mobilnummeret må være 8 siffer";
+import { ValidationMessages } from "@/utils/validationMessages";
 
 const validateFnr = (
   value: string,
@@ -20,31 +13,33 @@ const validateFnr = (
 
 export const FnrSchema = string()
   .trim()
-  .nonempty(requiredFnrErrorMessage)
-  .regex(/^\d{11}$/, lengthAndNumberFnrErrorMessage)
+  .nonempty(ValidationMessages.RequiredFnr)
+  .regex(/^\d{11}$/, ValidationMessages.LengthAndNumberFnr)
   .refine((value) => validateFnr(value), {
-    message: invalidFnrErrorMessage,
+    message: ValidationMessages.InvalidFnr,
   });
 
 export const narmesteLederFormSchema = object({
   fodselsnummer: FnrSchema,
-  etternavn: string().trim().nonempty(requireFieldErrorMessage),
+  etternavn: string().trim().nonempty(ValidationMessages.RequireField),
   mobilnummer: string()
     .trim()
-    .nonempty(requireFieldErrorMessage)
-    .regex(/^\d{8}$/, invalidMobilnummerErrorMessage),
-  epost: email(invalidEmailErrorMessage).nonempty(requireFieldErrorMessage),
+    .nonempty(ValidationMessages.RequireField)
+    .regex(/^\d{8}$/, ValidationMessages.InvalidMobilnummer),
+  epost: email(ValidationMessages.InvalidEmail).nonempty(
+    ValidationMessages.RequireField,
+  ),
 });
 
 export type NarmesteLederForm = z.infer<typeof narmesteLederFormSchema>;
 
 export const sykmeldtFormSchema = object({
   fodselsnummer: FnrSchema,
-  etternavn: string().trim().nonempty(requireFieldErrorMessage),
+  etternavn: string().trim().nonempty(ValidationMessages.RequireField),
   orgnummer: string()
     .trim()
-    .nonempty(requireFieldErrorMessage)
-    .regex(/^\d{9}$/, invalidOrgnummerMessage),
+    .nonempty(ValidationMessages.RequireField)
+    .regex(/^\d{9}$/, ValidationMessages.InvalidOrgnummer),
 });
 
 export type SykmeldtForm = z.infer<typeof sykmeldtFormSchema>;

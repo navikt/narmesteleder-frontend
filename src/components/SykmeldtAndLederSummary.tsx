@@ -1,13 +1,14 @@
 import { FormSummary, VStack } from "@navikt/ds-react";
 import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
 import { formatFnr } from "@/utils/formatting";
+import { TestId } from "@/utils/testIds";
 
 export function SykmeldtAndLederSummary() {
   const { submittedData, handleEdit } = useSykmeldtAndLederContextState();
 
   return (
     <VStack gap="space-32">
-      <FormSummary>
+      <FormSummary data-testid={TestId.SykmeldtAndLederSummary}>
         <FormSummary.Header>
           <FormSummary.Heading level="3">Sykmeldt</FormSummary.Heading>
         </FormSummary.Header>
