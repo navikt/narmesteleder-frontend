@@ -1,8 +1,9 @@
 import { Page, expect, test } from "@playwright/test";
-import { validTestData } from "./fixtures/testData";
+import { TestId } from "@/utils/testIds";
+import { validTestData } from "./fixtures/validTestData";
+import { fillFormByTestId, getByTestId } from "./utils";
 
-const getSubmitButton = (page: Page) =>
-  page.getByRole("button", { name: "Send inn" });
+const getSubmitButton = (page: Page) => getByTestId(page, TestId.SendInn);
 
 test.describe("Create Line Manager Requirement", () => {
   test.beforeEach(async ({ page }) => {
@@ -20,20 +21,19 @@ test.describe("Create Line Manager Requirement", () => {
   });
 
   test("should submit form with valid data", async ({ page }) => {
-    // Fill in the form with valid test data
-    const fnrInputs = page.getByLabel("Fødselsnummer (11 siffer)");
-    await fnrInputs.nth(0).fill(validTestData.validFnr);
-    await fnrInputs.nth(1).fill(validTestData.validFnr);
-    const lastNameInputs = page.getByLabel("Etternavn");
-    await lastNameInputs.nth(0).fill(validTestData.validEtternavn);
-    await lastNameInputs.nth(1).fill(validTestData.validEtternavn);
-    await page.getByLabel("E-post").fill(validTestData.validEmail);
-    await page
-      .getByLabel("Mobilnummer (8 siffer)")
-      .fill(validTestData.validMobilnummer);
-    await page
-      .getByLabel("Organisasjonsnummer (9 siffer)")
-      .fill(validTestData.validOrgnummer);
+    const fields = [
+      { testId: TestId.LederFodselsnummer, value: validTestData.validFnr },
+      { testId: TestId.LederEtternavn, value: validTestData.validEtternavn },
+      { testId: TestId.Epost, value: validTestData.validEmail },
+      { testId: TestId.Mobilnummer, value: validTestData.validMobilnummer },
+      {
+        testId: TestId.Organisasjonsnummer,
+        value: validTestData.validOrgnummer,
+      },
+      { testId: TestId.SykmeldtFodselsnummer, value: validTestData.validFnr },
+      { testId: TestId.SykmeldtEtternavn, value: validTestData.validEtternavn },
+    ];
+    await fillFormByTestId(page, fields);
 
     // Submit the form
     await getSubmitButton(page).click();

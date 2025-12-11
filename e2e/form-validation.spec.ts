@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { validTestData } from "./fixtures/testData";
+import { validTestData } from "./fixtures/validTestData";
 
 test.describe("Form Validation", () => {
   test.beforeEach(async ({ page }) => {
