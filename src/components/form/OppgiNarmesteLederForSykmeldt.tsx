@@ -8,6 +8,7 @@ import { useAppForm } from "@/components/form/hooks/form";
 import { useLederContextState } from "@/context/lederContextState";
 import { useOppdaterNarmesteLederAction } from "@/hooks/useOppdaterNarmesteLederAction";
 import { lederSchema } from "@/schemas/nærmestelederFormSchema";
+import { TestId } from "@/utils/testIds";
 
 export default function OppgiNarmesteLederForSykmeldt() {
   const { submittedData, handleSuccess, behovId } = useLederContextState();
@@ -47,7 +48,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
         {error && <ErrorAlert detail={error} />}
         <HStack className="mt-0">
           <form.AppForm>
-            <form.BoundSubmitButton label="Send inn" />
+            <form.BoundSubmitButton label="Send inn" testId={TestId.SendInn} />
           </form.AppForm>
         </HStack>
       </VStack>
