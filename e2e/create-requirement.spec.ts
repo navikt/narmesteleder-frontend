@@ -1,7 +1,8 @@
-import { expect, Page, test } from "@playwright/test";
+import { Page, expect, test } from "@playwright/test";
 import { validTestData } from "./fixtures/testData";
 
-const getSubmitButton = (page: Page) => page.getByRole("button", { name: "Send inn" });
+const getSubmitButton = (page: Page) =>
+  page.getByRole("button", { name: "Send inn" });
 
 test.describe("Create Line Manager Requirement", () => {
   test.beforeEach(async ({ page }) => {
