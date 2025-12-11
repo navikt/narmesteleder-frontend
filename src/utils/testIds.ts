@@ -1,5 +1,6 @@
 // Shared enum for test IDs used in components and e2e tests
 export enum TestId {
+  ErrorAlert = "errorAlert",
   Epost = "epost",
   ExitButton = "exitButton",
   HeadingLeder = "headingLeder",

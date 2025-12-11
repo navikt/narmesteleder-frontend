@@ -12,13 +12,12 @@ import {
   TokenXFetchUpdateResult,
   tokenXFetchUpdate,
 } from "@/server/tokenXFetch";
-import { mockable } from "@/utils/mockable";
 import { NARMESTE_LEDER_FALLBACK_ERROR_DETAIL } from "../narmesteLederErrorUtils";
 
 const getLineManagerPutPath = (requirementId: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${requirementId}`;
 
-const realOppdaterNarmesteLeder = async (
+export const oppdaterNarmesteLeder = async (
   requirementId: string,
   narmesteLeder: NarmesteLederForm,
 ): Promise<TokenXFetchUpdateResult> => {
@@ -38,14 +37,3 @@ const realOppdaterNarmesteLeder = async (
     method: "PUT",
   });
 };
-
-const fakeOppdaterNarmesteLeder =
-  async (): Promise<TokenXFetchUpdateResult> => {
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    return { success: true };
-  };
-
-export const oppdaterNarmesteLeder = mockable({
-  real: realOppdaterNarmesteLeder,
-  mock: fakeOppdaterNarmesteLeder,
-});

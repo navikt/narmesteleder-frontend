@@ -1,7 +1,9 @@
 import { startTransition, useActionState } from "react";
+import { useMockOpprettNarmesteLederAction } from "@/mocks/useMockOpprettNarmesteLederAction";
 import { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 import { ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import { mockableHook } from "@/utils/mockableHook";
 
 const initialState = { error: null as ErrorDetail | null };
 
@@ -24,7 +26,7 @@ const action = async (
   return nextState;
 };
 
-export const useOpprettNarmesteLederAction = () => {
+const useRealOpprettNarmesteLederAction = () => {
   const [{ error }, runAction, isPending] = useActionState(
     action,
     initialState,
@@ -46,3 +48,8 @@ export const useOpprettNarmesteLederAction = () => {
 
   return { startOpprettNarmesteLeder, isPending, error } as const;
 };
+
+export const useOpprettNarmesteLederAction = mockableHook({
+  real: useRealOpprettNarmesteLederAction,
+  mock: useMockOpprettNarmesteLederAction,
+});

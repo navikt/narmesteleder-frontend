@@ -1,7 +1,9 @@
 import { startTransition, useActionState } from "react";
+import { useMockOppdaterNarmesteLederAction } from "@/mocks/useMockOppdaterNarmesteLederAction";
 import { NarmesteLederForm } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 import { ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import { mockableHook } from "@/utils/mockableHook";
 
 const initialState = { error: null as ErrorDetail | null };
 
@@ -26,7 +28,7 @@ const action = async (
   return nextState;
 };
 
-export const useOppdaterNarmesteLederAction = () => {
+const useRealOppdaterNarmesteLederAction = () => {
   const [{ error }, runAction, isPending] = useActionState(
     action,
     initialState,
@@ -50,3 +52,8 @@ export const useOppdaterNarmesteLederAction = () => {
 
   return { startOppdaterNarmesteLeder, isPending, error } as const;
 };
+
+export const useOppdaterNarmesteLederAction = mockableHook({
+  real: useRealOppdaterNarmesteLederAction,
+  mock: useMockOppdaterNarmesteLederAction,
+});
