@@ -1,44 +1,36 @@
-import { expect, test } from "@playwright/test";
-import { validTestData } from "./fixtures/validTestData";
+import { Page, test } from "@playwright/test";
+import { TestId } from "@/utils/testIds";
+import { ValidationMessages } from "@/utils/validationMessages";
+import { invalidTestData } from "./fixtures/testData";
+import { expectAllCount, fillAll, getByTestId } from "./utils";
+
+const getSubmitButton = (page: Page) => getByTestId(page, TestId.SendInn);
 
 test.describe("Form Validation", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("./");
   });
 
-  // test("should validate FNR format", async ({ page }) => {
-  //   await page.fill('input[name="fodselsnummer"]', "123");
-  //   await page.locator('button[type="submit"]').click();
+  test("should show validation error when wrong data provided", async ({
+    page,
+  }) => {
+    await fillAll(page, [
+      [TestId.LederFodselsnummer, invalidTestData.fnr],
+      [TestId.LederEtternavn, invalidTestData.etternavn],
+      [TestId.Epost, invalidTestData.email],
+      [TestId.Mobilnummer, invalidTestData.mobilnummer],
+      [TestId.Organisasjonsnummer, invalidTestData.orgnummer],
+      [TestId.SykmeldtFodselsnummer, invalidTestData.fnr],
+      [TestId.SykmeldtEtternavn, invalidTestData.etternavn],
+    ]);
 
-  //   await expect(
-  //     page.locator("text=Fødselsnummeret er ufullstendig"),
-  //   ).toBeVisible();
-  // });
+    await getSubmitButton(page).click();
 
-  // test("should validate email format", async ({ page }) => {
-  //   await page.fill('input[name="fodselsnummer"]', validTestData.validFnr);
-  //   await page.fill('input[name="etternavn"]', validTestData.validEtternavn);
-  //   await page.fill('input[name="epost"]', "invalid-email");
-  //   await page.fill(
-  //     'input[name="mobilnummer"]',
-  //     validTestData.validMobilnummer,
-  //   );
-
-  //   await page.locator('button[type="submit"]').click();
-
-  //   await expect(page.locator("text=Ugyldig e-postadresse")).toBeVisible();
-  // });
-
-  // test("should validate mobile number format", async ({ page }) => {
-  //   await page.fill('input[name="fodselsnummer"]', validTestData.validFnr);
-  //   await page.fill('input[name="etternavn"]', validTestData.validEtternavn);
-  //   await page.fill('input[name="epost"]', validTestData.validEmail);
-  //   await page.fill('input[name="mobilnummer"]', "123");
-
-  //   await page.locator('button[type="submit"]').click();
-
-  //   await expect(
-  //     page.locator("text=Mobilnummeret må være 8 siffer"),
-  //   ).toBeVisible();
-  // });
+    await expectAllCount(page, [
+      [ValidationMessages.LengthAndNumberFnr, 2],
+      [ValidationMessages.InvalidMobilnummer, 1],
+      [ValidationMessages.InvalidOrgnummer, 1],
+      [ValidationMessages.InvalidEmail, 1],
+    ]);
+  });
 });

@@ -1,7 +1,15 @@
-import { test } from "@playwright/test";
+import { Page, test } from "@playwright/test";
 import { TestId } from "@/utils/testIds";
-import { validTestData } from "./fixtures/validTestData";
-import { expectAllVisible } from "./utils";
+import { ValidationMessages } from "@/utils/validationMessages";
+import { validTestData } from "./fixtures/testData";
+import {
+  expectAllCount,
+  expectAllVisible,
+  fillAll,
+  getByTestId,
+} from "./utils";
+
+const getSubmitButton = (page: Page) => getByTestId(page, TestId.SendInn);
 
 test.describe("Update Line Manager", () => {
   test.beforeEach(async ({ page }) => {
@@ -19,20 +27,32 @@ test.describe("Update Line Manager", () => {
     ]);
   });
 
-  // test("should submit updated data", async ({ page }) => {
-  //   // Fill in the form with updated test data
-  //   await page.fill('input[name="fodselsnummer"]', validTestData.validFnr);
-  //   await page.fill('input[name="etternavn"]', "UpdatedName");
-  //   await page.fill('input[name="epost"]', validTestData.validEmail);
-  //   await page.fill(
-  //     'input[name="mobilnummer"]',
-  //     validTestData.validMobilnummer,
-  //   );
+  test("should show validation errors for empty fields", async ({ page }) => {
+    await getSubmitButton(page).click();
 
-  //   // Submit the form
-  //   await page.locator('button[type="submit"]').click();
+    await expectAllCount(page, [
+      [ValidationMessages.RequireField, 2],
+      [ValidationMessages.RequiredFnr, 1],
+      [ValidationMessages.InvalidEmail, 1],
+    ]);
+  });
 
-  //   // Wait for success response
-  //   await expect(page.locator("text=Takk")).toBeVisible({ timeout: 5000 });
-  // });
+  test("should submit updated data and show submit view", async ({ page }) => {
+    await fillAll(page, [
+      [TestId.LederFodselsnummer, validTestData.fnr],
+      [TestId.LederEtternavn, validTestData.etternavn],
+      [TestId.Epost, validTestData.email],
+      [TestId.Mobilnummer, validTestData.mobilnummer],
+    ]);
+
+    await getSubmitButton(page).click();
+
+    await expectAllVisible(page, [
+      TestId.HeadingLeder,
+      TestId.ThankYouAlert,
+      TestId.LederInfoDescription,
+      TestId.LederSummary,
+      TestId.ExitButton,
+    ]);
+  });
 });
