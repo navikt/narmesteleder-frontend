@@ -21,5 +21,9 @@ export default defineConfig({
     command: "npm run dev",
     url: "http://localhost:3000/arbeidsgiver/ansatte/narmesteleder",
     reuseExistingServer: !process.env.CI,
+    env: {
+      // We choose demo here to have a stable environment for e2e tests
+      NEXT_PUBLIC_RUNTIME_ENVIRONMENT: "demo",
+    },
   },
 });

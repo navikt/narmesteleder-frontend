@@ -2,8 +2,7 @@ import z from "zod";
 
 export const isLocalOrDemo =
   process.env.NEXT_PUBLIC_RUNTIME_ENVIRONMENT === "local" ||
-  process.env.NEXT_PUBLIC_RUNTIME_ENVIRONMENT === "demo" ||
-  process.env.NEXT_PUBLIC_RUNTIME_ENVIRONMENT === "test";
+  process.env.NEXT_PUBLIC_RUNTIME_ENVIRONMENT === "demo";
 
 export const isNonProd = ["local", "demo", "dev", "test"].includes(
   process.env.NEXT_PUBLIC_RUNTIME_ENVIRONMENT ?? "prod",
