@@ -1,13 +1,14 @@
 import { Page } from "@playwright/test";
 import { TestId } from "@/utils/testIds";
 
-export const fillFormByTestId = (
+export const fillFormByTestId = async (
   page: Page,
   fields: Array<{ testId: TestId; value: string }>,
-) =>
-  Promise.all(
-    fields.map(({ testId, value }) => fillByTestId(page, testId, value)),
-  );
+) => {
+  for (const { testId, value } of fields) {
+    await fillByTestId(page, testId, value);
+  }
+};
 
 export const getByTestId = (page: Page, testId: TestId) =>
   page.getByTestId(testId);
