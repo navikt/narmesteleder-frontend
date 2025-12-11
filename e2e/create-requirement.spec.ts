@@ -1,5 +1,7 @@
-import { expect, test } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 import { validTestData } from "./fixtures/testData";
+
+const getSubmitButton = (page: Page) => page.getByRole("button", { name: "Send inn" });
 
 test.describe("Create Line Manager Requirement", () => {
   test.beforeEach(async ({ page }) => {
@@ -7,12 +9,11 @@ test.describe("Create Line Manager Requirement", () => {
   });
 
   test("should display submit button of the form", async ({ page }) => {
-    await expect(page.getByRole("button", { name: "Send inn" })).toBeVisible();
+    await expect(getSubmitButton(page)).toBeVisible();
   });
 
   test("should show validation errors for empty fields", async ({ page }) => {
-    const submitButton = page.getByRole("button", { name: "Send inn" });
-    await submitButton.click();
+    await getSubmitButton(page).click();
 
     await expect(page.getByText("Feltet er påkrevd")).toHaveCount(4);
   });
@@ -34,7 +35,7 @@ test.describe("Create Line Manager Requirement", () => {
       .fill(validTestData.validOrgnummer);
 
     // Submit the form
-    await page.getByRole("button", { name: "Send inn" }).click();
+    await getSubmitButton(page).click();
 
     // Wait for success response (mocked by fake server action)
     await expect(page.locator("text=Takk")).toBeVisible({ timeout: 5000 });
