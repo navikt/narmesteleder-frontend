@@ -3,6 +3,7 @@ import { logger } from "@navikt/next-logger";
 import notFound from "@/app/not-found";
 import LederInfoError from "@/components/LederInfoError";
 import { LederInfoSpinner } from "@/components/LederInfoSpinner";
+import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { LederInfo, fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
 import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
@@ -12,12 +13,18 @@ import { LederViewControl } from "../../components/LederViewControl";
 const isValidBehovId = (behovId: string) =>
   !requirementIdSchema.safeParse(behovId).success;
 
-const LederInfoContent = async ({ behovId }: { behovId: string }) => {
+const LederInfoContent = async ({
+  behovId,
+  simulateError,
+}: {
+  behovId: string;
+  simulateError: boolean;
+}) => {
   let lederInfo: LederInfo | null = null;
   let errorDetail: ErrorDetail | undefined;
 
   try {
-    lederInfo = await fetchLederInfo(behovId);
+    lederInfo = await fetchLederInfo(behovId, { simulateError });
   } catch (error) {
     if (isFrontendError(error)) {
       errorDetail = error.errorDetail;
@@ -39,18 +46,25 @@ const LederInfoContent = async ({ behovId }: { behovId: string }) => {
 
 export default async function Home({
   params,
+  searchParams,
 }: {
   params: Promise<{ behovId: string }>;
+  searchParams: Promise<{ simulateError?: string }>;
 }) {
   const { behovId } = await params;
+  const { simulateError } = await searchParams;
+
   if (isValidBehovId(behovId)) {
     logger.warn(`Invalid behovId format: ${behovId}`);
     return notFound();
   }
 
+  // Only allow simulateError in local/demo environments
+  const shouldSimulateError = isLocalOrDemo && simulateError === "true";
+
   return (
     <Suspense fallback={<LederInfoSpinner />}>
-      <LederInfoContent behovId={behovId} />
+      <LederInfoContent behovId={behovId} simulateError={shouldSimulateError} />
     </Suspense>
   );
 }
