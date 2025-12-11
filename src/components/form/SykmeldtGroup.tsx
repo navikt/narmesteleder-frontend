@@ -29,7 +29,7 @@ export const SykmeldtGroup = withFieldGroup({
             <field.TextInputField
               label="Organisasjonsnummer (9 siffer)"
               className="w-66"
-              testId={TestId.Orgnummer}
+              testId={TestId.Organisasjonsnummer}
             />
           )}
         </group.AppField>

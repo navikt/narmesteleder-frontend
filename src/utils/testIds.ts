@@ -4,7 +4,7 @@ export enum TestId {
   LederEtternavn = "lederEtternavn",
   Mobilnummer = "mobilnummer",
   Epost = "epost",
-  Orgnummer = "orgnummer",
+  Organisasjonsnummer = "organisasjonsnummer",
   SykmeldtFodselsnummer = "sykmeldtFodselsnummer",
   SykmeldtEtternavn = "sykmeldtEtternavn",
   SendInn = "sendInn",
