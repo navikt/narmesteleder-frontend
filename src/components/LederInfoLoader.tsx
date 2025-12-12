@@ -1,15 +1,22 @@
 import notFound from "@/app/not-found";
 import LederInfoError from "@/components/LederInfoError";
 import { LederViewControl } from "@/components/LederViewControl";
-import { fetchLederInfo } from "@/server/fetchData/fetchLederInfo";
+import {
+  MockScenario,
+  fetchLederInfo,
+} from "@/server/fetchData/fetchLederInfo";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
 
 interface LederInfoLoaderProps {
   behovId: string;
+  mockScenario?: MockScenario;
 }
 
-export const LederInfoLoader = async ({ behovId }: LederInfoLoaderProps) =>
-  fetchLederInfo(behovId)
+export const LederInfoLoader = async ({
+  behovId,
+  mockScenario,
+}: LederInfoLoaderProps) =>
+  fetchLederInfo(behovId, mockScenario)
     .then((lederInfo) => {
       if (!lederInfo) {
         return notFound();

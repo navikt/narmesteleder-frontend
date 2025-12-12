@@ -7,11 +7,17 @@ import {
   VStack,
 } from "@navikt/ds-react";
 import { useLederContextState } from "@/context/lederContextState";
+import { TestId } from "@/utils/testIds";
 
 export default function SykmeldtBox() {
   const { lederInfo } = useLederContextState();
   return (
-    <BoxNew padding="space-16" background="accent-soft" borderRadius="8">
+    <BoxNew
+      padding="space-16"
+      background="accent-soft"
+      borderRadius="8"
+      data-testid={TestId.SykmeldtBox}
+    >
       <VStack gap="space-16">
         <Heading level="2" size="small">
           Sykmeldt

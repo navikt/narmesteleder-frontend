@@ -1,4 +1,6 @@
 import { startTransition, useActionState } from "react";
+import { isLocalOrDemo } from "@/env-variables/envHelpers";
+import { useMockOppdaterNarmesteLederAction } from "@/mocks/useMockOppdaterNarmesteLederAction";
 import { NarmesteLederForm } from "@/schemas/nærmestelederFormSchema";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 import { ErrorDetail } from "@/server/narmesteLederErrorUtils";
@@ -26,7 +28,7 @@ const action = async (
   return nextState;
 };
 
-export const useOppdaterNarmesteLederAction = () => {
+const useRealOppdaterNarmesteLederAction = () => {
   const [{ error }, runAction, isPending] = useActionState(
     action,
     initialState,
@@ -50,3 +52,7 @@ export const useOppdaterNarmesteLederAction = () => {
 
   return { startOppdaterNarmesteLeder, isPending, error } as const;
 };
+
+export const useOppdaterNarmesteLederAction = isLocalOrDemo
+  ? useMockOppdaterNarmesteLederAction
+  : useRealOppdaterNarmesteLederAction;

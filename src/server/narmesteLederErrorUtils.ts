@@ -81,7 +81,9 @@ export type FrontendErrorResponse = {
 
 export type FrontendError = Error & { errorDetail: ErrorDetail };
 
-const createFrontendError = (errorDetail: ErrorDetail): FrontendError => {
+export const createFrontendError = (
+  errorDetail: ErrorDetail,
+): FrontendError => {
   const error = new Error(errorDetail.message) as FrontendError;
   error.name = "FrontendError";
   error.errorDetail = errorDetail;

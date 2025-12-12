@@ -7,7 +7,6 @@ import {
   TokenXTargetApi,
   getClientIdForTokenXTargetApi,
 } from "../server/helpers";
-import { mockable } from "./mockable";
 
 const validateAndGetIdPortenToken = async () => {
   const validationResult = await validateIdPortenToken();
@@ -48,14 +47,14 @@ const exchangeIdPortenTokenForTokenXOboToken = cache(
   },
 );
 
-const realValidateTokenAndGetTokenX = async (
+export const validateTokenAndGetTokenX = async (
   targetApi: TokenXTargetApi,
 ): Promise<string> => {
   const idPortenToken = await validateAndGetIdPortenToken();
   return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
 };
 
-const realValidateTokenAndGetTokenXOrRedirect = async (
+export const validateTokenAndGetTokenXOrRedirect = async (
   redirectAfterLoginUrl: string,
   targetApi: TokenXTargetApi,
 ) => {
@@ -65,15 +64,3 @@ const realValidateTokenAndGetTokenXOrRedirect = async (
 
   return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
 };
-
-const mockToken = "mock-token-for-local-or-demo";
-
-export const validateTokenAndGetTokenX = mockable({
-  real: realValidateTokenAndGetTokenX,
-  mock: async () => mockToken,
-});
-
-export const validateTokenAndGetTokenXOrRedirect = mockable({
-  real: realValidateTokenAndGetTokenXOrRedirect,
-  mock: async () => mockToken,
-});
