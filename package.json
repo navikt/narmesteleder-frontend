@@ -22,7 +22,7 @@
     "@navikt/next-logger": "^4.4.2",
     "@navikt/oasis": "^4.1.1",
     "@tanstack/react-form": "^1.27.0",
-    "next": "^16.0.7",
+    "next": "^16.0.10",
     "pino": "^10.0.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
