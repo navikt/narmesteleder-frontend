@@ -10,6 +10,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
     "prepare": "husky"
   },
   "dependencies": {
@@ -30,6 +33,7 @@
   },
   "devDependencies": {
     "@navikt/aksel-stylelint": "^7.35.1",
+    "@playwright/test": "^1.48.2",
     "@tailwindcss/postcss": "^4",
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@types/node": "^24.10.1",
