@@ -1,12 +1,13 @@
 import { FormSummary, VStack } from "@navikt/ds-react";
 import { useLederContextState } from "@/context/lederContextState";
 import { formatFnr } from "@/utils/formatting";
+import { TestId } from "@/utils/testIds";
 
 export function LederSummary() {
   const { submittedData, handleEdit, lederInfo } = useLederContextState();
 
   return (
-    <FormSummary>
+    <FormSummary data-testid={TestId.LederSummary}>
       <FormSummary.Header>
         <VStack gap="space-8">
           <p>Nærmeste leder for</p>

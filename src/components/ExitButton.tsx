@@ -1,10 +1,12 @@
 import NextLink from "next/link";
 import { Button } from "@navikt/ds-react";
 import { publicEnv } from "@/env-variables/publicEnv";
+import { TestId } from "@/utils/testIds";
 
 export function ExitButton() {
   return (
     <Button
+      data-testid={TestId.ExitButton}
       as={NextLink}
       href={publicEnv.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL}
       variant="secondary"
