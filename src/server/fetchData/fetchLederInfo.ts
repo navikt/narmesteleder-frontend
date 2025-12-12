@@ -1,5 +1,6 @@
 import "server-only";
 import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
+import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { mockLineManagerRequirement } from "@/mocks/data/mockLineManagerRequirement";
 import {
@@ -7,9 +8,14 @@ import {
   lineManagerReadSchema,
 } from "@/schemas/lineManagerReadSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import {
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+  createFrontendError,
+} from "@/server/narmesteLederErrorUtils";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
-import { mockable } from "@/utils/mockable";
+
+export type MockScenario = "fetch-error" | "slow-response";
 
 const getLineManagerRequirementPath = (id: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement/${id}`;
@@ -66,12 +72,26 @@ const realFetchLederInfo = async (
   return mapToLederInfo(result);
 };
 
-const fakeFetchLederInfo = async (): Promise<LederInfo> => {
-  await new Promise((resolve) => setTimeout(resolve, 600));
+/**
+ * Mock fetch for local/demo environments.
+ * Pass mockScenario to simulate different scenarios (e.g., "fetch-error", "slow-response").
+ *
+ * SAFETY: This mock is only used in local/demo environments.
+ */
+const fakeFetchLederInfo = async (
+  requirementId: string,
+  mockScenario?: MockScenario,
+): Promise<LederInfo> => {
+  const delay = mockScenario === "slow-response" ? 2000 : 600;
+  await new Promise((resolve) => setTimeout(resolve, delay));
+
+  if (mockScenario === "fetch-error") {
+    throw createFrontendError(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
+  }
+
   return mapToLederInfo(mockLineManagerRequirement);
 };
 
-export const fetchLederInfo = mockable({
-  real: realFetchLederInfo,
-  mock: fakeFetchLederInfo,
-});
+export const fetchLederInfo = isLocalOrDemo
+  ? fakeFetchLederInfo
+  : realFetchLederInfo;
