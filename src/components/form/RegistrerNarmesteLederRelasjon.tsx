@@ -9,6 +9,7 @@ import { useAppForm } from "@/components/form/hooks/form";
 import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
 import { useOpprettNarmesteLederAction } from "@/hooks/useOpprettNarmesteLederAction";
 import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
+import { TestId } from "@/utils/testIds";
 
 export default function RegistrerNarmesteLederRelasjon() {
   const { submittedData, handleSuccess } = useSykmeldtAndLederContextState();
@@ -30,6 +31,7 @@ export default function RegistrerNarmesteLederRelasjon() {
   return (
     <VStack gap="space-24">
       <form
+        data-testid={TestId.RegistrerNarmesteLederRelasjonForm}
         onSubmit={async (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -64,7 +66,10 @@ export default function RegistrerNarmesteLederRelasjon() {
             </BoxNew>
             {error && <ErrorAlert detail={error} />}
             <HStack className="mt-0">
-              <form.BoundSubmitButton label="Send inn" />
+              <form.BoundSubmitButton
+                label="Send inn"
+                testId={TestId.SendInn}
+              />
             </HStack>
           </VStack>
         </form.AppForm>
