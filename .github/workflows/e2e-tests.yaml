@@ -14,15 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: navikt/teamesyfo-github-actions-workflows/actions/npm-cached@main
         with:
+          NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           node-version: 24.x
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
