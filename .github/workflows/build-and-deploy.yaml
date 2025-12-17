@@ -5,7 +5,7 @@ on:
 
 jobs:
   next-app:
-    uses: navikt/teamesyfo-github-actions-workflows/.github/workflows/next-app.yaml@playwright-e2e-action
+    uses: navikt/teamesyfo-github-actions-workflows/.github/workflows/next-app.yaml@feat/playwright-e2e-action
     permissions:
       contents: read
       id-token: write
