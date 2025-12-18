@@ -15,3 +15,4 @@ jobs:
       app: narmesteleder-frontend
       base-path: /arbeidsgiver/ansatte/narmesteleder
       node-version: 24.x
+      e2e-test-framework: playwright
