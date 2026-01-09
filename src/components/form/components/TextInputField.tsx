@@ -1,19 +1,19 @@
 import { TextField, TextFieldProps } from "@navikt/ds-react";
 import { useFieldContext } from "@/components/form/hooks/form-context";
 
-export type BoundTextFieldProps = {
+export type TextInputFieldProps = {
   label: string;
   type?: TextFieldProps["type"];
   className?: string;
   testId?: string;
 };
 
-export function BoundTextField({
+export function TextInputField({
   label,
   type,
   className,
   testId,
-}: BoundTextFieldProps) {
+}: TextInputFieldProps) {
   const field = useFieldContext<string>();
 
   return (
