@@ -9,7 +9,7 @@ import {
 export const { useAppForm, withFieldGroup } = createFormHook({
   fieldContext,
   formContext,
-  fieldComponents: { TextInputField: TextInputField },
+  fieldComponents: { TextInputField },
   formComponents: {
     BoundSubmitButton: SubmitButton,
   },
