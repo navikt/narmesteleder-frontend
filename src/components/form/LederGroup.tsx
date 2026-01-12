@@ -13,6 +13,7 @@ export const LederGroup = withFieldGroup({
               label="Fødselsnummer (11 siffer)"
               className="w-66"
               testId={TestId.LederFodselsnummer}
+              isRequired
             />
           )}
         </group.AppField>
@@ -21,6 +22,7 @@ export const LederGroup = withFieldGroup({
             <field.TextInputField
               label="Etternavn"
               testId={TestId.LederEtternavn}
+              isRequired
             />
           )}
         </group.AppField>
@@ -30,6 +32,7 @@ export const LederGroup = withFieldGroup({
               label="E-post"
               type="email"
               testId={TestId.Epost}
+              isRequired
             />
           )}
         </group.AppField>
@@ -40,6 +43,7 @@ export const LederGroup = withFieldGroup({
               type="tel"
               testId={TestId.Mobilnummer}
               className="w-48"
+              isRequired
             />
           )}
         </group.AppField>

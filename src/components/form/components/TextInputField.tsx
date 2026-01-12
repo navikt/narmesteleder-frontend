@@ -1,19 +1,21 @@
 import { TextField, TextFieldProps } from "@navikt/ds-react";
 import { useFieldContext } from "@/components/form/hooks/form-context";
 
-export type BoundTextFieldProps = {
+export type TextInputFieldProps = {
   label: string;
   type?: TextFieldProps["type"];
   className?: string;
   testId?: string;
+  isRequired?: boolean;
 };
 
-export function BoundTextField({
+export function TextInputField({
   label,
   type,
   className,
   testId,
-}: BoundTextFieldProps) {
+  isRequired = false,
+}: TextInputFieldProps) {
   const field = useFieldContext<string>();
 
   return (
@@ -26,6 +28,7 @@ export function BoundTextField({
       type={type}
       className={className}
       data-testid={testId ?? field.name}
+      aria-required={isRequired}
     />
   );
 }

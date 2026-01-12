@@ -13,6 +13,7 @@ export const SykmeldtGroup = withFieldGroup({
               label="Fødselsnummer (11 siffer)"
               className="w-66"
               testId={TestId.SykmeldtFodselsnummer}
+              isRequired
             />
           )}
         </group.AppField>
@@ -21,6 +22,7 @@ export const SykmeldtGroup = withFieldGroup({
             <field.TextInputField
               label="Etternavn"
               testId={TestId.SykmeldtEtternavn}
+              isRequired
             />
           )}
         </group.AppField>
@@ -30,6 +32,7 @@ export const SykmeldtGroup = withFieldGroup({
               label="Organisasjonsnummer (9 siffer)"
               className="w-66"
               testId={TestId.Organisasjonsnummer}
+              isRequired
             />
           )}
         </group.AppField>
