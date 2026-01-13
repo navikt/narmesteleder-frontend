@@ -16,10 +16,10 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@navikt/aksel-icons": "^7.36.0",
-    "@navikt/ds-css": "^7.36.0",
-    "@navikt/ds-react": "^7.36.0",
-    "@navikt/ds-tailwind": "^7.36.0",
+    "@navikt/aksel-icons": "^7.37.0",
+    "@navikt/ds-css": "^7.37.0",
+    "@navikt/ds-react": "^7.37.0",
+    "@navikt/ds-tailwind": "^7.37.0",
     "@navikt/fnrvalidator": "^2.2.1",
     "@navikt/nav-dekoratoren-moduler": "^3.6.1",
     "@navikt/next-logger": "^4.4.4",
@@ -32,7 +32,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@navikt/aksel-stylelint": "^7.36.0",
+    "@navikt/aksel-stylelint": "^7.37.0",
     "@playwright/test": "^1.48.2",
     "@tailwindcss/postcss": "^4",
     "@trivago/prettier-plugin-sort-imports": "^6.0.1",
