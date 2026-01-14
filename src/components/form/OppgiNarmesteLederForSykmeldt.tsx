@@ -1,7 +1,7 @@
 "use client";
 
 import { revalidateLogic } from "@tanstack/react-form";
-import { HStack, Heading, VStack } from "@navikt/ds-react";
+import { BoxNew, HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/ErrorAlert";
 import { LederGroup } from "@/components/form/LederGroup";
 import { useAppForm } from "@/components/form/hooks/form";
@@ -36,23 +36,28 @@ export default function OppgiNarmesteLederForSykmeldt() {
         await form.handleSubmit();
       }}
     >
-      <VStack gap="space-32" className="w-full max-w-md">
-        <Heading className="mt-4" level="2" size="small">
-          Nærmeste leder
-        </Heading>
+      <form.AppForm>
+        <VStack gap="space-32">
+          <BoxNew padding="space-16" background="accent-soft" borderRadius="8">
+            <VStack gap="space-24" className="w-full max-w-md">
+              <Heading className="mt-2" level="2" size="medium">
+                Nærmeste leder
+              </Heading>
 
-        <form.AppForm>
-          <VStack gap="space-16">
-            <LederGroup form={form} fields="leder" />
-          </VStack>
-        </form.AppForm>
-        {error && <ErrorAlert detail={error} />}
-        <HStack className="mt-0">
-          <form.AppForm>
-            <form.BoundSubmitButton label="Send inn" testId={TestId.SendInn} />
-          </form.AppForm>
-        </HStack>
-      </VStack>
+              <VStack gap="space-24" className="w-full max-w-md">
+                <LederGroup form={form} fields="leder" />
+              </VStack>
+              {error && <ErrorAlert detail={error} />}
+              <HStack className="mt-0">
+                <form.BoundSubmitButton
+                  label="Send inn"
+                  testId={TestId.SendInn}
+                />
+              </HStack>
+            </VStack>
+          </BoxNew>
+        </VStack>
+      </form.AppForm>
     </form>
   );
 }
