@@ -43,10 +43,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
               <Heading className="mt-2" level="2" size="medium">
                 Nærmeste leder
               </Heading>
-
-              <VStack gap="space-24" className="w-full max-w-md">
-                <LederGroup form={form} fields="leder" />
-              </VStack>
+              <LederGroup form={form} fields="leder" />
               {error && <ErrorAlert detail={error} />}
               <HStack className="mt-0">
                 <form.BoundSubmitButton
