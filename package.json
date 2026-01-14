@@ -36,7 +36,7 @@
     "@navikt/aksel-stylelint": "^7.37.0",
     "@playwright/test": "^1.48.2",
     "@tailwindcss/postcss": "^4",
-    "@trivago/prettier-plugin-sort-imports": "^6.0.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "^24.10.4",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
