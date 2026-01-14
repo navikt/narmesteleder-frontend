@@ -18,8 +18,8 @@ export default function SykmeldtBox() {
       borderRadius="8"
       data-testid={TestId.SykmeldtBox}
     >
-      <VStack gap="space-16">
-        <Heading level="2" size="small">
+      <VStack gap="space-24">
+        <Heading level="2" className="mt-2" size="medium">
           Sykmeldt
         </Heading>
         <Stack
@@ -32,7 +32,7 @@ export default function SykmeldtBox() {
           }}
         >
           <Stack direction="column" gap="space-16">
-            <Label size="small" className="min-w-32">
+            <Label size="medium" className="min-w-32">
               Navn
             </Label>
             <BodyShort className="min-w-32">
@@ -40,7 +40,7 @@ export default function SykmeldtBox() {
             </BodyShort>
           </Stack>
           <Stack direction="column" gap="space-16">
-            <Label size="small" className="min-w-32">
+            <Label size="medium" className="min-w-32">
               Fødselsnummer
             </Label>
             <BodyShort className="min-w-32">{lederInfo.sykmeldtFnr}</BodyShort>
