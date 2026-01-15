@@ -7,9 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
     "test": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -37,17 +36,11 @@
     "@navikt/aksel-stylelint": "^7.37.0",
     "@playwright/test": "^1.48.2",
     "@tailwindcss/postcss": "^4",
-    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "^24.10.4",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.1",
-    "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
-    "prettier": "^3.7.4",
-    "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.0.3",
@@ -63,9 +56,11 @@
     "@types/react-dom": "19.2.2"
   },
   "lint-staged": {
+    "*": [
+      "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
+    ],
     "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
+      "bash -c 'tsc --noEmit'"
     ]
   }
 }
