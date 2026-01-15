@@ -1,8 +1,8 @@
 "use client";
 
-import { PropsWithChildren } from "react";
 import { Theme } from "@navikt/ds-react/Theme";
 import { configureLogger } from "@navikt/next-logger";
+import type { PropsWithChildren } from "react";
 import { publicEnv } from "@/env-variables/publicEnv";
 
 configureLogger({

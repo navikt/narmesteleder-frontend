@@ -1,5 +1,5 @@
-import { email, object, string, z } from "zod";
 import { dnr, fnr } from "@navikt/fnrvalidator";
+import { email, object, string, type z } from "zod";
 import { isNonProd } from "@/env-variables/envHelpers";
 import { ValidationMessages } from "@/utils/validationMessages";
 

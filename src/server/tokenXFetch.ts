@@ -1,14 +1,14 @@
 import "server-only";
-import z from "zod";
 import { logger } from "@navikt/next-logger";
+import type z from "zod";
 import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
 } from "@/utils/tokenX";
-import { TokenXTargetApi, getBackendRequestHeaders } from "./helpers";
+import { getBackendRequestHeaders, type TokenXTargetApi } from "./helpers";
 import {
-  ErrorDetail,
+  type ErrorDetail,
   toFrontendError,
   toFrontendErrorResponse,
 } from "./narmesteLederErrorUtils";

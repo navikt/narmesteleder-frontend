@@ -1,4 +1,4 @@
-import { Page, expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import { TestId } from "@/utils/testIds";
 import { validTestData } from "./fixtures/testData";
 import { fillAll, getByTestId } from "./utils";

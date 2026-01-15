@@ -2,8 +2,8 @@ import notFound from "@/app/not-found";
 import LederInfoError from "@/components/LederInfoError";
 import { LederViewControl } from "@/components/LederViewControl";
 import {
-  MockScenario,
   fetchLederInfo,
+  type MockScenario,
 } from "@/server/fetchData/fetchLederInfo";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
 

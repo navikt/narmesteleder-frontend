@@ -1,4 +1,4 @@
-import { Page, test } from "@playwright/test";
+import { type Page, test } from "@playwright/test";
 import { TestId } from "@/utils/testIds";
 import { ValidationMessages } from "@/utils/validationMessages";
 import { invalidTestData } from "./fixtures/testData";

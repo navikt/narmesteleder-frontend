@@ -1,17 +1,17 @@
 "use client";
 
-import React, { ReactElement, useEffect } from "react";
 import {
   BodyShort,
   BoxNew,
-  HGrid,
   Heading,
+  HGrid,
   Link,
   List,
   Page,
   VStack,
 } from "@navikt/ds-react";
 import { logger } from "@navikt/next-logger";
+import { type ReactElement, useEffect } from "react";
 import { ButtonMinSideArbeidsgiver } from "@/components/ButtonMinSideArbeidsgiver";
 import { CONTACT_NAV_URL } from "@/constants";
 
@@ -19,10 +19,10 @@ type Props = {
   error: Error;
 };
 
-export default function Error({ error }: Props): ReactElement {
+export default function ErrorPage({ error }: Props): ReactElement {
   useEffect(() => {
-    logger.error(`Displaying 500-page.`);
-  }, [error]);
+    logger.error(`Displaying 500-page, errormessage: ${error.message}`);
+  }, [error.message]);
 
   return (
     <Page.Block as="main" width="xl" gutters>

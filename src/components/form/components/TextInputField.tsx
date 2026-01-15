@@ -1,4 +1,4 @@
-import { TextField, TextFieldProps } from "@navikt/ds-react";
+import { TextField, type TextFieldProps } from "@navikt/ds-react";
 import { useFieldContext } from "@/components/form/hooks/form-context";
 
 export type TextInputFieldProps = {

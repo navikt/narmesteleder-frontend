@@ -19,8 +19,9 @@ const appDirectives = {
 
 const nextConfig: NextConfig = {
   async headers() {
-    const { buildCspHeader } =
-      await import("@navikt/nav-dekoratoren-moduler/ssr");
+    const { buildCspHeader } = await import(
+      "@navikt/nav-dekoratoren-moduler/ssr"
+    );
     const cspValue = await buildCspHeader(appDirectives, { env: environment });
     return [
       {

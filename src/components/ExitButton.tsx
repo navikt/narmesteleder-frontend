@@ -1,5 +1,5 @@
-import NextLink from "next/link";
 import { Button } from "@navikt/ds-react";
+import NextLink from "next/link";
 import { publicEnv } from "@/env-variables/publicEnv";
 import { TestId } from "@/utils/testIds";
 

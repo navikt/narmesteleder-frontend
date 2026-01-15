@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { throwEnvSchemaParsingError } from "@/env-variables/envHelpers";
 import {
-  PublicEnv,
+  type PublicEnv,
   publicEnvSchema,
   rawPublicEnv,
 } from "@/env-variables/publicEnv";
