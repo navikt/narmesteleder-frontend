@@ -15,10 +15,14 @@ import { type ReactElement, useEffect } from "react";
 import { ButtonMinSideArbeidsgiver } from "@/components/ButtonMinSideArbeidsgiver";
 import { CONTACT_NAV_URL } from "@/constants";
 
-export default function ErrorPage(): ReactElement {
+type Props = {
+  error: Error;
+};
+
+export default function ErrorPage({ error }: Props): ReactElement {
   useEffect(() => {
-    logger.error(`Displaying 500-page.`);
-  }, []);
+    logger.error(`Displaying 500-page, errormessage: ${error.message}`);
+  }, [error.message]);
 
   return (
     <Page.Block as="main" width="xl" gutters>
