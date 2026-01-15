@@ -1,11 +1,11 @@
 "use client";
 
+import { BoxNew, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
-import { BoxNew, HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/ErrorAlert";
+import { useAppForm } from "@/components/form/hooks/form";
 import { LederGroup } from "@/components/form/LederGroup";
 import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
-import { useAppForm } from "@/components/form/hooks/form";
 import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
 import { useOpprettNarmesteLederAction } from "@/hooks/useOpprettNarmesteLederAction";
 import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
@@ -13,8 +13,7 @@ import { TestId } from "@/utils/testIds";
 
 export default function RegistrerNarmesteLederRelasjon() {
   const { submittedData, handleSuccess } = useSykmeldtAndLederContextState();
-  const { startOpprettNarmesteLeder, error: error } =
-    useOpprettNarmesteLederAction();
+  const { startOpprettNarmesteLeder, error } = useOpprettNarmesteLederAction();
 
   const form = useAppForm({
     defaultValues: submittedData,

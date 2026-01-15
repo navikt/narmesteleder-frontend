@@ -1,6 +1,6 @@
-import { Page, expect } from "@playwright/test";
-import { TestId } from "@/utils/testIds";
-import { ValidationMessages } from "@/utils/validationMessages";
+import { expect, type Page } from "@playwright/test";
+import type { TestId } from "@/utils/testIds";
+import type { ValidationMessages } from "@/utils/validationMessages";
 
 const getByText = (page: Page, validationMessage: ValidationMessages) =>
   page.getByText(validationMessage);

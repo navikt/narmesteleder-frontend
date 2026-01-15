@@ -2,7 +2,7 @@
 import { LederEditView } from "@/components/LederEditView";
 import { LederSubmitView } from "@/components/LederSubmitView";
 import { LederViewControl as LederViewControlContext } from "@/context/lederContextState";
-import { LederInfo } from "@/server/fetchData/fetchLederInfo";
+import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
 
 type LederViewControlProps = {
   lederInfo: LederInfo;

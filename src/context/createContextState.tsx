@@ -1,4 +1,4 @@
-import { ComponentType, createContext, useContext, useState } from "react";
+import { type ComponentType, createContext, useContext, useState } from "react";
 
 export type ViewMode = "editing" | "submitted";
 

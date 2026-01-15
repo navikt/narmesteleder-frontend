@@ -1,8 +1,8 @@
 import { VStack } from "@navikt/ds-react";
+import OppgiNarmesteLederForSykmeldt from "./form/OppgiNarmesteLederForSykmeldt";
 import { HeadingLeder } from "./HeadingLeder";
 import OppgiLederPanel from "./OppgiLederPanel";
 import SykmeldtBox from "./SykmeldtBox";
-import OppgiNarmesteLederForSykmeldt from "./form/OppgiNarmesteLederForSykmeldt";
 
 export function LederEditView() {
   return (

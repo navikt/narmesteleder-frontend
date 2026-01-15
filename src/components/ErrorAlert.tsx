@@ -1,5 +1,5 @@
 import { LocalAlert } from "@navikt/ds-react";
-import { type ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
 import { TestId } from "@/utils/testIds";
 
 type ErrorAlertProps = {

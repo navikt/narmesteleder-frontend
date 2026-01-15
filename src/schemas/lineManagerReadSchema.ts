@@ -1,4 +1,4 @@
-import { object, string, z } from "zod";
+import { object, string, type z } from "zod";
 
 export const employeeSchema = object({
   firstName: string(),

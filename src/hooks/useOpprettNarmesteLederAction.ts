@@ -1,9 +1,9 @@
 import { startTransition, useActionState } from "react";
 import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { useMockOpprettNarmesteLederAction } from "@/mocks/useMockOpprettNarmesteLederAction";
-import { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
+import type { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
-import { ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
 
 const initialState = { error: null as ErrorDetail | null };
 

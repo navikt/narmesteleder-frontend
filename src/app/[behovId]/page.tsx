@@ -1,10 +1,10 @@
-import { Suspense } from "react";
 import { logger } from "@navikt/next-logger";
+import { Suspense } from "react";
 import notFound from "@/app/not-found";
 import { LederInfoLoader } from "@/components/LederInfoLoader";
 import { LederInfoSpinner } from "@/components/LederInfoSpinner";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
-import { MockScenario } from "@/server/fetchData/fetchLederInfo";
+import type { MockScenario } from "@/server/fetchData/fetchLederInfo";
 
 const isValidBehovId = (behovId: string) =>
   !requirementIdSchema.safeParse(behovId).success;

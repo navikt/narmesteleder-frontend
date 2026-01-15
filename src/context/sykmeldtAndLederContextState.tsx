@@ -1,5 +1,5 @@
 import {
-  NarmesteLederInfo,
+  type NarmesteLederInfo,
   narmesteLederInfoDefaults,
 } from "@/schemas/nærmestelederFormSchema";
 import { createContextState } from "./createContextState";

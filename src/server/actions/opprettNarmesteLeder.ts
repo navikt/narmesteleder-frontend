@@ -4,12 +4,12 @@ import "server-only";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toLineManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
-  NarmesteLederInfo,
+  type NarmesteLederInfo,
   narmesteLederInfoSchema,
 } from "@/schemas/nærmestelederFormSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import {
-  TokenXFetchUpdateResult,
+  type TokenXFetchUpdateResult,
   tokenXFetchUpdate,
 } from "@/server/tokenXFetch";
 import { NARMESTE_LEDER_FALLBACK_ERROR_DETAIL } from "../narmesteLederErrorUtils";

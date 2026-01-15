@@ -1,9 +1,9 @@
-import { type Mock, beforeEach, describe, expect, it, vi } from "vitest";
 import { logger } from "@navikt/next-logger";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import {
   BackendErrorType,
-  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   errorTypeToDetail,
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   toFrontendErrorResponse,
 } from "./narmesteLederErrorUtils";
 

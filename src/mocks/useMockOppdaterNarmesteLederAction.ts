@@ -1,6 +1,6 @@
 "use client";
 
-import { NarmesteLederForm } from "@/schemas/nærmestelederFormSchema";
+import type { NarmesteLederForm } from "@/schemas/nærmestelederFormSchema";
 import { useMockSubmitAction } from "./useMockSubmitAction";
 
 export const useMockOppdaterNarmesteLederAction = () => {

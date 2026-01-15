@@ -3,13 +3,13 @@
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
-  NarmesteLederForm,
+  type NarmesteLederForm,
   narmesteLederFormSchema,
 } from "@/schemas/nærmestelederFormSchema";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import {
-  TokenXFetchUpdateResult,
+  type TokenXFetchUpdateResult,
   tokenXFetchUpdate,
 } from "@/server/tokenXFetch";
 import { NARMESTE_LEDER_FALLBACK_ERROR_DETAIL } from "../narmesteLederErrorUtils";

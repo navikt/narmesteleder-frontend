@@ -1,5 +1,5 @@
-import { Leder, lederDefaults } from "@/schemas/nærmestelederFormSchema";
-import { LederInfo } from "@/server/fetchData/fetchLederInfo";
+import { type Leder, lederDefaults } from "@/schemas/nærmestelederFormSchema";
+import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
 import { createContextState } from "./createContextState";
 
 export const {

@@ -1,4 +1,4 @@
-import { LineManagerReadResponse } from "@/schemas/lineManagerReadSchema";
+import type { LineManagerReadResponse } from "@/schemas/lineManagerReadSchema";
 
 export const mockLineManagerRequirement: LineManagerReadResponse = {
   id: "123456",

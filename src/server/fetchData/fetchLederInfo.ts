@@ -4,13 +4,13 @@ import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { mockLineManagerRequirement } from "@/mocks/data/mockLineManagerRequirement";
 import {
-  LineManagerReadResponse,
+  type LineManagerReadResponse,
   lineManagerReadSchema,
 } from "@/schemas/lineManagerReadSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import {
-  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   createFrontendError,
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
 } from "@/server/narmesteLederErrorUtils";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
@@ -79,7 +79,7 @@ const realFetchLederInfo = async (
  * SAFETY: This mock is only used in local/demo environments.
  */
 const fakeFetchLederInfo = async (
-  requirementId: string,
+  _requirementId: string,
   mockScenario?: MockScenario,
 ): Promise<LederInfo> => {
   const delay = mockScenario === "slow-response" ? 2000 : 600;

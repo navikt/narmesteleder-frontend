@@ -1,10 +1,10 @@
 "use client";
 
+import { BoxNew, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
-import { BoxNew, HStack, Heading, VStack } from "@navikt/ds-react";
 import ErrorAlert from "@/components/ErrorAlert";
-import { LederGroup } from "@/components/form/LederGroup";
 import { useAppForm } from "@/components/form/hooks/form";
+import { LederGroup } from "@/components/form/LederGroup";
 import { useLederContextState } from "@/context/lederContextState";
 import { useOppdaterNarmesteLederAction } from "@/hooks/useOppdaterNarmesteLederAction";
 import { lederSchema } from "@/schemas/nærmestelederFormSchema";
@@ -12,7 +12,7 @@ import { TestId } from "@/utils/testIds";
 
 export default function OppgiNarmesteLederForSykmeldt() {
   const { submittedData, handleSuccess, behovId } = useLederContextState();
-  const { error: error, startOppdaterNarmesteLeder } =
+  const { error, startOppdaterNarmesteLeder } =
     useOppdaterNarmesteLederAction();
 
   const form = useAppForm({

@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import Script from "next/script";
 import { Page, PageBlock } from "@navikt/ds-react/Page";
 import { fetchDecoratorReact } from "@navikt/nav-dekoratoren-moduler/ssr";
+import type { Metadata } from "next";
+import Script from "next/script";
 import Providers from "@/app/Providers";
 import "@/app/globals.css";
 import { publicEnv } from "@/env-variables/publicEnv";

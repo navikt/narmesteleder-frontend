@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
 
 export type SubmitMockScenario = "submit-error" | "slow-submit";
 
