@@ -1,4 +1,4 @@
-import naviktTailwindPreset from "@navikt/ds-tailwind/darkside-tw3";
+import naviktTailwindPreset from "@navikt/ds-tailwind";
 
 const config = {
   presets: [naviktTailwindPreset],

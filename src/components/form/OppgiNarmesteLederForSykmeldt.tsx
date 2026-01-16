@@ -1,6 +1,6 @@
 "use client";
 
-import { BoxNew, Heading, HStack, VStack } from "@navikt/ds-react";
+import { Box, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
 import ErrorAlert from "@/components/ErrorAlert";
 import { useAppForm } from "@/components/form/hooks/form";
@@ -38,7 +38,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
     >
       <form.AppForm>
         <VStack gap="space-32">
-          <BoxNew padding="space-16" background="accent-soft" borderRadius="8">
+          <Box padding="space-16" background="accent-soft" borderRadius="8">
             <VStack gap="space-24" className="w-full max-w-md">
               <Heading className="mt-2" level="2" size="medium">
                 Nærmeste leder
@@ -52,7 +52,7 @@ export default function OppgiNarmesteLederForSykmeldt() {
                 />
               </HStack>
             </VStack>
-          </BoxNew>
+          </Box>
         </VStack>
       </form.AppForm>
     </form>
