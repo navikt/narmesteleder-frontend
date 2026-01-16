@@ -16,10 +16,10 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@navikt/aksel-icons": "^7.37.0",
-    "@navikt/ds-css": "^7.37.0",
-    "@navikt/ds-react": "^7.37.0",
-    "@navikt/ds-tailwind": "^7.37.0",
+    "@navikt/aksel-icons": "^8.0.0",
+    "@navikt/ds-css": "^8.0.0",
+    "@navikt/ds-react": "^8.0.0",
+    "@navikt/ds-tailwind": "^8.0.0",
     "@navikt/fnrvalidator": "^2.2.1",
     "@navikt/nav-dekoratoren-moduler": "^3.6.1",
     "@navikt/next-logger": "^4.4.5",
@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
-    "@navikt/aksel-stylelint": "^7.37.0",
     "@playwright/test": "^1.48.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.10.4",
@@ -45,11 +44,6 @@
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.0.3",
     "vitest": "^4.0.16"
-  },
-  "stylelint": {
-    "extends": [
-      "@navikt/aksel-stylelint/recommended"
-    ]
   },
   "overrides": {
     "@types/react": "19.2.2",
