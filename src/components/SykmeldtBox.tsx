@@ -1,6 +1,6 @@
 import {
   BodyShort,
-  BoxNew,
+  Box,
   Heading,
   Label,
   Stack,
@@ -12,7 +12,7 @@ import { TestId } from "@/utils/testIds";
 export default function SykmeldtBox() {
   const { lederInfo } = useLederContextState();
   return (
-    <BoxNew
+    <Box
       padding="space-16"
       background="accent-soft"
       borderRadius="8"
@@ -47,6 +47,6 @@ export default function SykmeldtBox() {
           </Stack>
         </Stack>
       </VStack>
-    </BoxNew>
+    </Box>
   );
 }

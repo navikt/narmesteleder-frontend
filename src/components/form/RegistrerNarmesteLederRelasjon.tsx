@@ -1,6 +1,6 @@
 "use client";
 
-import { BoxNew, Heading, HStack, VStack } from "@navikt/ds-react";
+import { Box, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
 import ErrorAlert from "@/components/ErrorAlert";
 import { useAppForm } from "@/components/form/hooks/form";
@@ -39,30 +39,22 @@ export default function RegistrerNarmesteLederRelasjon() {
       >
         <form.AppForm>
           <VStack gap="space-32">
-            <BoxNew
-              padding="space-16"
-              background="accent-soft"
-              borderRadius="8"
-            >
+            <Box padding="space-16" background="accent-soft" borderRadius="8">
               <VStack gap="space-24" className="w-full max-w-md">
                 <Heading className="mt-2" size="medium" level="2">
                   Sykmeldt
                 </Heading>
                 <SykmeldtGroup form={form} fields="sykmeldt" />
               </VStack>
-            </BoxNew>
-            <BoxNew
-              padding="space-16"
-              background="accent-soft"
-              borderRadius="8"
-            >
+            </Box>
+            <Box padding="space-16" background="accent-soft" borderRadius="8">
               <VStack gap="space-24" className="w-full max-w-md">
                 <Heading className="mt-2" size="medium" level="2">
                   Nærmeste leder
                 </Heading>
                 <LederGroup form={form} fields="leder" />
               </VStack>
-            </BoxNew>
+            </Box>
             {error && <ErrorAlert detail={error} />}
             <HStack className="mt-0">
               <form.BoundSubmitButton

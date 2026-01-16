@@ -2,7 +2,7 @@
 
 import {
   BodyShort,
-  BoxNew,
+  Box,
   Heading,
   HGrid,
   Link,
@@ -26,7 +26,7 @@ export default function ErrorPage({ error }: Props): ReactElement {
 
   return (
     <Page.Block as="main" width="xl" gutters>
-      <BoxNew paddingBlock="space-80 space-32">
+      <Box paddingBlock="space-80 space-32">
         <HGrid columns="minmax(auto,600px)" data-aksel-template="500-v2">
           <VStack gap="space-64">
             <VStack gap="space-48" align="start">
@@ -90,7 +90,7 @@ export default function ErrorPage({ error }: Props): ReactElement {
             </div>
           </VStack>
         </HGrid>
-      </BoxNew>
+      </Box>
     </Page.Block>
   );
 }

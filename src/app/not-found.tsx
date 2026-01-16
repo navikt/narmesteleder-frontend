@@ -1,10 +1,10 @@
-import { BodyShort, BoxNew, Heading, VStack } from "@navikt/ds-react";
+import { BodyShort, Box, Heading, VStack } from "@navikt/ds-react";
 import { PageBlock } from "@navikt/ds-react/Page";
 import { ButtonMinSideArbeidsgiver } from "@/components/ButtonMinSideArbeidsgiver";
 
 const NotFound = async () => (
   <PageBlock as="main" width="xl" gutters>
-    <BoxNew paddingBlock="space-80 space-64" data-aksel-template="404-v2">
+    <Box paddingBlock="space-80 space-64" data-aksel-template="404-v2">
       <VStack gap="space-64">
         <VStack gap="space-24" align="start">
           <div>
@@ -27,7 +27,7 @@ const NotFound = async () => (
           <ButtonMinSideArbeidsgiver text="Go to employer page" />
         </VStack>
       </VStack>
-    </BoxNew>
+    </Box>
   </PageBlock>
 );
 
