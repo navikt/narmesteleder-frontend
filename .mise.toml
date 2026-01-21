@@ -8,3 +8,24 @@ run = "npm run build"
 [tasks.dev]
 description = "Start Next.js app in development mode"
 run = "npm run dev"
+
+[tasks.lint]
+description = "Run linter"
+run = "npm run lint"
+
+[tasks.test]
+description = "Run tests"
+run = "npm run test"
+
+[tasks.playwright]
+description = "Run Playwright tests"
+run = "npm run test:e2e"
+
+[tasks.format]
+description = "Format codebase"
+run = "npm run format"
+
+[tasks.format-fix]
+description = "Run Biome to fix code style issues"
+run = "npx biome check --fix"
+
