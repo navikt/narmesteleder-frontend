@@ -8,6 +8,14 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
 
+## Miljøer
+
+[🚀 Produksjon](https://www.nav.no/arbeidsgiver/ansatte/narmesteleder)
+
+[🛠️ Utvikling](https://www.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
+
+[🎬 Demo](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
+
 ## Formålet med appen
 
 Appen brukes til å registrere en **nærmeste leder** for en person som er sykmeldt. Den tilbyr to hovedfunksjoner.
