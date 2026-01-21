@@ -8,7 +8,13 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
 
-**Viktig:** For å komme i gang med bygging og kjøring av appen, les vår [wiki for Next.js-applikasjoner](https://github.com/navikt/esyfo-dev-tools/wiki/nextjs-build-run).
+## Miljøer
+
+[🚀 Produksjon](https://www.nav.no/arbeidsgiver/ansatte/narmesteleder)
+
+[🛠️ Utvikling](https://www.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
+
+[🎬 Demo](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
 
 ## Formålet med appen
 
@@ -42,6 +48,8 @@ Brukte endepunkter
 - **POST** `/api/v1/linemanager`
 - **PUT** `/api/v1/linemanager/requirement/{id}`
 
----
+## Utvikling (kjøre lokalt)
+
+For å komme i gang med bygging og kjøring av appen, les vår [wiki for Next.js-applikasjoner](https://github.com/navikt/esyfo-dev-tools/wiki/nextjs-build-run).
 
 [^basepath]: `basePath`-verdien settes i Next.js-konfigurasjonen i `next.config.ts` og angir URL-prefikset som hele appen lever under.
