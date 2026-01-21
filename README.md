@@ -8,8 +8,6 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Vitest](https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
 
-**Viktig:** For å komme i gang med bygging og kjøring av appen, les vår [wiki for Next.js-applikasjoner](https://github.com/navikt/esyfo-dev-tools/wiki/nextjs-build-run).
-
 ## Formålet med appen
 
 Appen brukes til å registrere en **nærmeste leder** for en person som er sykmeldt. Den tilbyr to hovedfunksjoner.
@@ -41,6 +39,10 @@ Brukte endepunkter
 - **GET** `/api/v1/linemanager/requirement/{id}`
 - **POST** `/api/v1/linemanager`
 - **PUT** `/api/v1/linemanager/requirement/{id}`
+
+## Utvikling (kjøre lokalt)
+
+For å komme i gang med bygging og kjøring av appen, les vår [wiki for Next.js-applikasjoner](https://github.com/navikt/esyfo-dev-tools/wiki/nextjs-build-run).
 
 ---
 
