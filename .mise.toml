@@ -1,2 +1,6 @@
 [tools]
 node = "24"
+
+[tasks.build]
+description = "Create production build for Next.js app"
+run = "npm run build"
