@@ -4,3 +4,7 @@ node = "24"
 [tasks.build]
 description = "Create production build for Next.js app"
 run = "npm run build"
+
+[tasks.dev]
+description = "Start Next.js app in development mode"
+run = "npm run dev"
