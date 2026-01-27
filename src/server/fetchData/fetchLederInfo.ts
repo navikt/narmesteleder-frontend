@@ -3,6 +3,7 @@ import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
 import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { mockLineManagerRequirement } from "@/mocks/data/mockLineManagerRequirement";
+import { simulateBackendDelay } from "@/mocks/simulateBackendDelay";
 import {
   type LineManagerReadResponse,
   lineManagerReadSchema,
@@ -83,7 +84,7 @@ const fakeFetchLederInfo = async (
   mockScenario?: MockScenario,
 ): Promise<LederInfo> => {
   const delay = mockScenario === "slow-response" ? 2000 : 600;
-  await new Promise((resolve) => setTimeout(resolve, delay));
+  await simulateBackendDelay(delay);
 
   if (mockScenario === "fetch-error") {
     throw createFrontendError(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);

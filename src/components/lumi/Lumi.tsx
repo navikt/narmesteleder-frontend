@@ -6,15 +6,11 @@ import {
   LumiSurveyDock,
   type LumiSurveyTransport,
 } from "@navikt/lumi-survey";
+import { opprettSurveyFeedback } from "@/server/actions/opprettSurveyFeedback";
 
 const transport: LumiSurveyTransport = {
   async submit(submission) {
-    // TODO replace with server side action
-    await fetch("/api/lumi/feedback", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(submission.transportPayload),
-    });
+    await opprettSurveyFeedback(submission.transportPayload);
   },
 };
 
