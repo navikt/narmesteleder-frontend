@@ -11,6 +11,8 @@ export const serverEnvSchema = z.object({
   // Provided by nais-*.yaml
   NARMESTELEDER_BACKEND_HOST: z.string(),
   NARMESTELEDER_BACKEND_CLIENT_ID: z.string(),
+  LUMI_API_HOST: z.string(),
+  LUMI_API_CLIENT_ID: z.string(),
   // Provided by nais
   TOKEN_X_WELL_KNOWN_URL: z.string(),
   TOKEN_X_CLIENT_ID: z.string(),
@@ -21,10 +23,11 @@ export const serverEnvSchema = z.object({
 });
 
 const rawServerEnv = {
-  // Provided by nais-*.yml
+  // Provided by nais-*.yaml
   NARMESTELEDER_BACKEND_HOST: process.env.NARMESTELEDER_BACKEND_HOST,
   NARMESTELEDER_BACKEND_CLIENT_ID: process.env.NARMESTELEDER_BACKEND_CLIENT_ID,
-
+  LUMI_API_HOST: process.env.LUMI_API_HOST,
+  LUMI_API_CLIENT_ID: process.env.LUMI_API_CLIENT_ID,
   // Provided by nais
   TOKEN_X_WELL_KNOWN_URL: process.env.TOKEN_X_WELL_KNOWN_URL,
   TOKEN_X_CLIENT_ID: process.env.TOKEN_X_CLIENT_ID,
