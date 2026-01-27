@@ -3,6 +3,8 @@ import { LederEditView } from "@/components/LederEditView";
 import { LederSubmitView } from "@/components/LederSubmitView";
 import { LederViewControl as LederViewControlContext } from "@/context/lederContextState";
 import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
+import { Lumi } from "./lumi/Lumi";
+import { lumiSurvey } from "./lumi/lumiSurvey";
 
 type LederViewControlProps = {
   lederInfo: LederInfo;
@@ -14,11 +16,14 @@ export function LederViewControl({
   behovId,
 }: LederViewControlProps) {
   return (
-    <LederViewControlContext
-      EditView={LederEditView}
-      SubmitView={LederSubmitView}
-      lederInfo={lederInfo}
-      behovId={behovId}
-    />
+    <>
+      <LederViewControlContext
+        EditView={LederEditView}
+        SubmitView={LederSubmitView}
+        lederInfo={lederInfo}
+        behovId={behovId}
+      />
+      <Lumi feedbackId="leder-feedback" survey={lumiSurvey} />
+    </>
   );
 }
