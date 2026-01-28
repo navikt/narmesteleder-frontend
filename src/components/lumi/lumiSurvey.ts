@@ -8,13 +8,11 @@ export const lumiSurvey: LumiSurveyConfig = {
       type: "rating",
       variant: "emoji",
       prompt: "Hvor enkelt var det å melde inn nærmesteleder?",
-      description: "Alle tilbakemeldinger er til stor nytte for oss",
     },
     {
       id: "narmesteleder-begrunnelse",
       type: "text",
       prompt: "Legg gjerne til en begrunnelse",
-      description: "Alle tilbakemeldinger er til stor nytte for oss",
       required: false,
       minRows: 3,
       maxLength: 500,
