@@ -1,6 +1,3 @@
-import "@navikt/ds-css";
-import "@navikt/lumi-survey/styles.css";
-
 import {
   type LumiSurveyConfig,
   LumiSurveyDock,
