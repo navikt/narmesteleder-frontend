@@ -121,7 +121,7 @@ export async function tokenXFetchUpdate({
 
   const frontendErrorResponse = await toFrontendErrorResponse(response);
 
-  logger.error(
+  logger.warn(
     `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendErrorResponse?.type}`,
   );
 
