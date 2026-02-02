@@ -1,7 +1,11 @@
 import "server-only";
-import { logger } from "@navikt/next-logger";
 import type z from "zod";
-import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
+import {
+  logApiError,
+  logApiNetworkError,
+  logApiParseError,
+  logApiSuccess,
+} from "@/utils/logHandling";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
@@ -20,7 +24,8 @@ const readJsonBody = async (
   try {
     return await response.json();
   } catch (error) {
-    logErrorMessageAndThrowError(
+    logApiParseError(endpoint, "json", error);
+    throw new Error(
       `Failed to parse response as JSON from ${endpoint}: ${error}`,
     );
   }
@@ -34,7 +39,8 @@ const validateResponse = <S extends z.ZodTypeAny>(
   try {
     return responseDataSchema.parse(responseData);
   } catch (error) {
-    logErrorMessageAndThrowError(
+    logApiParseError(endpoint, "zod", error);
+    throw new Error(
       `Failed to parse response data with zod schema from ${endpoint}: ${error}`,
     );
   }
@@ -61,6 +67,7 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   responseDataSchema: S;
   redirectAfterLoginUrl: string;
 }): Promise<z.infer<S>> {
+  const startTime = Date.now();
   const oboToken = await validateTokenAndGetTokenXOrRedirect(
     redirectAfterLoginUrl,
     targetApi,
@@ -70,13 +77,21 @@ export async function tokenXFetchGet<S extends z.ZodType>({
     headers: getBackendRequestHeaders(oboToken),
   });
 
+  const durationMs = Date.now() - startTime;
+
   if (!response.ok) {
     const frontendError = await toFrontendError(response);
-    logErrorMessageAndThrowError(
-      `Fetch failed: method=GET endpoint=${endpoint} status=${response.status} ${response.statusText}`,
-      frontendError,
+    logApiError(
+      "GET",
+      endpoint,
+      response.status,
+      response.statusText,
+      durationMs,
     );
+    throw frontendError;
   }
+
+  logApiSuccess("GET", endpoint, response.status, durationMs);
 
   return parseAndValidateResponse(response, endpoint, responseDataSchema);
 }
@@ -99,6 +114,7 @@ export async function tokenXFetchUpdate({
   requestBody: unknown;
   method?: "POST" | "PUT" | "DELETE";
 }): Promise<TokenXFetchUpdateResult> {
+  const startTime = Date.now();
   const oboToken = await validateTokenAndGetTokenX(targetApi);
 
   let response: Response;
@@ -108,24 +124,30 @@ export async function tokenXFetchUpdate({
       body: JSON.stringify(requestBody),
       headers: getBackendRequestHeaders(oboToken),
     });
+    const durationMs = Date.now() - startTime;
+
     if (response.ok) {
-      logger.info(
-        `Fetch succeeded: method=${method} endpoint=${endpoint} status=${response.status}`,
-      );
+      logApiSuccess(method, endpoint, response.status, durationMs);
       return { success: true };
     }
   } catch (error) {
-    logErrorMessageAndThrowError(
-      `Fetch failed: method=${method} endpoint=${endpoint} - network error: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
+    const durationMs = Date.now() - startTime;
+    logApiNetworkError(method, endpoint, durationMs, error);
+    throw new Error(
+      `Network error: ${error instanceof Error ? error.message : String(error)}`,
     );
   }
 
+  const durationMs = Date.now() - startTime;
   const frontendErrorResponse = await toFrontendErrorResponse(response);
 
-  logger.warn(
-    `Fetch failed: method=${method} endpoint=${endpoint} status=${response.status} ${response.statusText} backendErrorType=${frontendErrorResponse?.type}`,
+  logApiError(
+    method,
+    endpoint,
+    response.status,
+    response.statusText,
+    durationMs,
+    frontendErrorResponse?.type,
   );
 
   return {

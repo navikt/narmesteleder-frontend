@@ -117,9 +117,11 @@ const parseBackendErrorPayload = async (
     }
   } catch (error) {
     logger.error(
-      `Failed to parse backend error response as JSON: ${
-        error instanceof Error ? error.message : String(error)
-      } - body=${rawBody.slice(0, 200)}`,
+      {
+        error: error instanceof Error ? error.message : String(error),
+        bodyPreview: rawBody.slice(0, 200),
+      },
+      "Failed to parse backend error response as JSON",
     );
   }
 

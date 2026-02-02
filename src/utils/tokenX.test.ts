@@ -1,4 +1,3 @@
-import { logger } from "@navikt/next-logger";
 import { requestOboToken } from "@navikt/oasis";
 import { redirect } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -8,6 +7,11 @@ import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
 } from "../../src/utils/tokenX";
+
+// Mock logHandling
+vi.mock("@/utils/logHandling", () => ({
+  logError: vi.fn(),
+}));
 
 // Mock logger
 vi.mock("@navikt/next-logger", () => ({
@@ -31,6 +35,8 @@ vi.mock("@navikt/oasis", () => ({
   requestOboToken: vi.fn(),
 }));
 
+import { logError } from "@/utils/logHandling";
+
 const oboTokenMock = "obo-token-mock";
 
 const idPortenTokenMock = "idporten-token-mock";
@@ -48,6 +54,7 @@ const failIdPortenValidation = {
 const validateIdPortenTokenMock = vi.mocked(validateIdPortenToken);
 const requestOboTokenMock = vi.mocked(requestOboToken);
 const redirectMock = vi.mocked(redirect);
+const logErrorMock = vi.mocked(logError);
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -70,29 +77,36 @@ describe("validateTokenAndGetTokenX", () => {
       validateTokenAndGetTokenX(TokenXTargetApi.NARMESTELEDER_BACKEND),
     ).rejects.toThrow();
 
-    expect(logger.error).toHaveBeenCalledWith(
-      expect.stringContaining("IdPorten token validation failed"),
+    expect(logErrorMock).toHaveBeenCalledWith(
+      {
+        reason: failIdPortenValidation.reason,
+      },
+      "IdPorten token validation failed",
     );
   });
 
   it("throws when obo token request fails", async () => {
     validateIdPortenTokenMock.mockResolvedValue(successIdPortenValidation);
     // It is weird to mock that, but since we have to mock redirect, will the logic continue
+    const errorObj = {
+      cause: "some-error",
+      name: "SomeError",
+      message: "some message",
+    };
     requestOboTokenMock.mockResolvedValue({
       ok: false,
-      error: {
-        cause: "some-error",
-        name: "SomeError",
-        message: "some message",
-      },
+      error: errorObj,
     });
 
     await expect(
       validateTokenAndGetTokenX(TokenXTargetApi.NARMESTELEDER_BACKEND),
     ).rejects.toThrow();
 
-    expect(logger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to exchange idporten token"),
+    expect(logErrorMock).toHaveBeenCalledWith(
+      {
+        error: errorObj,
+      },
+      "Failed to exchange idporten token",
     );
   });
 });
@@ -128,13 +142,14 @@ describe("validateTokenAndGetTokenXOrRedirect", () => {
   it("throws when obo token request fails", async () => {
     validateIdPortenTokenMock.mockResolvedValue(successIdPortenValidation);
     // It is weird to mock that, but since we have to mock redirect, will the logic continue
+    const errorObj = {
+      cause: "some-error",
+      name: "SomeError",
+      message: "some message",
+    };
     requestOboTokenMock.mockResolvedValue({
       ok: false,
-      error: {
-        cause: "some-error",
-        name: "SomeError",
-        message: "some message",
-      },
+      error: errorObj,
     });
 
     await expect(
@@ -144,8 +159,11 @@ describe("validateTokenAndGetTokenXOrRedirect", () => {
       ),
     ).rejects.toThrow();
 
-    expect(logger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to exchange idporten token"),
+    expect(logErrorMock).toHaveBeenCalledWith(
+      {
+        error: errorObj,
+      },
+      "Failed to exchange idporten token",
     );
   });
 });

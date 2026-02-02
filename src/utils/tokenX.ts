@@ -2,7 +2,7 @@ import { requestOboToken } from "@navikt/oasis";
 import { cache } from "react";
 import { redirectToLogin } from "@/auth/redirectToLogin";
 import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
-import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
+import { logError } from "@/utils/logHandling";
 import {
   getClientIdForTokenXTargetApi,
   type TokenXTargetApi,
@@ -12,8 +12,15 @@ const validateAndGetIdPortenToken = async () => {
   const validationResult = await validateIdPortenToken();
 
   if (!validationResult.success) {
-    const errorMessage = `IdPorten token validation failed: ${validationResult.reason}`;
-    logErrorMessageAndThrowError(errorMessage);
+    logError(
+      {
+        reason: validationResult.reason,
+      },
+      "IdPorten token validation failed",
+    );
+    throw new Error(
+      `IdPorten token validation failed: ${validationResult.reason}`,
+    );
   }
 
   return validationResult.token;
@@ -39,8 +46,15 @@ const exchangeIdPortenTokenForTokenXOboToken = cache(
     );
 
     if (!tokenXGrant.ok) {
-      const errorMessage = `Failed to exchange idporten token: ${tokenXGrant.error}`;
-      logErrorMessageAndThrowError(errorMessage);
+      logError(
+        {
+          error: tokenXGrant.error,
+        },
+        "Failed to exchange idporten token",
+      );
+      throw new Error(
+        `Failed to exchange idporten token: ${tokenXGrant.error}`,
+      );
     }
 
     return tokenXGrant.token;
