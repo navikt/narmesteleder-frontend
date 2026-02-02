@@ -1,10 +1,11 @@
 import "server-only";
 import type z from "zod";
 import {
-  logApiError,
-  logApiNetworkError,
-  logApiParseError,
   logApiSuccess,
+  logBackendError,
+  logNetworkError,
+  logParseError,
+  logSchemaValidationError,
 } from "@/utils/logHandling";
 import {
   validateTokenAndGetTokenX,
@@ -24,7 +25,7 @@ const readJsonBody = async (
   try {
     return await response.json();
   } catch (error) {
-    logApiParseError(endpoint, "json", error);
+    logParseError(error);
     throw new Error(
       `Failed to parse response as JSON from ${endpoint}: ${error}`,
     );
@@ -38,8 +39,8 @@ const validateResponse = <S extends z.ZodTypeAny>(
 ): z.infer<S> => {
   try {
     return responseDataSchema.parse(responseData);
-  } catch (error) {
-    logApiParseError(endpoint, "zod", error);
+  } catch (error: unknown) {
+    logSchemaValidationError(error);
     throw new Error(
       `Failed to parse response data with zod schema from ${endpoint}: ${error}`,
     );
@@ -81,17 +82,22 @@ export async function tokenXFetchGet<S extends z.ZodType>({
 
   if (!response.ok) {
     const frontendError = await toFrontendError(response);
-    logApiError(
-      "GET",
+    logBackendError({
+      method: "GET",
       endpoint,
-      response.status,
-      response.statusText,
+      status: response.status,
       durationMs,
-    );
+      error: frontendError,
+    });
     throw frontendError;
   }
 
-  logApiSuccess("GET", endpoint, response.status, durationMs);
+  logApiSuccess({
+    method: "GET",
+    endpoint,
+    status: response.status,
+    durationMs,
+  });
 
   return parseAndValidateResponse(response, endpoint, responseDataSchema);
 }
@@ -127,12 +133,23 @@ export async function tokenXFetchUpdate({
     const durationMs = Date.now() - startTime;
 
     if (response.ok) {
-      logApiSuccess(method, endpoint, response.status, durationMs);
+      logApiSuccess({
+        method,
+        endpoint,
+        status: response.status,
+        durationMs,
+      });
       return { success: true };
     }
   } catch (error) {
     const durationMs = Date.now() - startTime;
-    logApiNetworkError(method, endpoint, durationMs, error);
+    logNetworkError({
+      method,
+      endpoint,
+      durationMs,
+      error,
+      status: 0,
+    });
     throw new Error(
       `Network error: ${error instanceof Error ? error.message : String(error)}`,
     );
@@ -141,14 +158,13 @@ export async function tokenXFetchUpdate({
   const durationMs = Date.now() - startTime;
   const frontendErrorResponse = await toFrontendErrorResponse(response);
 
-  logApiError(
+  logBackendError({
     method,
     endpoint,
-    response.status,
-    response.statusText,
+    status: response.status,
     durationMs,
-    frontendErrorResponse?.type,
-  );
+    error: frontendErrorResponse,
+  });
 
   return {
     success: false,

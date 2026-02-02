@@ -12,15 +12,10 @@ const validateAndGetIdPortenToken = async () => {
   const validationResult = await validateIdPortenToken();
 
   if (!validationResult.success) {
-    logError(
-      {
-        reason: validationResult.reason,
-      },
-      "IdPorten token validation failed",
-    );
-    throw new Error(
-      `IdPorten token validation failed: ${validationResult.reason}`,
-    );
+    const errorMessage = `IdPorten token validation failed: ${validationResult.reason}`;
+    logError(errorMessage);
+
+    throw new Error(errorMessage);
   }
 
   return validationResult.token;
@@ -46,15 +41,10 @@ const exchangeIdPortenTokenForTokenXOboToken = cache(
     );
 
     if (!tokenXGrant.ok) {
-      logError(
-        {
-          error: tokenXGrant.error,
-        },
-        "Failed to exchange idporten token",
-      );
-      throw new Error(
-        `Failed to exchange idporten token: ${tokenXGrant.error}`,
-      );
+      const errorMessage = `Failed to exchange idporten token: ${tokenXGrant.error}`;
+      logError(errorMessage);
+
+      throw new Error(errorMessage);
     }
 
     return tokenXGrant.token;

@@ -78,10 +78,7 @@ describe("validateTokenAndGetTokenX", () => {
     ).rejects.toThrow();
 
     expect(logErrorMock).toHaveBeenCalledWith(
-      {
-        reason: failIdPortenValidation.reason,
-      },
-      "IdPorten token validation failed",
+      "IdPorten token validation failed: invalid",
     );
   });
 
@@ -103,10 +100,7 @@ describe("validateTokenAndGetTokenX", () => {
     ).rejects.toThrow();
 
     expect(logErrorMock).toHaveBeenCalledWith(
-      {
-        error: errorObj,
-      },
-      "Failed to exchange idporten token",
+      `Failed to exchange idporten token: ${errorObj}`,
     );
   });
 });
@@ -160,10 +154,7 @@ describe("validateTokenAndGetTokenXOrRedirect", () => {
     ).rejects.toThrow();
 
     expect(logErrorMock).toHaveBeenCalledWith(
-      {
-        error: errorObj,
-      },
-      "Failed to exchange idporten token",
+      `Failed to exchange idporten token: ${errorObj}`,
     );
   });
 });
