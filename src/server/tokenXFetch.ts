@@ -81,15 +81,15 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   const durationMs = Date.now() - startTime;
 
   if (!response.ok) {
-    const frontendError = await toFrontendError(response);
+    const frontendErrorResponse = await toFrontendErrorResponse(response);
     logBackendError({
       method: "GET",
       endpoint,
       status: response.status,
       durationMs,
-      error: frontendError,
+      error: frontendErrorResponse.errorDetail,
     });
-    throw frontendError;
+    throw new Error(frontendErrorResponse.errorDetail.message);
   }
 
   logApiSuccess({
@@ -143,12 +143,16 @@ export async function tokenXFetchUpdate({
     }
   } catch (error) {
     const durationMs = Date.now() - startTime;
+    const errorDetail: ErrorDetail = {
+      title: "Network error",
+      message: error instanceof Error ? error.message : String(error),
+    };
     logNetworkError({
       method,
       endpoint,
       durationMs,
-      error,
       status: 0,
+      error: errorDetail,
     });
     throw new Error(
       `Network error: ${error instanceof Error ? error.message : String(error)}`,
@@ -163,7 +167,7 @@ export async function tokenXFetchUpdate({
     endpoint,
     status: response.status,
     durationMs,
-    error: frontendErrorResponse,
+    error: frontendErrorResponse.errorDetail,
   });
 
   return {

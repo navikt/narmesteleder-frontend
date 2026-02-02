@@ -1,7 +1,7 @@
 import { logger } from "@navikt/next-logger";
 import { ZodError } from "zod";
 import {
-  type FrontendErrorResponse,
+  type ErrorDetail,
   isFrontendError,
 } from "@/server/narmesteLederErrorUtils";
 
@@ -13,7 +13,7 @@ type ApiLogParams = {
 };
 
 type ApiErrorParams = ApiLogParams & {
-  error: Error | FrontendErrorResponse | unknown;
+  error: ErrorDetail;
 };
 
 const LOG_TEMPLATES = {
@@ -77,7 +77,7 @@ export const logNetworkError = (params: ApiErrorParams): void => {
   logger.error(
     {
       ...getBaseLogContext(params),
-      error: extractError(params.error),
+      error: params.error,
     },
     LOG_TEMPLATES.network(params.method),
   );
@@ -88,7 +88,7 @@ export const logBackendError = (params: ApiErrorParams): void => {
     params.error instanceof Error
       ? params.error.message
       : isFrontendError(params.error)
-        ? params.error
+        ? params.error.errorDetail
         : String(params.error);
 
   const context = {
