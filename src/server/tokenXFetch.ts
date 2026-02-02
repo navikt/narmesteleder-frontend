@@ -109,6 +109,9 @@ export async function tokenXFetchUpdate({
       headers: getBackendRequestHeaders(oboToken),
     });
     if (response.ok) {
+      logger.info(
+        `Fetch succeeded: method=${method} endpoint=${endpoint} status=${response.status}`,
+      );
       return { success: true };
     }
   } catch (error) {
