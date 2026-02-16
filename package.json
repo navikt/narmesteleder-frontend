@@ -57,5 +57,6 @@
     "*.{ts,tsx}": [
       "bash -c 'tsc --noEmit'"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.29.2"
 }

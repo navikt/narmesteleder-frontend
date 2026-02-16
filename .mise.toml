@@ -1,46 +1,47 @@
 [tools]
 node = "24"
+pnpm = "10"
 
 [tasks.install]
 description = "Install dependencies (cached)"
-run = "npm install"
-sources = ["package.json", "package-lock.json"]
-outputs = ["node_modules/.package-lock.json"]
+run = "pnpm install"
+sources = ["package.json", "pnpm-lock.yaml"]
+outputs = ["node_modules/.modules.yaml"]
 
 [tasks.build]
 description = "Create production build for Next.js app"
 depends = ["install"]
-run = "npm run build"
+run = "pnpm run build"
 
 [tasks.dev]
 description = "Start Next.js app in development mode"
 depends = ["install"]
-run = "npm run dev"
+run = "pnpm run dev"
 
 [tasks.lint]
 description = "Run linter"
 depends = ["install"]
-run = "npm run lint"
+run = "pnpm run lint"
 
 [tasks.test]
 description = "Run tests"
 depends = ["install"]
-run = "npm run test"
+run = "pnpm run test"
 
 [tasks.playwright]
 description = "Run Playwright tests"
 depends = ["install"]
-run = "npm run test:e2e"
+run = "pnpm run test:e2e"
 
 [tasks.format]
 description = "Format codebase"
 depends = ["install"]
-run = "npm run format"
+run = "pnpm run format"
 
 [tasks.format-fix]
 description = "Run Biome to fix code style issues"
 depends = ["install"]
-run = "npx biome check --fix"
+run = "pnpm exec biome check --fix"
 
 [tasks.check]
 description = "Run lint and all tests"
