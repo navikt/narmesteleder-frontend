@@ -9,23 +9,23 @@ importers:
   .:
     dependencies:
       '@navikt/aksel-icons':
-        specifier: ^8.2.2
+        specifier: ^8.3.0
         version: 8.4.1
       '@navikt/ds-css':
-        specifier: ^8.2.2
+        specifier: ^8.3.0
         version: 8.4.1
       '@navikt/ds-react':
-        specifier: ^8.2.2
+        specifier: ^8.3.0
         version: 8.4.1(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@navikt/ds-tailwind':
-        specifier: ^8.2.2
+        specifier: ^8.3.0
         version: 8.4.1
       '@navikt/fnrvalidator':
         specifier: ^2.2.1
         version: 2.2.1
       '@navikt/lumi-survey':
         specifier: ^0.0.5
-        version: 0.0.5(@navikt/ds-css@8.4.1)(@navikt/ds-react@8.4.1(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 0.0.5(@navikt/ds-css@8.4.1)(@navikt/ds-react@8.4.1(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@navikt/nav-dekoratoren-moduler@3.6.2(csp-header@6.3.0)(html-react-parser@5.2.17(@types/react@19.2.2)(react@19.2.0))(jsdom@28.0.0)(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@navikt/nav-dekoratoren-moduler':
         specifier: ^3.6.2
         version: 3.6.2(csp-header@6.3.0)(html-react-parser@5.2.17(@types/react@19.2.2)(react@19.2.0))(jsdom@28.0.0)(react@19.2.0)
@@ -64,7 +64,7 @@ importers:
         specifier: ^4
         version: 4.1.18
       '@types/node':
-        specifier: ^24.10.10
+        specifier: ^24.10.11
         version: 24.10.13
       '@types/react':
         specifier: 19.2.2
@@ -597,8 +597,12 @@ packages:
     peerDependencies:
       '@navikt/ds-css': '>=8'
       '@navikt/ds-react': '>=8'
+      '@navikt/nav-dekoratoren-moduler': '*'
       react: '>=18'
       react-dom: '>=18'
+    peerDependenciesMeta:
+      '@navikt/nav-dekoratoren-moduler':
+        optional: true
 
   '@navikt/nav-dekoratoren-moduler@3.6.2':
     resolution: {integrity: sha512-863vAyH9VjmRi8q4Aci4RQ3MaOG5faupzOD77IyhhTUmlyIxRw62jngX2j8c7wjavwwalhNnmie226NjYoNxjQ==, tarball: https://npm.pkg.github.com/download/@navikt/nav-dekoratoren-moduler/3.6.2/70dac085c605d0299f03a122646aecefea764d30}
@@ -608,6 +612,9 @@ packages:
       html-react-parser: '>=5.x'
       jsdom: '>=16.x'
       react: '>=17.x'
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   '@navikt/next-logger@4.5.1':
     resolution: {integrity: sha512-qfiBT/kPK92sCVKGHlUeD2N9vDvJzEFpjn2qRVZiatQivD9IE+qRZwsdCpuvdU1Hylsc/fcF9/i03YQzXBf0iQ==, tarball: https://npm.pkg.github.com/download/@navikt/next-logger/4.5.1/e8c32873a7931396b0871c77b94673cbfb12d376}
@@ -2064,12 +2071,14 @@ snapshots:
 
   '@navikt/fnrvalidator@2.2.1': {}
 
-  '@navikt/lumi-survey@0.0.5(@navikt/ds-css@8.4.1)(@navikt/ds-react@8.4.1(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@navikt/lumi-survey@0.0.5(@navikt/ds-css@8.4.1)(@navikt/ds-react@8.4.1(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@navikt/nav-dekoratoren-moduler@3.6.2(csp-header@6.3.0)(html-react-parser@5.2.17(@types/react@19.2.2)(react@19.2.0))(jsdom@28.0.0)(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@navikt/ds-css': 8.4.1
       '@navikt/ds-react': 8.4.1(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
+    optionalDependencies:
+      '@navikt/nav-dekoratoren-moduler': 3.6.2(csp-header@6.3.0)(html-react-parser@5.2.17(@types/react@19.2.2)(react@19.2.0))(jsdom@28.0.0)(react@19.2.0)
 
   '@navikt/nav-dekoratoren-moduler@3.6.2(csp-header@6.3.0)(html-react-parser@5.2.17(@types/react@19.2.2)(react@19.2.0))(jsdom@28.0.0)(react@19.2.0)':
     dependencies:
@@ -2077,6 +2086,7 @@ snapshots:
       html-react-parser: 5.2.17(@types/react@19.2.2)(react@19.2.0)
       js-cookie: 3.0.5
       jsdom: 28.0.0
+    optionalDependencies:
       react: 19.2.0
 
   '@navikt/next-logger@4.5.1(next@16.1.6(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(pino@10.3.1)':
