@@ -11,7 +11,7 @@ import { useOpprettNarmesteLederAction } from "@/hooks/useOpprettNarmesteLederAc
 import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
 import { TestId } from "@/utils/testIds";
 
-export default function RegistrerNarmesteLederRelasjon() {
+export default function RegistreringForm() {
   const { submittedData, handleSuccess } = useSykmeldtAndLederContextState();
   const { startOpprettNarmesteLeder, error } = useOpprettNarmesteLederAction();
 

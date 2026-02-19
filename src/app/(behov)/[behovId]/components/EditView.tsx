@@ -1,6 +1,6 @@
 import { VStack } from "@navikt/ds-react";
-import OppgiNarmesteLederForSykmeldt from "@/components/form/OppgiNarmesteLederForSykmeldt";
 import { HeadingLeder } from "@/components/HeadingLeder";
+import BehovForm from "./BehovForm";
 import OppgiLederPanel from "./OppgiLederPanel";
 import SykmeldtBox from "./SykmeldtBox";
 
@@ -10,7 +10,7 @@ export function EditView() {
       <HeadingLeder />
       <OppgiLederPanel />
       <SykmeldtBox />
-      <OppgiNarmesteLederForSykmeldt />
+      <BehovForm />
     </VStack>
   );
 }

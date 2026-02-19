@@ -10,7 +10,7 @@ import { useOppdaterNarmesteLederAction } from "@/hooks/useOppdaterNarmesteLeder
 import { lederSchema } from "@/schemas/nærmestelederFormSchema";
 import { TestId } from "@/utils/testIds";
 
-export default function OppgiNarmesteLederForSykmeldt() {
+export default function BehovForm() {
   const { submittedData, handleSuccess, behovId } = useLederContextState();
   const { error, startOppdaterNarmesteLeder } =
     useOppdaterNarmesteLederAction();
