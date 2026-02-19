@@ -3,7 +3,7 @@ import { useLederContextState } from "@/context/lederContextState";
 import { formatFnr } from "@/utils/formatting";
 import { TestId } from "@/utils/testIds";
 
-export function LederSummary() {
+export function Summary() {
   const { submittedData, handleEdit, lederInfo } = useLederContextState();
 
   return (

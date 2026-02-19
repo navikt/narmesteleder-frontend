@@ -1,7 +1,7 @@
 import { BodyLong, BodyShort, GuidePanel } from "@navikt/ds-react";
 import { TestId } from "@/utils/testIds";
 
-export default function SykmeldtAndLederInfoPanel() {
+export default function InfoPanel() {
   return (
     <GuidePanel poster={true} data-testid={TestId.SykmeldtAndLederInfoPanel}>
       <BodyLong spacing>

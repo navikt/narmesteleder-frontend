@@ -1,22 +1,19 @@
 "use client";
 import { LederViewControl as LederViewControlContext } from "@/context/lederContextState";
 import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
-import { LederEditView } from "./LederEditView";
-import { LederSubmitView } from "./LederSubmitView";
+import { EditView } from "./EditView";
+import { SubmitView } from "./SubmitView";
 
-type LederViewControlProps = {
+type ViewControlProps = {
   lederInfo: LederInfo;
   behovId: string;
 };
 
-export function LederViewControl({
-  lederInfo,
-  behovId,
-}: LederViewControlProps) {
+export function ViewControl({ lederInfo, behovId }: ViewControlProps) {
   return (
     <LederViewControlContext
-      EditView={LederEditView}
-      SubmitView={LederSubmitView}
+      EditView={EditView}
+      SubmitView={SubmitView}
       lederInfo={lederInfo}
       behovId={behovId}
     />

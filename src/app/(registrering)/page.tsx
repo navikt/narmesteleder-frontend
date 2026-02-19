@@ -1,5 +1,5 @@
-import { SykmeldAndtLederViewControl } from "@/app/(registrering)/components/SykmeldtAndLederViewControl";
+import { ViewControl } from "@/app/(registrering)/components/ViewControl";
 
 export default async function Home() {
-  return <SykmeldAndtLederViewControl />;
+  return <ViewControl />;
 }

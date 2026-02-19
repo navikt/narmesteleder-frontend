@@ -1,7 +1,7 @@
 import { logger } from "@navikt/next-logger";
 import { Suspense } from "react";
-import { LederInfoLoader } from "@/app/(behov)/[behovId]/components/LederInfoLoader";
-import { LederInfoSpinner } from "@/app/(behov)/[behovId]/components/LederInfoSpinner";
+import { InfoLoader } from "@/app/(behov)/[behovId]/components/InfoLoader";
+import { InfoSpinner } from "@/app/(behov)/[behovId]/components/InfoSpinner";
 import notFound from "@/app/not-found";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import type { MockScenario } from "@/server/fetchData/fetchLederInfo";
@@ -26,8 +26,8 @@ export default async function Home({
   }
 
   return (
-    <Suspense fallback={<LederInfoSpinner />}>
-      <LederInfoLoader behovId={behovId} mockScenario={mockScenario} />
+    <Suspense fallback={<InfoSpinner />}>
+      <InfoLoader behovId={behovId} mockScenario={mockScenario} />
     </Suspense>
   );
 }

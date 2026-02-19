@@ -5,11 +5,11 @@ import ErrorAlert from "@/components/ErrorAlert";
 import { HeadingLeder } from "@/components/HeadingLeder";
 import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
 
-interface LederInfoErrorProps {
+interface InfoErrorProps {
   detail: ErrorDetail;
 }
 
-export default function LederInfoError({ detail }: LederInfoErrorProps) {
+export default function InfoError({ detail }: InfoErrorProps) {
   return (
     <VStack gap="space-32">
       <HeadingLeder />

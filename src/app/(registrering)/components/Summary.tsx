@@ -3,7 +3,7 @@ import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederConte
 import { formatFnr } from "@/utils/formatting";
 import { TestId } from "@/utils/testIds";
 
-export function SykmeldtAndLederSummary() {
+export function Summary() {
   const { submittedData, handleEdit } = useSykmeldtAndLederContextState();
 
   return (

@@ -1,25 +1,25 @@
 import { HStack, VStack } from "@navikt/ds-react";
+import { InfoDescription } from "@/app/(behov)/[behovId]/components/InfoDescription";
 import { ExitButton } from "@/components/ExitButton";
 import { HeadingLeder } from "@/components/HeadingLeder";
 import { Lumi } from "@/components/lumi/Lumi";
 import { lumiSurvey } from "@/components/lumi/lumiSurvey";
 import ThankYouAlert from "@/components/ThankYouAlert";
-import { LederInfoDescription } from "./LederInfoDescription";
-import { LederSummary } from "./LederSummary";
+import { Summary } from "./Summary";
 
-export function LederSubmitView() {
+export function SubmitView() {
   return (
     <>
-      <VStack gap="space-32">
+      <VStack gap="space-24">
         <HeadingLeder />
         <ThankYouAlert />
-        <LederInfoDescription />
-        <LederSummary />
+        <InfoDescription />
+        <Summary />
         <HStack>
           <ExitButton />
         </HStack>
       </VStack>
-      <Lumi feedbackId="leder-feedback" survey={lumiSurvey} />
+      <Lumi feedbackId="sykmeldt-and-leder-feedback" survey={lumiSurvey} />
     </>
   );
 }

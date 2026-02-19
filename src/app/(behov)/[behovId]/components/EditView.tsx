@@ -4,7 +4,7 @@ import { HeadingLeder } from "@/components/HeadingLeder";
 import OppgiLederPanel from "@/components/OppgiLederPanel";
 import SykmeldtBox from "@/components/SykmeldtBox";
 
-export function LederEditView() {
+export function EditView() {
   return (
     <VStack gap="space-32">
       <HeadingLeder />
