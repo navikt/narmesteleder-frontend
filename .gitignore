@@ -55,3 +55,6 @@ next-env.d.ts
 
 # local mise config
 .mise.local.toml
+
+# local notes
+.local-notes/
