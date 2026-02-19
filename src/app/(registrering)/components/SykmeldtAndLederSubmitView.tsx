@@ -1,10 +1,10 @@
 import { HStack, VStack } from "@navikt/ds-react";
+import { LederInfoDescription } from "@/app/(behov)/[behovId]/components/LederInfoDescription";
 import { ExitButton } from "@/components/ExitButton";
 import { HeadingLeder } from "@/components/HeadingLeder";
-import { LederInfoDescription } from "@/components/LederInfoDescription";
+import { Lumi } from "@/components/lumi/Lumi";
+import { lumiSurvey } from "@/components/lumi/lumiSurvey";
 import ThankYouAlert from "@/components/ThankYouAlert";
-import { Lumi } from "./lumi/Lumi";
-import { lumiSurvey } from "./lumi/lumiSurvey";
 import { SykmeldtAndLederSummary } from "./SykmeldtAndLederSummary";
 
 export function SykmeldtAndLederSubmitView() {

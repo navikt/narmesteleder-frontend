@@ -1,6 +1,6 @@
 import { VStack } from "@navikt/ds-react";
-import RegistrerNarmesteLederRelasjon from "./form/RegistrerNarmesteLederRelasjon";
-import { HeadingLeder } from "./HeadingLeder";
+import RegistrerNarmesteLederRelasjon from "@/components/form/RegistrerNarmesteLederRelasjon";
+import { HeadingLeder } from "@/components/HeadingLeder";
 import SykmeldtAndLederInfoPanel from "./SykmeldtAndLederInfoPanel";
 
 export function SykmeldAndtLederEditView() {

@@ -1,11 +1,11 @@
 import notFound from "@/app/not-found";
-import LederInfoError from "@/components/LederInfoError";
-import { LederViewControl } from "@/components/LederViewControl";
 import {
   fetchLederInfo,
   type MockScenario,
 } from "@/server/fetchData/fetchLederInfo";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
+import LederInfoError from "./LederInfoError";
+import { LederViewControl } from "./LederViewControl";
 
 interface LederInfoLoaderProps {
   behovId: string;

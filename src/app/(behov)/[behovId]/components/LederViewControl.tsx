@@ -1,8 +1,8 @@
 "use client";
-import { LederEditView } from "@/components/LederEditView";
-import { LederSubmitView } from "@/components/LederSubmitView";
 import { LederViewControl as LederViewControlContext } from "@/context/lederContextState";
 import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
+import { LederEditView } from "./LederEditView";
+import { LederSubmitView } from "./LederSubmitView";
 
 type LederViewControlProps = {
   lederInfo: LederInfo;
