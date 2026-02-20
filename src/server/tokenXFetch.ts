@@ -1,11 +1,11 @@
 import "server-only";
 import { logger } from "@navikt/next-logger";
 import type z from "zod";
-import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
-} from "@/utils/tokenX";
+} from "@/auth/tokenX";
+import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import { getBackendRequestHeaders, type TokenXTargetApi } from "./helpers";
 import {
   type ErrorDetail,
