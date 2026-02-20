@@ -2,9 +2,9 @@ import {
   type NarmesteLederInfo,
   narmesteLederInfoDefaults,
 } from "@/schemas/nærmestelederFormSchema";
-import { createContextState } from "./createContextState";
+import { createContextState } from "@/shared/state/createContextState";
 
 export const {
-  useContextState: useSykmeldtAndLederContextState,
-  ViewControl: SykmeldtAndLederViewControl,
+  useContextState: useRegistreringContextState,
+  ViewControl: RegistreringViewControlProvider,
 } = createContextState<NarmesteLederInfo>(narmesteLederInfoDefaults);

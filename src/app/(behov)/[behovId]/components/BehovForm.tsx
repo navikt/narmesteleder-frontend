@@ -2,18 +2,17 @@
 
 import { Box, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
+import { useBehovAction } from "@/app/(behov)/[behovId]/hooks/useBehovAction";
+import { useBehovContextState } from "@/app/(behov)/[behovId]/state/contextState";
 import ErrorAlert from "@/components/ErrorAlert";
 import { useAppForm } from "@/components/form/hooks/form";
 import { LederGroup } from "@/components/form/LederGroup";
-import { useLederContextState } from "@/context/lederContextState";
-import { useOppdaterNarmesteLederAction } from "@/hooks/useOppdaterNarmesteLederAction";
 import { lederSchema } from "@/schemas/nærmestelederFormSchema";
 import { TestId } from "@/utils/testIds";
 
 export default function BehovForm() {
-  const { submittedData, handleSuccess, behovId } = useLederContextState();
-  const { error, startOppdaterNarmesteLeder } =
-    useOppdaterNarmesteLederAction();
+  const { submittedData, handleSuccess, behovId } = useBehovContextState();
+  const { error, startOppdaterNarmesteLeder } = useBehovAction();
 
   const form = useAppForm({
     defaultValues: submittedData,

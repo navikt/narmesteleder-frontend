@@ -1,5 +1,5 @@
 "use client";
-import { LederViewControl as LederViewControlContext } from "@/context/lederContextState";
+import { BehovViewControlProvider } from "@/app/(behov)/[behovId]/state/contextState";
 import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
 import { EditView } from "./EditView";
 import { SubmitView } from "./SubmitView";
@@ -11,7 +11,7 @@ type ViewControlProps = {
 
 export function ViewControl({ lederInfo, behovId }: ViewControlProps) {
   return (
-    <LederViewControlContext
+    <BehovViewControlProvider
       EditView={EditView}
       SubmitView={SubmitView}
       lederInfo={lederInfo}

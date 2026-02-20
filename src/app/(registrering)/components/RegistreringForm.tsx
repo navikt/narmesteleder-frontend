@@ -2,18 +2,18 @@
 
 import { Box, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
+import { useRegistreringAction } from "@/app/(registrering)/hooks/useRegistreringAction";
+import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
 import ErrorAlert from "@/components/ErrorAlert";
 import { useAppForm } from "@/components/form/hooks/form";
 import { LederGroup } from "@/components/form/LederGroup";
 import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
-import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
-import { useOpprettNarmesteLederAction } from "@/hooks/useOpprettNarmesteLederAction";
 import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
 import { TestId } from "@/utils/testIds";
 
 export default function RegistreringForm() {
-  const { submittedData, handleSuccess } = useSykmeldtAndLederContextState();
-  const { startOpprettNarmesteLeder, error } = useOpprettNarmesteLederAction();
+  const { submittedData, handleSuccess } = useRegistreringContextState();
+  const { startOpprettNarmesteLeder, error } = useRegistreringAction();
 
   const form = useAppForm({
     defaultValues: submittedData,

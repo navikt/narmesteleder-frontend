@@ -26,7 +26,7 @@ const action = async (
   return nextState;
 };
 
-const useRealOpprettNarmesteLederAction = () => {
+const useRealRegistreringAction = () => {
   const [{ error }, runAction, isPending] = useActionState(
     action,
     initialState,
@@ -49,6 +49,6 @@ const useRealOpprettNarmesteLederAction = () => {
   return { startOpprettNarmesteLeder, isPending, error } as const;
 };
 
-export const useOpprettNarmesteLederAction = isLocalOrDemo
+export const useRegistreringAction = isLocalOrDemo
   ? useMockOpprettNarmesteLederAction
-  : useRealOpprettNarmesteLederAction;
+  : useRealRegistreringAction;

@@ -1,10 +1,10 @@
 import { type Leder, lederDefaults } from "@/schemas/nærmestelederFormSchema";
 import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
-import { createContextState } from "./createContextState";
+import { createContextState } from "@/shared/state/createContextState";
 
 export const {
-  useContextState: useLederContextState,
-  ViewControl: LederViewControl,
+  useContextState: useBehovContextState,
+  ViewControl: BehovViewControlProvider,
 } = createContextState<Leder, { lederInfo: LederInfo; behovId: string }>(
   lederDefaults,
   (props: { lederInfo: LederInfo; behovId: string }) => ({

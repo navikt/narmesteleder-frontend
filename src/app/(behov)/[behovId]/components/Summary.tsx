@@ -1,10 +1,10 @@
 import { FormSummary, VStack } from "@navikt/ds-react";
-import { useLederContextState } from "@/context/lederContextState";
+import { useBehovContextState } from "@/app/(behov)/[behovId]/state/contextState";
 import { formatFnr } from "@/utils/formatting";
 import { TestId } from "@/utils/testIds";
 
 export function Summary() {
-  const { submittedData, handleEdit, lederInfo } = useLederContextState();
+  const { submittedData, handleEdit, lederInfo } = useBehovContextState();
 
   return (
     <FormSummary data-testid={TestId.LederSummary}>

@@ -1,10 +1,10 @@
 import { FormSummary, VStack } from "@navikt/ds-react";
-import { useSykmeldtAndLederContextState } from "@/context/sykmeldtAndLederContextState";
+import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
 import { formatFnr } from "@/utils/formatting";
 import { TestId } from "@/utils/testIds";
 
 export function Summary() {
-  const { submittedData, handleEdit } = useSykmeldtAndLederContextState();
+  const { submittedData, handleEdit } = useRegistreringContextState();
 
   return (
     <VStack gap="space-32">

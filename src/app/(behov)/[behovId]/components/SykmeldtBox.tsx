@@ -6,11 +6,11 @@ import {
   Stack,
   VStack,
 } from "@navikt/ds-react";
-import { useLederContextState } from "@/context/lederContextState";
+import { useBehovContextState } from "@/app/(behov)/[behovId]/state/contextState";
 import { TestId } from "@/utils/testIds";
 
 export default function SykmeldtBox() {
-  const { lederInfo } = useLederContextState();
+  const { lederInfo } = useBehovContextState();
   return (
     <Box
       padding="space-16"

@@ -28,7 +28,7 @@ const action = async (
   return nextState;
 };
 
-const useRealOppdaterNarmesteLederAction = () => {
+const useRealBehovAction = () => {
   const [{ error }, runAction, isPending] = useActionState(
     action,
     initialState,
@@ -53,6 +53,6 @@ const useRealOppdaterNarmesteLederAction = () => {
   return { startOppdaterNarmesteLeder, isPending, error } as const;
 };
 
-export const useOppdaterNarmesteLederAction = isLocalOrDemo
+export const useBehovAction = isLocalOrDemo
   ? useMockOppdaterNarmesteLederAction
-  : useRealOppdaterNarmesteLederAction;
+  : useRealBehovAction;
