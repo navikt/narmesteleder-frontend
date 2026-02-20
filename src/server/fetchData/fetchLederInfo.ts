@@ -1,5 +1,4 @@
 import "server-only";
-import { getRedirectAfterLoginUrlForAG } from "@/auth/redirectToLogin";
 import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { mockLineManagerRequirement } from "@/mocks/data/mockLineManagerRequirement";
@@ -8,6 +7,7 @@ import {
   type LineManagerReadResponse,
   lineManagerReadSchema,
 } from "@/schemas/lineManagerReadSchema";
+import { getRedirectAfterLoginUrlForAG } from "@/server/auth/redirectToLogin";
 import { TokenXTargetApi } from "@/server/helpers";
 import {
   createFrontendError,

@@ -4,7 +4,7 @@ import type z from "zod";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
-} from "@/auth/tokenX";
+} from "@/server/auth/tokenX";
 import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import { getBackendRequestHeaders, type TokenXTargetApi } from "./helpers";
 import {

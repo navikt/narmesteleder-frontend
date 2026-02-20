@@ -1,5 +1,5 @@
-import { withFieldGroup } from "@/components/form/hooks/form";
 import { narmesteLederFormDefaults } from "@/schemas/nærmestelederFormSchema";
+import { withFieldGroup } from "@/shared/components/form/hooks/form";
 import { UiSelector } from "@/utils/uiSelectors";
 
 export const LederGroup = withFieldGroup({

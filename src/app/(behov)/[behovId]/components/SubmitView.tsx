@@ -1,10 +1,10 @@
 import { HStack, VStack } from "@navikt/ds-react";
-import { ExitButton } from "@/components/ExitButton";
-import { HeadingLeder } from "@/components/HeadingLeder";
-import { InfoDescription } from "@/components/InfoDescription";
-import { Lumi } from "@/components/lumi/Lumi";
-import { lumiSurveyConfig } from "@/components/lumi/lumiSurveyConfig";
-import ThankYouAlert from "@/components/ThankYouAlert";
+import { ExitButton } from "@/shared/components/ExitButton";
+import { HeadingLeder } from "@/shared/components/HeadingLeder";
+import { InfoDescription } from "@/shared/components/InfoDescription";
+import { Lumi } from "@/shared/components/lumi/Lumi";
+import { lumiSurveyConfig } from "@/shared/components/lumi/lumiSurveyConfig";
+import ThankYouAlert from "@/shared/components/ThankYouAlert";
 import { Summary } from "./Summary";
 
 export function SubmitView() {

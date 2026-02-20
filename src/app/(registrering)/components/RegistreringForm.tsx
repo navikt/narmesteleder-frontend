@@ -4,11 +4,11 @@ import { Box, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
 import { useRegistreringAction } from "@/app/(registrering)/hooks/useRegistreringAction";
 import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
-import ErrorAlert from "@/components/ErrorAlert";
-import { useAppForm } from "@/components/form/hooks/form";
-import { LederGroup } from "@/components/form/LederGroup";
-import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
 import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
+import ErrorAlert from "@/shared/components/ErrorAlert";
+import { useAppForm } from "@/shared/components/form/hooks/form";
+import { LederGroup } from "@/shared/components/form/LederGroup";
+import { SykmeldtGroup } from "@/shared/components/form/SykmeldtGroup";
 import { UiSelector } from "@/utils/uiSelectors";
 
 export default function RegistreringForm() {

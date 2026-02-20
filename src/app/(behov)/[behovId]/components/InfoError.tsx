@@ -1,9 +1,9 @@
 "use client";
 import { HStack, VStack } from "@navikt/ds-react";
-import { ButtonMinSideArbeidsgiver } from "@/components/ButtonMinSideArbeidsgiver";
-import ErrorAlert from "@/components/ErrorAlert";
-import { HeadingLeder } from "@/components/HeadingLeder";
 import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
+import { ButtonMinSideArbeidsgiver } from "@/shared/components/ButtonMinSideArbeidsgiver";
+import ErrorAlert from "@/shared/components/ErrorAlert";
+import { HeadingLeder } from "@/shared/components/HeadingLeder";
 
 interface InfoErrorProps {
   detail: ErrorDetail;

@@ -1,12 +1,12 @@
 import { requestOboToken } from "@navikt/oasis";
 import { cache } from "react";
-import { redirectToLogin } from "@/auth/redirectToLogin";
-import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
+import { redirectToLogin } from "@/server/auth/redirectToLogin";
+import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
 import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import {
   getClientIdForTokenXTargetApi,
   type TokenXTargetApi,
-} from "../server/helpers";
+} from "../helpers";
 
 const validateAndGetIdPortenToken = async () => {
   const validationResult = await validateIdPortenToken();

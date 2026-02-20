@@ -1,5 +1,5 @@
 import { Button } from "@navikt/ds-react";
-import { useFormContext } from "@/components/form/hooks/form-context";
+import { useFormContext } from "@/shared/components/form/hooks/form-context";
 
 export const SubmitButton = ({
   label,

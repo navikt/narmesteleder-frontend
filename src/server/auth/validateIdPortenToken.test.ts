@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { validateIdPortenToken } from "../../src/auth/validateIdPortenToken";
+import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
 
 vi.mock("next/headers", () => ({
   headers: () => ({ get: () => undefined }),

@@ -1,5 +1,5 @@
 import { VStack } from "@navikt/ds-react";
-import { HeadingLeder } from "@/components/HeadingLeder";
+import { HeadingLeder } from "@/shared/components/HeadingLeder";
 import BehovForm from "./BehovForm";
 import OppgiLederPanel from "./OppgiLederPanel";
 import SykmeldtBox from "./SykmeldtBox";

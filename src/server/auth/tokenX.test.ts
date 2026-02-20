@@ -5,8 +5,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
-} from "@/auth/tokenX";
-import { validateIdPortenToken } from "@/auth/validateIdPortenToken";
+} from "@/server/auth/tokenX";
+import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
 import { TokenXTargetApi } from "@/server/helpers";
 
 // Mock logger
@@ -23,7 +23,7 @@ vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
 }));
 
-vi.mock("@/auth/validateIdPortenToken", () => ({
+vi.mock("@/server/auth/validateIdPortenToken", () => ({
   validateIdPortenToken: vi.fn(),
 }));
 
