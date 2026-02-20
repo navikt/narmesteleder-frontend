@@ -13,7 +13,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "prepare": "husky"
+    "prepare": "lefthook install --reset-hooks-path"
   },
   "dependencies": {
     "@navikt/aksel-icons": "^8.3.0",
@@ -40,7 +40,7 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "babel-plugin-react-compiler": "^1.0.0",
-    "husky": "^9.1.7",
+    "lefthook": "^2.1.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.0.5",
@@ -49,14 +49,6 @@
   "overrides": {
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2"
-  },
-  "lint-staged": {
-    "*": [
-      "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
-    ],
-    "*.{ts,tsx}": [
-      "bash -c 'tsc --noEmit'"
-    ]
   },
   "packageManager": "pnpm@10.29.2"
 }
