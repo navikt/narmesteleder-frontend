@@ -23,13 +23,13 @@ Single-test commands:
 
 - This is a Next.js App Router app under base path `/arbeidsgiver/ansatte/narmesteleder` (`next.config.ts`, `NEXT_PUBLIC_BASE_PATH`).
 - Two top-level user flows:
-  - `src/app/page.tsx`: create relation via empty form (`SykmeldtAndLederViewControl`).
-  - `src/app/[behovId]/page.tsx`: update relation for a specific requirement; validates `behovId` with zod and loads backend data via `LederInfoLoader`.
+  - `src/app/(registrering)/page.tsx`: create relation via full registration flow (`ViewControl`).
+  - `src/app/(behov)/[behovId]/page.tsx`: update relation for a specific requirement; validates `behovId` with zod and loads backend data via `InfoLoader`.
 - Server communication is centralized in `src/server/*`:
   - `fetchData/fetchLederInfo.ts` for read calls.
   - `actions/opprettNarmesteLeder.ts` and `actions/oppdaterNarmesteLeder.ts` for writes.
   - `tokenXFetch.ts` wraps GET/POST/PUT fetches, token exchange, zod response validation, and frontend error mapping.
-- Auth path: IdPorten token validation (`src/auth/validateIdPortenToken.ts`) -> TokenX exchange (`src/utils/tokenX.ts`) -> backend call.
+- Auth path: IdPorten token validation (`src/auth/validateIdPortenToken.ts`) -> TokenX exchange (`src/auth/tokenX.ts`) -> backend call.
 - Environment behavior split:
   - `local`/`demo` uses mocks (`src/mocks/*`) and supports `mockScenario` in `[behovId]` route.
   - other envs call real backend/Lumi endpoints from `getServerEnv()`.
@@ -46,7 +46,7 @@ Single-test commands:
 - Form stack convention:
   - TanStack React Form through `useAppForm` helpers in `src/components/form/hooks`.
   - Validation comes from zod schemas in `src/schemas/*` (`validators: { onDynamic: ... }`).
-- Edit/submit UI state is standardized with `createContextState` (`src/context/createContextState.tsx`) and per-flow context wrappers.
+- Edit/submit UI state is standardized with `createContextState` (`src/shared/state/createContextState.tsx`) and per-flow context wrappers.
 - Keep schema-first boundaries:
   - validate route params, form payloads, and backend responses with zod before use.
   - keep env access through `publicEnv`/`getServerEnv` only (both zod-validated).
