@@ -39,10 +39,16 @@ Single-test commands:
 
 ## Key codebase conventions
 
-- Reuse Aksel spacing/component conventions from `.github/instructions/nextjs-aksel-instructions.md`:
+- Route-group ownership is intentional:
+  - keep registrering flow-local code in `src/app/(registrering)/**`
+  - keep behov flow-local code in `src/app/(behov)/[behovId]/**`
+  - keep cross-flow modules in neutral folders (`src/components`, `src/shared`, `src/auth`, `src/utils`).
+- Reuse Aksel spacing/component conventions from `.github/instructions/nextjs-aksel.instructions.md`:
   - prefer Aksel components (`Box`, `VStack`, `HStack`, etc.)
   - use `space-*` tokens for spacing props
   - avoid Tailwind margin/padding utilities for layout spacing decisions
+- Copilot guidance:
+  - follow repository instruction/prompt files under `.github/instructions/` before adding new patterns.
 - Form stack convention:
   - TanStack React Form through `useAppForm` helpers in `src/components/form/hooks`.
   - Validation comes from zod schemas in `src/schemas/*` (`validators: { onDynamic: ... }`).
