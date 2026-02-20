@@ -16,8 +16,8 @@ Single-test commands:
 
 - Run one Vitest file: `pnpm test src/utils/formatting.test.ts`
 - Run one Vitest test case: `pnpm test src/utils/formatting.test.ts -t "should join multiple strings with default separator"`
-- Run one Playwright spec: `pnpm test:e2e e2e/create-linemanager.spec.ts`
-- Run one Playwright test by title: `pnpm test:e2e e2e/create-linemanager.spec.ts -g "should display edit view"`
+- Run one Playwright spec: `pnpm test:e2e e2e/registrering-flow.spec.ts`
+- Run one Playwright test by title: `pnpm test:e2e e2e/registrering-flow.spec.ts -g "should display edit view"`
 
 ## High-level architecture
 

@@ -12,18 +12,16 @@ import {
 const getSubmitButton = (page: Page) =>
   getByUiSelector(page, UiSelector.SendInn);
 
-test.describe("Update Line Manager", () => {
+test.describe("Registrering flow", () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the update page with a requirement ID
-    await page.goto(`./${validTestData.requirementId}`);
+    await page.goto("./");
   });
 
   test("should display edit view", async ({ page }) => {
     await expectAllVisible(page, [
       UiSelector.HeadingLeder,
-      UiSelector.OppgiLederPanel,
-      UiSelector.SykmeldtBox,
-      UiSelector.BehovForm,
+      UiSelector.RegistreringInfoPanel,
+      UiSelector.RegistreringForm,
       UiSelector.SendInn,
     ]);
   });
@@ -32,18 +30,23 @@ test.describe("Update Line Manager", () => {
     await getSubmitButton(page).click();
 
     await expectAllCount(page, [
-      [ValidationMessages.RequireField, 2],
-      [ValidationMessages.RequiredFnr, 1],
+      [ValidationMessages.RequireField, 4],
+      [ValidationMessages.RequiredFnr, 2],
       [ValidationMessages.InvalidEmail, 1],
     ]);
   });
 
-  test("should submit updated data and show submit view", async ({ page }) => {
+  test("should submit form with valid data and show submit view", async ({
+    page,
+  }) => {
     await fillAll(page, [
       [UiSelector.LederFodselsnummer, validTestData.fnr],
       [UiSelector.LederEtternavn, validTestData.etternavn],
       [UiSelector.Epost, validTestData.email],
       [UiSelector.Mobilnummer, validTestData.mobilnummer],
+      [UiSelector.Organisasjonsnummer, validTestData.orgnummer],
+      [UiSelector.SykmeldtFodselsnummer, validTestData.fnr],
+      [UiSelector.SykmeldtEtternavn, validTestData.etternavn],
     ]);
 
     await getSubmitButton(page).click();
@@ -52,7 +55,7 @@ test.describe("Update Line Manager", () => {
       UiSelector.HeadingLeder,
       UiSelector.ThankYouAlert,
       UiSelector.LederInfoDescription,
-      UiSelector.BehovSummary,
+      UiSelector.RegistreringSummary,
       UiSelector.ExitButton,
     ]);
   });

@@ -12,16 +12,18 @@ import {
 const getSubmitButton = (page: Page) =>
   getByUiSelector(page, UiSelector.SendInn);
 
-test.describe("Create Line Manager", () => {
+test.describe("Behov flow", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("./");
+    // Navigate to the update page with a requirement ID
+    await page.goto(`./${validTestData.requirementId}`);
   });
 
   test("should display edit view", async ({ page }) => {
     await expectAllVisible(page, [
       UiSelector.HeadingLeder,
-      UiSelector.RegistreringInfoPanel,
-      UiSelector.RegistreringForm,
+      UiSelector.OppgiLederPanel,
+      UiSelector.SykmeldtBox,
+      UiSelector.BehovForm,
       UiSelector.SendInn,
     ]);
   });
@@ -30,23 +32,18 @@ test.describe("Create Line Manager", () => {
     await getSubmitButton(page).click();
 
     await expectAllCount(page, [
-      [ValidationMessages.RequireField, 4],
-      [ValidationMessages.RequiredFnr, 2],
+      [ValidationMessages.RequireField, 2],
+      [ValidationMessages.RequiredFnr, 1],
       [ValidationMessages.InvalidEmail, 1],
     ]);
   });
 
-  test("should submit form with valid data and show submit view", async ({
-    page,
-  }) => {
+  test("should submit updated data and show submit view", async ({ page }) => {
     await fillAll(page, [
       [UiSelector.LederFodselsnummer, validTestData.fnr],
       [UiSelector.LederEtternavn, validTestData.etternavn],
       [UiSelector.Epost, validTestData.email],
       [UiSelector.Mobilnummer, validTestData.mobilnummer],
-      [UiSelector.Organisasjonsnummer, validTestData.orgnummer],
-      [UiSelector.SykmeldtFodselsnummer, validTestData.fnr],
-      [UiSelector.SykmeldtEtternavn, validTestData.etternavn],
     ]);
 
     await getSubmitButton(page).click();
@@ -55,7 +52,7 @@ test.describe("Create Line Manager", () => {
       UiSelector.HeadingLeder,
       UiSelector.ThankYouAlert,
       UiSelector.LederInfoDescription,
-      UiSelector.RegistreringSummary,
+      UiSelector.BehovSummary,
       UiSelector.ExitButton,
     ]);
   });
