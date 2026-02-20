@@ -19,8 +19,8 @@ test.describe("Create Line Manager", () => {
   test("should display edit view", async ({ page }) => {
     await expectAllVisible(page, [
       TestId.HeadingLeder,
-      TestId.SykmeldtAndLederInfoPanel,
-      TestId.RegistrerNarmesteLederRelasjonForm,
+      TestId.RegistreringInfoPanel,
+      TestId.RegistreringForm,
       TestId.SendInn,
     ]);
   });
@@ -54,7 +54,7 @@ test.describe("Create Line Manager", () => {
       TestId.HeadingLeder,
       TestId.ThankYouAlert,
       TestId.LederInfoDescription,
-      TestId.SykmeldtAndLederSummary,
+      TestId.RegistreringSummary,
       TestId.ExitButton,
     ]);
   });

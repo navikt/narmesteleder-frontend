@@ -30,7 +30,7 @@ export default function RegistreringForm() {
   return (
     <VStack gap="space-24">
       <form
-        data-testid={TestId.RegistrerNarmesteLederRelasjonForm}
+        data-testid={TestId.RegistreringForm}
         onSubmit={async (e) => {
           e.preventDefault();
           e.stopPropagation();

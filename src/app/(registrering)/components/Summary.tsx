@@ -8,7 +8,7 @@ export function Summary() {
 
   return (
     <VStack gap="space-32">
-      <FormSummary data-testid={TestId.SykmeldtAndLederSummary}>
+      <FormSummary data-testid={TestId.RegistreringSummary}>
         <FormSummary.Header>
           <FormSummary.Heading level="3">Sykmeldt</FormSummary.Heading>
         </FormSummary.Header>

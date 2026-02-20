@@ -22,7 +22,7 @@ test.describe("Update Line Manager", () => {
       TestId.HeadingLeder,
       TestId.OppgiLederPanel,
       TestId.SykmeldtBox,
-      TestId.OppiNarmesteLederForSykmeldt,
+      TestId.BehovForm,
       TestId.SendInn,
     ]);
   });
@@ -51,7 +51,7 @@ test.describe("Update Line Manager", () => {
       TestId.HeadingLeder,
       TestId.ThankYouAlert,
       TestId.LederInfoDescription,
-      TestId.LederSummary,
+      TestId.BehovSummary,
       TestId.ExitButton,
     ]);
   });

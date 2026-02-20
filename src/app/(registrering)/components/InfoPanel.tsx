@@ -3,7 +3,7 @@ import { TestId } from "@/utils/testIds";
 
 export default function InfoPanel() {
   return (
-    <GuidePanel poster={true} data-testid={TestId.SykmeldtAndLederInfoPanel}>
+    <GuidePanel poster={true} data-testid={TestId.RegistreringInfoPanel}>
       <BodyLong spacing>
         Her kan du oppgi hvem som er nærmeste leder for en sykmeldt ansatt.
         Dette er for å sikre at riktig leder skal få tilgang til

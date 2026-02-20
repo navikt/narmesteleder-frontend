@@ -28,7 +28,7 @@ export default function BehovForm() {
 
   return (
     <form
-      data-testid={TestId.OppiNarmesteLederForSykmeldt}
+      data-testid={TestId.BehovForm}
       onSubmit={async (e) => {
         e.preventDefault();
         e.stopPropagation();

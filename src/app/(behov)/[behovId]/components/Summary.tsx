@@ -7,7 +7,7 @@ export function Summary() {
   const { submittedData, handleEdit, lederInfo } = useBehovContextState();
 
   return (
-    <FormSummary data-testid={TestId.LederSummary}>
+    <FormSummary data-testid={TestId.BehovSummary}>
       <FormSummary.Header>
         <VStack gap="space-8">
           <p>Nærmeste leder for</p>
