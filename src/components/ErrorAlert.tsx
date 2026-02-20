@@ -1,6 +1,6 @@
 import { LocalAlert } from "@navikt/ds-react";
 import type { ErrorDetail } from "@/server/narmesteLederErrorUtils";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 type ErrorAlertProps = {
   detail?: ErrorDetail;
@@ -15,7 +15,7 @@ export default function ErrorAlert({ detail }: ErrorAlertProps) {
   const content = detail?.message ?? DEFAULT_MESSAGE;
 
   return (
-    <LocalAlert status="error" data-testid={TestId.ErrorAlert}>
+    <LocalAlert status="error" data-testid={UiSelector.ErrorAlert}>
       <LocalAlert.Header>
         <LocalAlert.Title>{title}</LocalAlert.Title>
       </LocalAlert.Header>

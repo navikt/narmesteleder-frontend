@@ -1,14 +1,14 @@
 import { FormSummary, VStack } from "@navikt/ds-react";
 import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
 import { formatFnr } from "@/utils/formatting";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export function Summary() {
   const { submittedData, handleEdit } = useRegistreringContextState();
 
   return (
     <VStack gap="space-32">
-      <FormSummary data-testid={TestId.RegistreringSummary}>
+      <FormSummary data-testid={UiSelector.RegistreringSummary}>
         <FormSummary.Header>
           <FormSummary.Heading level="3">Sykmeldt</FormSummary.Heading>
         </FormSummary.Header>

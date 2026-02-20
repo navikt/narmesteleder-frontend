@@ -1,9 +1,9 @@
 import { LocalAlert } from "@navikt/ds-react";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export default function ThankYouAlert() {
   return (
-    <LocalAlert status="success" data-testid={TestId.ThankYouAlert}>
+    <LocalAlert status="success" data-testid={UiSelector.ThankYouAlert}>
       <LocalAlert.Header>
         <LocalAlert.Title>Nærmeste leder er registrert</LocalAlert.Title>
       </LocalAlert.Header>

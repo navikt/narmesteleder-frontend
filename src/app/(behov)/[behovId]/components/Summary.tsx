@@ -1,13 +1,13 @@
 import { FormSummary, VStack } from "@navikt/ds-react";
 import { useBehovContextState } from "@/app/(behov)/[behovId]/state/contextState";
 import { formatFnr } from "@/utils/formatting";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export function Summary() {
   const { submittedData, handleEdit, lederInfo } = useBehovContextState();
 
   return (
-    <FormSummary data-testid={TestId.BehovSummary}>
+    <FormSummary data-testid={UiSelector.BehovSummary}>
       <FormSummary.Header>
         <VStack gap="space-8">
           <p>Nærmeste leder for</p>

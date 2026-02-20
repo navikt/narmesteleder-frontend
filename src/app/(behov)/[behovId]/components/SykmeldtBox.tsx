@@ -7,7 +7,7 @@ import {
   VStack,
 } from "@navikt/ds-react";
 import { useBehovContextState } from "@/app/(behov)/[behovId]/state/contextState";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export default function SykmeldtBox() {
   const { lederInfo } = useBehovContextState();
@@ -16,7 +16,7 @@ export default function SykmeldtBox() {
       padding="space-16"
       background="accent-soft"
       borderRadius="8"
-      data-testid={TestId.SykmeldtBox}
+      data-testid={UiSelector.SykmeldtBox}
     >
       <VStack gap="space-24">
         <Heading level="2" className="mt-2" size="medium">

@@ -1,16 +1,16 @@
 import { expect, type Page } from "@playwright/test";
-import type { TestId } from "@/utils/testIds";
+import type { UiSelector } from "@/utils/uiSelectors";
 import type { ValidationMessages } from "@/utils/validationMessages";
 
 const getByText = (page: Page, validationMessage: ValidationMessages) =>
   page.getByText(validationMessage);
 
-export const getByTestId = (page: Page, testId: TestId) =>
+export const getByUiSelector = (page: Page, testId: UiSelector) =>
   page.getByTestId(testId);
 
-export const expectAllVisible = async (page: Page, testIds: TestId[]) => {
+export const expectAllVisible = async (page: Page, testIds: UiSelector[]) => {
   for (const testId of testIds) {
-    await expect(getByTestId(page, testId)).toBeVisible();
+    await expect(getByUiSelector(page, testId)).toBeVisible();
   }
 };
 
@@ -23,8 +23,11 @@ export const expectAllCount = async (
   }
 };
 
-export const fillAll = async (page: Page, fields: Array<[TestId, string]>) => {
+export const fillAll = async (
+  page: Page,
+  fields: Array<[UiSelector, string]>,
+) => {
   for (const [testId, value] of fields) {
-    await getByTestId(page, testId).fill(value);
+    await getByUiSelector(page, testId).fill(value);
   }
 };

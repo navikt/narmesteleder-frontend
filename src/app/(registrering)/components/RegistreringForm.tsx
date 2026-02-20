@@ -9,7 +9,7 @@ import { useAppForm } from "@/components/form/hooks/form";
 import { LederGroup } from "@/components/form/LederGroup";
 import { SykmeldtGroup } from "@/components/form/SykmeldtGroup";
 import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export default function RegistreringForm() {
   const { submittedData, handleSuccess } = useRegistreringContextState();
@@ -30,7 +30,7 @@ export default function RegistreringForm() {
   return (
     <VStack gap="space-24">
       <form
-        data-testid={TestId.RegistreringForm}
+        data-testid={UiSelector.RegistreringForm}
         onSubmit={async (e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -59,7 +59,7 @@ export default function RegistreringForm() {
             <HStack className="mt-0">
               <form.BoundSubmitButton
                 label="Send inn"
-                testId={TestId.SendInn}
+                testId={UiSelector.SendInn}
               />
             </HStack>
           </VStack>

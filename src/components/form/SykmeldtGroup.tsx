@@ -1,6 +1,6 @@
 import { withFieldGroup } from "@/components/form/hooks/form";
 import { sykmeldtFormDefaults } from "@/schemas/nærmestelederFormSchema";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export const SykmeldtGroup = withFieldGroup({
   defaultValues: sykmeldtFormDefaults,
@@ -12,7 +12,7 @@ export const SykmeldtGroup = withFieldGroup({
             <field.TextInputField
               label="Fødselsnummer (11 siffer)"
               className="w-66"
-              testId={TestId.SykmeldtFodselsnummer}
+              testId={UiSelector.SykmeldtFodselsnummer}
               isRequired
             />
           )}
@@ -21,7 +21,7 @@ export const SykmeldtGroup = withFieldGroup({
           {(field) => (
             <field.TextInputField
               label="Etternavn"
-              testId={TestId.SykmeldtEtternavn}
+              testId={UiSelector.SykmeldtEtternavn}
               isRequired
             />
           )}
@@ -31,7 +31,7 @@ export const SykmeldtGroup = withFieldGroup({
             <field.TextInputField
               label="Organisasjonsnummer (9 siffer)"
               className="w-66"
-              testId={TestId.Organisasjonsnummer}
+              testId={UiSelector.Organisasjonsnummer}
               isRequired
             />
           )}

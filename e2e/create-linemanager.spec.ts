@@ -1,15 +1,16 @@
 import { type Page, test } from "@playwright/test";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 import { ValidationMessages } from "@/utils/validationMessages";
 import { validTestData } from "./fixtures/testData";
 import {
   expectAllCount,
   expectAllVisible,
   fillAll,
-  getByTestId,
+  getByUiSelector,
 } from "./utils";
 
-const getSubmitButton = (page: Page) => getByTestId(page, TestId.SendInn);
+const getSubmitButton = (page: Page) =>
+  getByUiSelector(page, UiSelector.SendInn);
 
 test.describe("Create Line Manager", () => {
   test.beforeEach(async ({ page }) => {
@@ -18,10 +19,10 @@ test.describe("Create Line Manager", () => {
 
   test("should display edit view", async ({ page }) => {
     await expectAllVisible(page, [
-      TestId.HeadingLeder,
-      TestId.RegistreringInfoPanel,
-      TestId.RegistreringForm,
-      TestId.SendInn,
+      UiSelector.HeadingLeder,
+      UiSelector.RegistreringInfoPanel,
+      UiSelector.RegistreringForm,
+      UiSelector.SendInn,
     ]);
   });
 
@@ -39,23 +40,23 @@ test.describe("Create Line Manager", () => {
     page,
   }) => {
     await fillAll(page, [
-      [TestId.LederFodselsnummer, validTestData.fnr],
-      [TestId.LederEtternavn, validTestData.etternavn],
-      [TestId.Epost, validTestData.email],
-      [TestId.Mobilnummer, validTestData.mobilnummer],
-      [TestId.Organisasjonsnummer, validTestData.orgnummer],
-      [TestId.SykmeldtFodselsnummer, validTestData.fnr],
-      [TestId.SykmeldtEtternavn, validTestData.etternavn],
+      [UiSelector.LederFodselsnummer, validTestData.fnr],
+      [UiSelector.LederEtternavn, validTestData.etternavn],
+      [UiSelector.Epost, validTestData.email],
+      [UiSelector.Mobilnummer, validTestData.mobilnummer],
+      [UiSelector.Organisasjonsnummer, validTestData.orgnummer],
+      [UiSelector.SykmeldtFodselsnummer, validTestData.fnr],
+      [UiSelector.SykmeldtEtternavn, validTestData.etternavn],
     ]);
 
     await getSubmitButton(page).click();
 
     await expectAllVisible(page, [
-      TestId.HeadingLeder,
-      TestId.ThankYouAlert,
-      TestId.LederInfoDescription,
-      TestId.RegistreringSummary,
-      TestId.ExitButton,
+      UiSelector.HeadingLeder,
+      UiSelector.ThankYouAlert,
+      UiSelector.LederInfoDescription,
+      UiSelector.RegistreringSummary,
+      UiSelector.ExitButton,
     ]);
   });
 });

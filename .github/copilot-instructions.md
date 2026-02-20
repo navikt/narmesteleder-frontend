@@ -52,4 +52,4 @@ Single-test commands:
   - keep env access through `publicEnv`/`getServerEnv` only (both zod-validated).
 - Keep API targets and headers centralized:
   - use `TokenXTargetApi` and `tokenXFetchGet`/`tokenXFetchUpdate`, not ad-hoc fetches.
-- Keep test selectors centralized in `src/utils/testIds.ts`; e2e tests import the enum directly.
+- Keep test selectors centralized in `src/utils/uiSelectors.ts`; e2e tests import the enum directly.

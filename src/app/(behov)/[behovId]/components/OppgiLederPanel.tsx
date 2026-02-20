@@ -1,11 +1,11 @@
 import { BodyLong, GuidePanel } from "@navikt/ds-react";
 import { useBehovContextState } from "@/app/(behov)/[behovId]/state/contextState";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export default function OppgiLederPanel() {
   const { lederInfo } = useBehovContextState();
   return (
-    <GuidePanel poster={true} data-testid={TestId.OppgiLederPanel}>
+    <GuidePanel poster={true} data-testid={UiSelector.OppgiLederPanel}>
       <BodyLong spacing>
         <strong>
           {lederInfo.sykmeldt.fullnavn} ({lederInfo.sykmeldtFnr})

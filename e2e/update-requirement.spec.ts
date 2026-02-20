@@ -1,15 +1,16 @@
 import { type Page, test } from "@playwright/test";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 import { ValidationMessages } from "@/utils/validationMessages";
 import { validTestData } from "./fixtures/testData";
 import {
   expectAllCount,
   expectAllVisible,
   fillAll,
-  getByTestId,
+  getByUiSelector,
 } from "./utils";
 
-const getSubmitButton = (page: Page) => getByTestId(page, TestId.SendInn);
+const getSubmitButton = (page: Page) =>
+  getByUiSelector(page, UiSelector.SendInn);
 
 test.describe("Update Line Manager", () => {
   test.beforeEach(async ({ page }) => {
@@ -19,11 +20,11 @@ test.describe("Update Line Manager", () => {
 
   test("should display edit view", async ({ page }) => {
     await expectAllVisible(page, [
-      TestId.HeadingLeder,
-      TestId.OppgiLederPanel,
-      TestId.SykmeldtBox,
-      TestId.BehovForm,
-      TestId.SendInn,
+      UiSelector.HeadingLeder,
+      UiSelector.OppgiLederPanel,
+      UiSelector.SykmeldtBox,
+      UiSelector.BehovForm,
+      UiSelector.SendInn,
     ]);
   });
 
@@ -39,20 +40,20 @@ test.describe("Update Line Manager", () => {
 
   test("should submit updated data and show submit view", async ({ page }) => {
     await fillAll(page, [
-      [TestId.LederFodselsnummer, validTestData.fnr],
-      [TestId.LederEtternavn, validTestData.etternavn],
-      [TestId.Epost, validTestData.email],
-      [TestId.Mobilnummer, validTestData.mobilnummer],
+      [UiSelector.LederFodselsnummer, validTestData.fnr],
+      [UiSelector.LederEtternavn, validTestData.etternavn],
+      [UiSelector.Epost, validTestData.email],
+      [UiSelector.Mobilnummer, validTestData.mobilnummer],
     ]);
 
     await getSubmitButton(page).click();
 
     await expectAllVisible(page, [
-      TestId.HeadingLeder,
-      TestId.ThankYouAlert,
-      TestId.LederInfoDescription,
-      TestId.BehovSummary,
-      TestId.ExitButton,
+      UiSelector.HeadingLeder,
+      UiSelector.ThankYouAlert,
+      UiSelector.LederInfoDescription,
+      UiSelector.BehovSummary,
+      UiSelector.ExitButton,
     ]);
   });
 });

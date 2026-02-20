@@ -8,7 +8,7 @@ import ErrorAlert from "@/components/ErrorAlert";
 import { useAppForm } from "@/components/form/hooks/form";
 import { LederGroup } from "@/components/form/LederGroup";
 import { lederSchema } from "@/schemas/nærmestelederFormSchema";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export default function BehovForm() {
   const { submittedData, handleSuccess, behovId } = useBehovContextState();
@@ -28,7 +28,7 @@ export default function BehovForm() {
 
   return (
     <form
-      data-testid={TestId.BehovForm}
+      data-testid={UiSelector.BehovForm}
       onSubmit={async (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -47,7 +47,7 @@ export default function BehovForm() {
               <HStack className="mt-0">
                 <form.BoundSubmitButton
                   label="Send inn"
-                  testId={TestId.SendInn}
+                  testId={UiSelector.SendInn}
                 />
               </HStack>
             </VStack>

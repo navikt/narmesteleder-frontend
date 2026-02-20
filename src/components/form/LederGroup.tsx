@@ -1,6 +1,6 @@
 import { withFieldGroup } from "@/components/form/hooks/form";
 import { narmesteLederFormDefaults } from "@/schemas/nærmestelederFormSchema";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 
 export const LederGroup = withFieldGroup({
   defaultValues: narmesteLederFormDefaults,
@@ -12,7 +12,7 @@ export const LederGroup = withFieldGroup({
             <field.TextInputField
               label="Fødselsnummer (11 siffer)"
               className="w-66"
-              testId={TestId.LederFodselsnummer}
+              testId={UiSelector.LederFodselsnummer}
               isRequired
             />
           )}
@@ -21,7 +21,7 @@ export const LederGroup = withFieldGroup({
           {(field) => (
             <field.TextInputField
               label="Etternavn"
-              testId={TestId.LederEtternavn}
+              testId={UiSelector.LederEtternavn}
               isRequired
             />
           )}
@@ -31,7 +31,7 @@ export const LederGroup = withFieldGroup({
             <field.TextInputField
               label="E-post"
               type="email"
-              testId={TestId.Epost}
+              testId={UiSelector.Epost}
               isRequired
             />
           )}
@@ -41,7 +41,7 @@ export const LederGroup = withFieldGroup({
             <field.TextInputField
               label="Mobilnummer (8 siffer)"
               type="tel"
-              testId={TestId.Mobilnummer}
+              testId={UiSelector.Mobilnummer}
               className="w-48"
               isRequired
             />
