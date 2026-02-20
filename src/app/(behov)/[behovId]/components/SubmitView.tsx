@@ -3,7 +3,7 @@ import { ExitButton } from "@/components/ExitButton";
 import { HeadingLeder } from "@/components/HeadingLeder";
 import { InfoDescription } from "@/components/InfoDescription";
 import { Lumi } from "@/components/lumi/Lumi";
-import { lumiSurvey } from "@/components/lumi/lumiSurvey";
+import { lumiSurveyConfig } from "@/components/lumi/lumiSurveyConfig";
 import ThankYouAlert from "@/components/ThankYouAlert";
 import { Summary } from "./Summary";
 
@@ -19,7 +19,7 @@ export function SubmitView() {
           <ExitButton />
         </HStack>
       </VStack>
-      <Lumi feedbackId="leder-feedback" survey={lumiSurvey} />
+      <Lumi feedbackId="leder-feedback" survey={lumiSurveyConfig} />
     </>
   );
 }

@@ -1,6 +1,6 @@
 import type { LumiSurveyConfig } from "@navikt/lumi-survey";
 
-export const lumiSurvey: LumiSurveyConfig = {
+export const lumiSurveyConfig: LumiSurveyConfig = {
   type: "rating",
   questions: [
     {
