@@ -1,10 +1,11 @@
 import { type Page, test } from "@playwright/test";
-import { TestId } from "@/utils/testIds";
+import { UiSelector } from "@/utils/uiSelectors";
 import { ValidationMessages } from "@/utils/validationMessages";
 import { invalidTestData } from "./fixtures/testData";
-import { expectAllCount, fillAll, getByTestId } from "./utils";
+import { expectAllCount, fillAll, getByUiSelector } from "./utils";
 
-const getSubmitButton = (page: Page) => getByTestId(page, TestId.SendInn);
+const getSubmitButton = (page: Page) =>
+  getByUiSelector(page, UiSelector.SendInn);
 
 test.describe("Form Validation", () => {
   test.beforeEach(async ({ page }) => {
@@ -15,13 +16,13 @@ test.describe("Form Validation", () => {
     page,
   }) => {
     await fillAll(page, [
-      [TestId.LederFodselsnummer, invalidTestData.fnr],
-      [TestId.LederEtternavn, invalidTestData.etternavn],
-      [TestId.Epost, invalidTestData.email],
-      [TestId.Mobilnummer, invalidTestData.mobilnummer],
-      [TestId.Organisasjonsnummer, invalidTestData.orgnummer],
-      [TestId.SykmeldtFodselsnummer, invalidTestData.fnr],
-      [TestId.SykmeldtEtternavn, invalidTestData.etternavn],
+      [UiSelector.LederFodselsnummer, invalidTestData.fnr],
+      [UiSelector.LederEtternavn, invalidTestData.etternavn],
+      [UiSelector.Epost, invalidTestData.email],
+      [UiSelector.Mobilnummer, invalidTestData.mobilnummer],
+      [UiSelector.Organisasjonsnummer, invalidTestData.orgnummer],
+      [UiSelector.SykmeldtFodselsnummer, invalidTestData.fnr],
+      [UiSelector.SykmeldtEtternavn, invalidTestData.etternavn],
     ]);
 
     await getSubmitButton(page).click();

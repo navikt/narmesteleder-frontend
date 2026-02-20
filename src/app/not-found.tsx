@@ -1,6 +1,6 @@
 import { BodyShort, Box, Heading, VStack } from "@navikt/ds-react";
 import { PageBlock } from "@navikt/ds-react/Page";
-import { ButtonMinSideArbeidsgiver } from "@/components/ButtonMinSideArbeidsgiver";
+import { ButtonMinSideArbeidsgiver } from "@/shared/components/ButtonMinSideArbeidsgiver";
 
 const NotFound = async () => (
   <PageBlock as="main" width="xl" gutters>

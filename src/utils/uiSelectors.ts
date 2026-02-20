@@ -1,0 +1,23 @@
+// Shared enum for test IDs used in components and e2e tests
+export enum UiSelector {
+  ErrorAlert = "errorAlert",
+  Epost = "epost",
+  ExitButton = "exitButton",
+  HeadingLeder = "headingLeder",
+  LederInfoDescription = "lederInfoDescription",
+  LederFodselsnummer = "lederFodselsnummer",
+  LederEtternavn = "lederEtternavn",
+  BehovSummary = "behovSummary",
+  Mobilnummer = "mobilnummer",
+  Organisasjonsnummer = "organisasjonsnummer",
+  SendInn = "sendInn",
+  RegistreringSummary = "registreringSummary",
+  SykmeldtEtternavn = "sykmeldtEtternavn",
+  SykmeldtFodselsnummer = "sykmeldtFodselsnummer",
+  ThankYouAlert = "thankYouAlert",
+  RegistreringForm = "registreringForm",
+  OppgiLederPanel = "oppgiLederPanel",
+  SykmeldtBox = "sykmeldtBox",
+  BehovForm = "behovForm",
+  RegistreringInfoPanel = "registreringInfoPanel",
+}

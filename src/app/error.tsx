@@ -12,8 +12,9 @@ import {
 } from "@navikt/ds-react";
 import { logger } from "@navikt/next-logger";
 import { type ReactElement, useEffect } from "react";
-import { ButtonMinSideArbeidsgiver } from "@/components/ButtonMinSideArbeidsgiver";
-import { CONTACT_NAV_URL } from "@/constants";
+import { ButtonMinSideArbeidsgiver } from "@/shared/components/ButtonMinSideArbeidsgiver";
+
+const CONTACT_NAV_URL = "https://www.nav.no/kontaktoss#skriv-til-oss";
 
 type Props = {
   error: Error;
