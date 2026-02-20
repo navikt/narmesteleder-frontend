@@ -5,7 +5,7 @@ export type TextInputFieldProps = {
   label: string;
   type?: TextFieldProps["type"];
   className?: string;
-  testId?: string;
+  uiSelector?: string;
   isRequired?: boolean;
 };
 
@@ -13,7 +13,7 @@ export function TextInputField({
   label,
   type,
   className,
-  testId,
+  uiSelector,
   isRequired = false,
 }: TextInputFieldProps) {
   const field = useFieldContext<string>();
@@ -27,7 +27,7 @@ export function TextInputField({
       error={field.state.meta.errors[0]?.message}
       type={type}
       className={className}
-      data-testid={testId ?? field.name}
+      data-testid={uiSelector ?? field.name}
       aria-required={isRequired}
     />
   );

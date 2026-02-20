@@ -47,7 +47,7 @@ export default function BehovForm() {
               <HStack className="mt-0">
                 <form.BoundSubmitButton
                   label="Send inn"
-                  testId={UiSelector.SendInn}
+                  uiSelector={UiSelector.SendInn}
                 />
               </HStack>
             </VStack>

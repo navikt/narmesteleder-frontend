@@ -5,12 +5,15 @@ import type { ValidationMessages } from "@/utils/validationMessages";
 const getByText = (page: Page, validationMessage: ValidationMessages) =>
   page.getByText(validationMessage);
 
-export const getByUiSelector = (page: Page, testId: UiSelector) =>
-  page.getByTestId(testId);
+export const getByUiSelector = (page: Page, uiSelector: UiSelector) =>
+  page.getByTestId(uiSelector);
 
-export const expectAllVisible = async (page: Page, testIds: UiSelector[]) => {
-  for (const testId of testIds) {
-    await expect(getByUiSelector(page, testId)).toBeVisible();
+export const expectAllVisible = async (
+  page: Page,
+  uiSelectors: UiSelector[],
+) => {
+  for (const uiSelector of uiSelectors) {
+    await expect(getByUiSelector(page, uiSelector)).toBeVisible();
   }
 };
 
@@ -27,7 +30,7 @@ export const fillAll = async (
   page: Page,
   fields: Array<[UiSelector, string]>,
 ) => {
-  for (const [testId, value] of fields) {
-    await getByUiSelector(page, testId).fill(value);
+  for (const [uiSelector, value] of fields) {
+    await getByUiSelector(page, uiSelector).fill(value);
   }
 };

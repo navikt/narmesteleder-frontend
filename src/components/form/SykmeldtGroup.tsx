@@ -12,7 +12,7 @@ export const SykmeldtGroup = withFieldGroup({
             <field.TextInputField
               label="Fødselsnummer (11 siffer)"
               className="w-66"
-              testId={UiSelector.SykmeldtFodselsnummer}
+              uiSelector={UiSelector.SykmeldtFodselsnummer}
               isRequired
             />
           )}
@@ -21,7 +21,7 @@ export const SykmeldtGroup = withFieldGroup({
           {(field) => (
             <field.TextInputField
               label="Etternavn"
-              testId={UiSelector.SykmeldtEtternavn}
+              uiSelector={UiSelector.SykmeldtEtternavn}
               isRequired
             />
           )}
@@ -31,7 +31,7 @@ export const SykmeldtGroup = withFieldGroup({
             <field.TextInputField
               label="Organisasjonsnummer (9 siffer)"
               className="w-66"
-              testId={UiSelector.Organisasjonsnummer}
+              uiSelector={UiSelector.Organisasjonsnummer}
               isRequired
             />
           )}

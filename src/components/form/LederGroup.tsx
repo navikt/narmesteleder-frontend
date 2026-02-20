@@ -12,7 +12,7 @@ export const LederGroup = withFieldGroup({
             <field.TextInputField
               label="Fødselsnummer (11 siffer)"
               className="w-66"
-              testId={UiSelector.LederFodselsnummer}
+              uiSelector={UiSelector.LederFodselsnummer}
               isRequired
             />
           )}
@@ -21,7 +21,7 @@ export const LederGroup = withFieldGroup({
           {(field) => (
             <field.TextInputField
               label="Etternavn"
-              testId={UiSelector.LederEtternavn}
+              uiSelector={UiSelector.LederEtternavn}
               isRequired
             />
           )}
@@ -31,7 +31,7 @@ export const LederGroup = withFieldGroup({
             <field.TextInputField
               label="E-post"
               type="email"
-              testId={UiSelector.Epost}
+              uiSelector={UiSelector.Epost}
               isRequired
             />
           )}
@@ -41,7 +41,7 @@ export const LederGroup = withFieldGroup({
             <field.TextInputField
               label="Mobilnummer (8 siffer)"
               type="tel"
-              testId={UiSelector.Mobilnummer}
+              uiSelector={UiSelector.Mobilnummer}
               className="w-48"
               isRequired
             />

@@ -3,10 +3,10 @@ import { useFormContext } from "@/components/form/hooks/form-context";
 
 export const SubmitButton = ({
   label,
-  testId,
+  uiSelector,
 }: {
   label: string;
-  testId?: string;
+  uiSelector?: string;
 }) => {
   const form = useFormContext();
   return (
@@ -16,7 +16,7 @@ export const SubmitButton = ({
           type="submit"
           variant="primary"
           disabled={isSubmitting}
-          data-testid={testId ? testId : "submit-button"}
+          data-testid={uiSelector ? uiSelector : "submit-button"}
         >
           {label}
         </Button>
