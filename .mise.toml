@@ -19,9 +19,19 @@ depends = ["install"]
 run = "pnpm run dev"
 
 [tasks.lint]
-description = "Run linter"
+description = "Run linter with fixing enabled"
 depends = ["install"]
-run = "pnpm run lint"
+run = "pnpm run lint:fix"
+
+[tasks.format]
+description = "Run formatter with fixing enabled"
+depends = ["install"]
+run = "pnpm run format:fix"
+
+[tasks.check]
+description = "Run lint and formatter checks"
+depends = ["install"]
+run = "pnpm run check:fix"
 
 [tasks.test]
 description = "Run tests"
@@ -33,20 +43,7 @@ description = "Run Playwright tests"
 depends = ["install"]
 run = "pnpm run test:e2e"
 
-[tasks.format]
-description = "Format codebase"
+[tasks.verify]
+description = "Verify code quality, run tests and build"
 depends = ["install"]
-run = "pnpm run format"
-
-[tasks.format-fix]
-description = "Run Biome to fix code style issues"
-depends = ["install"]
-run = "pnpm exec biome check --fix"
-
-[tasks.check]
-description = "Run lint and all tests"
-depends = ["lint", "test", "playwright"]
-
-[tasks.ci]
-description = "Full CI validation (lint + tests + build)"
-depends = ["check", "build"]
+run = "mise run check && mise run test --no-watch && mise run build"
