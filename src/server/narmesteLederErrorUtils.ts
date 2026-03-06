@@ -36,9 +36,9 @@ export const errorTypeToDetail: Record<BackendErrorType, ErrorDetail> = {
       "Etternavnet du har fylt inn  for den sykmeldte stemmer ikke overens med oppgitt fødselsnummer. Sjekk at du har fylt inn riktig og prøv igjen.",
   },
   [BackendErrorType.NO_ACTIVE_SICK_LEAVE]: {
-    title: "Den ansatte er ikke sykmeldt",
+    title: "Ingen sykmelding funnet",
     message:
-      "For å kunne oppgi nærmeste leder for en ansatt må den ansatte være sykmeldt, og ha en aktiv sykmelding.",
+      "Vi finner ingen sykmelding på denne personen, du kan derfor ikke oppgi nærmeste leder for den ansatte.",
   },
   [BackendErrorType.EMPLOYEE_MISSING_EMPLOYMENT_IN_ORG]: {
     title: "Den sykmeldte tilhører ikke organisasjonen",
