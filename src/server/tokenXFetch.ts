@@ -1,6 +1,6 @@
 import "server-only";
 import { logger } from "@navikt/next-logger";
-import type z from "zod";
+import z from "zod";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
@@ -34,6 +34,13 @@ const validateResponse = <S extends z.ZodTypeAny>(
   try {
     return responseDataSchema.parse(responseData);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      logger.error(
+        { validationIssues: z.prettifyError(error), endpoint },
+        "[Backend] Failed to parse response data with zod schema",
+      );
+      throw error;
+    }
     logErrorMessageAndThrowError(
       `Failed to parse response data with zod schema from ${endpoint}: ${error}`,
     );
