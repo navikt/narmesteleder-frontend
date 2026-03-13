@@ -1,13 +1,23 @@
 import { logger } from "@navikt/next-logger";
 import { Suspense } from "react";
+import { z } from "zod";
 import { InfoLoader } from "@/app/(behov)/[behovId]/components/InfoLoader";
 import { InfoSpinner } from "@/app/(behov)/[behovId]/components/InfoSpinner";
 import notFound from "@/app/not-found";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import type { MockScenario } from "@/server/fetchData/fetchLederInfo";
 
-const isValidBehovId = (behovId: string) =>
-  !requirementIdSchema.safeParse(behovId).success;
+const isValidBehovId = (behovId: string) => {
+  const result = requirementIdSchema.safeParse(behovId);
+  if (!result.success) {
+    logger.error(
+      { validationIssues: z.prettifyError(result.error) },
+      "[Backend] Failed to parse behovId",
+    );
+    return true;
+  }
+  return false;
+};
 
 export default async function Home({
   params,
