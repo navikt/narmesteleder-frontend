@@ -31,20 +31,15 @@ const validateResponse = <S extends z.ZodTypeAny>(
   endpoint: string,
   responseDataSchema: S,
 ): z.infer<S> => {
-  try {
-    return responseDataSchema.parse(responseData);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      logger.error(
-        { validationIssues: z.prettifyError(error), endpoint },
-        "[Backend] Failed to parse response data with zod schema",
-      );
-      throw error;
-    }
-    logErrorMessageAndThrowError(
-      `Failed to parse response data with zod schema from ${endpoint}: ${error}`,
+  const result = responseDataSchema.safeParse(responseData);
+  if (!result.success) {
+    logger.error(
+      { validationIssues: z.prettifyError(result.error), endpoint },
+      "[Backend] Failed to parse response data with zod schema",
     );
+    throw result.error;
   }
+  return result.data;
 };
 
 const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
