@@ -1,6 +1,6 @@
 import "server-only";
 import { logger } from "@navikt/next-logger";
-import type z from "zod";
+import z from "zod";
 import {
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
@@ -31,13 +31,15 @@ const validateResponse = <S extends z.ZodTypeAny>(
   endpoint: string,
   responseDataSchema: S,
 ): z.infer<S> => {
-  try {
-    return responseDataSchema.parse(responseData);
-  } catch (error) {
-    logErrorMessageAndThrowError(
-      `Failed to parse response data with zod schema from ${endpoint}: ${error}`,
-    );
+  const result = responseDataSchema.safeParse(responseData);
+  if (result.success) {
+    return result.data;
   }
+  logger.error(
+    { validationIssues: z.prettifyError(result.error), endpoint },
+    "[Backend] payload validation failed for response from endpoint",
+  );
+  throw new Error("Det oppstod en feil ved henting av data.");
 };
 
 const parseAndValidateResponse = async <S extends z.ZodTypeAny>(

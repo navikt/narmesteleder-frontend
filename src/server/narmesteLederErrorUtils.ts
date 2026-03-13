@@ -112,9 +112,15 @@ const parseBackendErrorPayload = async (
     const jsonPayload = JSON.parse(rawBody);
     const parsed = backendErrorSchema.safeParse(jsonPayload);
 
-    if (parsed.success) {
-      return parsed.data;
+    if (!parsed.success) {
+      logger.error(
+        { validationIssues: z.prettifyError(parsed.error) },
+        "[Backend] Failed to parse backend error response",
+      );
+      return undefined;
     }
+
+    return parsed.data;
   } catch (error) {
     logger.error(
       `Failed to parse backend error response as JSON: ${

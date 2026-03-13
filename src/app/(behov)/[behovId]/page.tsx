@@ -1,13 +1,25 @@
 import { logger } from "@navikt/next-logger";
 import { Suspense } from "react";
+import { z } from "zod";
 import { InfoLoader } from "@/app/(behov)/[behovId]/components/InfoLoader";
 import { InfoSpinner } from "@/app/(behov)/[behovId]/components/InfoSpinner";
 import notFound from "@/app/not-found";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import type { MockScenario } from "@/server/fetchData/fetchLederInfo";
 
-const isValidBehovId = (behovId: string) =>
-  !requirementIdSchema.safeParse(behovId).success;
+const isValidBehovId = (behovId: string) => {
+  const parseResult = requirementIdSchema.safeParse(behovId);
+  if (parseResult.success) {
+    return true;
+  }
+
+  logger.warn(
+    { validationIssues: z.prettifyError(parseResult.error) },
+    "[Route] invalid behovId parameter in URL",
+  );
+
+  return false;
+};
 
 export default async function Home({
   params,
@@ -20,8 +32,7 @@ export default async function Home({
   const { behovId } = await params;
   const { mockScenario } = await searchParams;
 
-  if (isValidBehovId(behovId)) {
-    logger.warn(`Invalid behovId format: ${behovId}`);
+  if (!isValidBehovId(behovId)) {
     return notFound();
   }
 
