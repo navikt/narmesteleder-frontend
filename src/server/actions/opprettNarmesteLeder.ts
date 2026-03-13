@@ -26,7 +26,7 @@ export const opprettNarmesteLeder = async (
   if (!validationResult.success) {
     logger.error(
       { validationIssues: z.prettifyError(validationResult.error) },
-      "[Backend] Failed to parse narmesteLederInfo in opprettNarmesteLeder",
+      "[RequestValidation] invalid narmesteLederInfo payload for opprettNarmesteLeder",
     );
     return {
       success: false,

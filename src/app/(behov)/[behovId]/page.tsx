@@ -13,9 +13,9 @@ const isValidBehovId = (behovId: string) => {
     return true;
   }
 
-  logger.error(
+  logger.warn(
     { validationIssues: z.prettifyError(parseResult.error) },
-    "[Backend] Failed to parse behovId",
+    "[Route] invalid behovId parameter in URL",
   );
 
   return false;

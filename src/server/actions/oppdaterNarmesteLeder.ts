@@ -29,7 +29,7 @@ export const oppdaterNarmesteLeder = async (
   if (!validatedRequirementId.success) {
     logger.error(
       { validationIssues: z.prettifyError(validatedRequirementId.error) },
-      "[Backend] Failed to parse requirementId in oppdaterNarmesteLeder",
+      "[ServerAction][Validation] invalid requirementId in oppdaterNarmesteLeder",
     );
     return {
       success: false,
@@ -40,7 +40,7 @@ export const oppdaterNarmesteLeder = async (
   if (!validatedForm.success) {
     logger.error(
       { validationIssues: z.prettifyError(validatedForm.error) },
-      "[Backend] Failed to parse narmesteLederForm in oppdaterNarmesteLeder",
+      "[ServerAction][Validation] invalid narmesteLederForm in oppdaterNarmesteLeder",
     );
     return {
       success: false,
