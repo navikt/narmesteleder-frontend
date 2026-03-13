@@ -1,6 +1,8 @@
 "use server";
 
 import "server-only";
+import { logger } from "@navikt/next-logger";
+import { z } from "zod";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toLineManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
@@ -22,6 +24,10 @@ export const opprettNarmesteLeder = async (
 ): Promise<TokenXFetchUpdateResult> => {
   const validationResult = narmesteLederInfoSchema.safeParse(narmesteLeder);
   if (!validationResult.success) {
+    logger.error(
+      { validationIssues: z.prettifyError(validationResult.error) },
+      "[Backend] Failed to parse narmesteLederInfo in opprettNarmesteLeder",
+    );
     return {
       success: false,
       errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
