@@ -8,14 +8,16 @@ import { requirementIdSchema } from "@/schemas/requirementSchema";
 import type { MockScenario } from "@/server/fetchData/fetchLederInfo";
 
 const isValidBehovId = (behovId: string) => {
-  const result = requirementIdSchema.safeParse(behovId);
-  if (!result.success) {
-    logger.error(
-      { validationIssues: z.prettifyError(result.error) },
-      "[Backend] Failed to parse behovId",
-    );
+  const parseResult = requirementIdSchema.safeParse(behovId);
+  if (parseResult.success) {
     return true;
   }
+
+  logger.error(
+    { validationIssues: z.prettifyError(parseResult.error) },
+    "[Backend] Failed to parse behovId",
+  );
+
   return false;
 };
 
@@ -30,8 +32,7 @@ export default async function Home({
   const { behovId } = await params;
   const { mockScenario } = await searchParams;
 
-  if (isValidBehovId(behovId)) {
-    logger.warn(`Invalid behovId format: ${behovId}`);
+  if (!isValidBehovId(behovId)) {
     return notFound();
   }
 
