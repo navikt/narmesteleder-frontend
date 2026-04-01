@@ -24,8 +24,8 @@ importers:
         specifier: ^2.2.1
         version: 2.2.1
       '@navikt/lumi-survey':
-        specifier: ^0.1.1
-        version: 0.1.1(@navikt/ds-css@8.8.0)(@navikt/ds-react@8.8.0(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^0.4.0
+        version: 0.4.0(@navikt/ds-css@8.8.0)(@navikt/ds-react@8.8.0(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@navikt/nav-dekoratoren-moduler':
         specifier: ^3.7.1
         version: 3.7.1(html-react-parser@5.2.17(@types/react@19.2.2)(react@19.2.0))(react@19.2.0)
@@ -597,8 +597,8 @@ packages:
   '@navikt/fnrvalidator@2.2.1':
     resolution: {integrity: sha512-R6x3MBFC0E/B7oTs+P2jAP+ym7+d6cwSpDsLeMja9IwPpJq3HV/OClFBVWm9fJZPmXfumKRMGy6gqsQPj90ftg==, tarball: https://npm.pkg.github.com/download/@navikt/fnrvalidator/2.2.1/37ed0feb23a7525139ad5512684ff6b0977112c6}
 
-  '@navikt/lumi-survey@0.1.1':
-    resolution: {integrity: sha512-84Uniy8b4CIwYsBuPIIdMHjilIq2261EvvRJU5mqLOwWtZo4ZfANjQ+oLcPQvYscqkZs2wD92ZobYtBQVLFvvg==, tarball: https://npm.pkg.github.com/download/@navikt/lumi-survey/0.1.1/ac3055547e8d91b984d3ca673d76cb068bb432ad}
+  '@navikt/lumi-survey@0.4.0':
+    resolution: {integrity: sha512-bYXxDx9JxecdoO9G8KgncKsf8VAN0yHmbOg5tYSU1XtNO1LZTJNvt3MIxCxY5+MWo4WgA7i4DSff9V8LDHKIcw==, tarball: https://npm.pkg.github.com/download/@navikt/lumi-survey/0.4.0/b61ffa9cfebcdc0e1d1eb549314c67563542c6ac}
     peerDependencies:
       '@navikt/ds-css': '>=8'
       '@navikt/ds-react': '>=8'
@@ -2141,7 +2141,7 @@ snapshots:
 
   '@navikt/fnrvalidator@2.2.1': {}
 
-  '@navikt/lumi-survey@0.1.1(@navikt/ds-css@8.8.0)(@navikt/ds-react@8.8.0(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@navikt/lumi-survey@0.4.0(@navikt/ds-css@8.8.0)(@navikt/ds-react@8.8.0(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@navikt/ds-css': 8.8.0
       '@navikt/ds-react': 8.8.0(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
