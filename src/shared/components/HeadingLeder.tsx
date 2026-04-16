@@ -1,10 +1,20 @@
-import { Heading } from "@navikt/ds-react";
+import { Box, Heading, VStack } from "@navikt/ds-react";
+import { HeadingVirksomhetsvelgerContent } from "@/shared/components/HeadingVirksomhetsvelger";
 import { UiSelector } from "@/utils/uiSelectors";
 
-export function HeadingLeder() {
+export function HeadingLeder({
+  readOnlyVirksomhet = false,
+}: {
+  readOnlyVirksomhet?: boolean;
+}) {
   return (
-    <Heading size="large" level="1" data-testid={UiSelector.HeadingLeder}>
-      Oppgi nærmeste leder
-    </Heading>
+    <Box as="section" data-testid={UiSelector.HeadingLeder}>
+      <VStack gap="space-16">
+        <Heading size="large" level="1">
+          Oppgi nærmeste leder
+        </Heading>
+        <HeadingVirksomhetsvelgerContent readOnly={readOnlyVirksomhet} />
+      </VStack>
+    </Box>
   );
 }

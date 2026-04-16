@@ -4,6 +4,7 @@ export enum UiSelector {
   Epost = "epost",
   ExitButton = "exitButton",
   HeadingLeder = "headingLeder",
+  HeadingVirksomhet = "headingVirksomhet",
   LederInfoDescription = "lederInfoDescription",
   LederFodselsnummer = "lederFodselsnummer",
   LederEtternavn = "lederEtternavn",

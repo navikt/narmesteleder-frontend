@@ -1,8 +1,9 @@
-import { type Page, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import { UiSelector } from "@/utils/uiSelectors";
 import { ValidationMessages } from "@/utils/validationMessages";
 import { validTestData } from "./fixtures/testData";
 import {
+  chooseVirksomhet,
   expectAllCount,
   expectAllVisible,
   fillAll,
@@ -44,10 +45,14 @@ test.describe("Registrering flow", () => {
       [UiSelector.LederEtternavn, validTestData.etternavn],
       [UiSelector.Epost, validTestData.email],
       [UiSelector.Mobilnummer, validTestData.mobilnummer],
-      [UiSelector.Organisasjonsnummer, validTestData.orgnummer],
       [UiSelector.SykmeldtFodselsnummer, validTestData.fnr],
       [UiSelector.SykmeldtEtternavn, validTestData.etternavn],
     ]);
+    await chooseVirksomhet(page, {
+      hovedenhetNavn: validTestData.virksomhetHovedenhetNavn,
+      virksomhetNavn: validTestData.virksomhetNavn,
+      soketekst: validTestData.virksomhetSoketekst,
+    });
 
     await getSubmitButton(page).click();
 
@@ -58,5 +63,35 @@ test.describe("Registrering flow", () => {
       UiSelector.RegistreringSummary,
       UiSelector.ExitButton,
     ]);
+  });
+
+  test("should keep selected virksomhet when returning to edit view", async ({
+    page,
+  }) => {
+    await fillAll(page, [
+      [UiSelector.LederFodselsnummer, validTestData.fnr],
+      [UiSelector.LederEtternavn, validTestData.etternavn],
+      [UiSelector.Epost, validTestData.email],
+      [UiSelector.Mobilnummer, validTestData.mobilnummer],
+      [UiSelector.SykmeldtFodselsnummer, validTestData.fnr],
+      [UiSelector.SykmeldtEtternavn, validTestData.etternavn],
+    ]);
+    await chooseVirksomhet(page, {
+      hovedenhetNavn: validTestData.virksomhetHovedenhetNavn,
+      virksomhetNavn: validTestData.virksomhetNavn,
+      soketekst: validTestData.virksomhetSoketekst,
+    });
+
+    await getSubmitButton(page).click();
+    await page.getByRole("link", { name: "Endre" }).first().click();
+
+    await expect(
+      getByUiSelector(page, UiSelector.Organisasjonsnummer).getByRole(
+        "button",
+        {
+          name: new RegExp(validTestData.virksomhetNavn),
+        },
+      ),
+    ).toBeVisible();
   });
 });
