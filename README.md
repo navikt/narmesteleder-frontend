@@ -10,13 +10,13 @@
 
 ## Miljøer
 
-[🚀 Produksjon](https://www.nav.no/arbeidsgiver/ansatte/narmesteleder)
+🚀 [Produksjon](https://www.nav.no/arbeidsgiver/ansatte/narmesteleder)
 
-[🛠️ Utvikling](https://www.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
+🛠️ [Utvikling](https://www.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
 
-[🎬 Demo - skjema for sykmeldt og nærmeste leder](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
+🎬 [Demo - skjema for sykmeldt og nærmeste leder](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
 
-[🎬 Demo - skjema med forhåndsutfylt sykmeldt](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder/b8dec976-932a-45d3-b1d4-09debe8e44be)
+🎬 [Demo - skjema med forhåndsutfylt sykmeldt](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder/b8dec976-932a-45d3-b1d4-09debe8e44be)
 
 ## Formålet med appen
 
@@ -52,8 +52,14 @@ Brukte endepunkter
 
 ## Utvikling (kjøre lokalt)
 
-For å komme i gang med bygging og kjøring av appen, les vår [wiki for Next.js-applikasjoner](https://github.com/navikt/esyfo-dev-tools/wiki/nextjs-build-run).
+For å komme i gang med å bygge og kjøre appen, se vår [Wiki for frontendapper](https://navikt.github.io/team-esyfo/utvikling/frontend/).
 
 Når appen er startet, åpne http://localhost:3000/arbeidsgiver/ansatte/narmesteleder
+
+## For Nav-ansatte
+
+Interne henvendelser kan sendes via Slack i kanalen [#esyfo](https://nav-it.slack.com/archives/C012X796B4L).
+
+---
 
 [^basepath]: `basePath`-verdien settes i Next.js-konfigurasjonen i `next.config.ts` og angir URL-prefikset som hele appen lever under.
