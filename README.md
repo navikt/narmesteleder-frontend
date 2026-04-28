@@ -56,4 +56,10 @@ For å komme i gang med å bygge og kjøre appen, se vår [Wiki for frontendappe
 
 Når appen er startet, åpne http://localhost:3000/arbeidsgiver/ansatte/narmesteleder
 
+## For Nav-ansatte
+
+Interne henvendelser kan sendes via Slack i kanalen [#esyfo](https://nav-it.slack.com/archives/C012X796B4L).
+
+---
+
 [^basepath]: `basePath`-verdien settes i Next.js-konfigurasjonen i `next.config.ts` og angir URL-prefikset som hele appen lever under.
