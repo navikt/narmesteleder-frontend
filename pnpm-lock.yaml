@@ -80,7 +80,7 @@ importers:
         version: 2.1.6
       tailwindcss:
         specifier: ^4
-        version: 4.2.3
+        version: 4.2.4
       typescript:
         specifier: ^6
         version: 6.0.3
@@ -1574,6 +1574,9 @@ packages:
   tailwindcss@4.2.3:
     resolution: {integrity: sha512-fA/NX5gMf0ooCLISgB0wScaWgaj6rjTN2SVAwleURjiya7ITNkV+VMmoHtKkldP6CIZoYCZyxb8zP/e2TWoEtQ==}
 
+  tailwindcss@4.2.4:
+    resolution: {integrity: sha512-HhKppgO81FQof5m6TEnuBWCZGgfRAWbaeOaGT00KOy/Pf/j6oUihdvBpA7ltCeAvZpFhW3j0PTclkxsd4IXYDA==}
+
   tapable@2.3.3:
     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
     engines: {node: '>=6'}
@@ -3042,6 +3045,8 @@ snapshots:
   tabbable@6.4.0: {}
 
   tailwindcss@4.2.3: {}
+
+  tailwindcss@4.2.4: {}
 
   tapable@2.3.3: {}
 
