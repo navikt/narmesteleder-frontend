@@ -1,11 +1,13 @@
-import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { sykmeldtFormDefaults } from "@/schemas/nærmestelederFormSchema";
 import { withFieldGroup } from "@/shared/components/form/hooks/form";
+import { useOptionalVirksomhetContext } from "@/shared/state/virksomhetContext";
 import { UiSelector } from "@/utils/uiSelectors";
 
 export const SykmeldtGroup = withFieldGroup({
   defaultValues: sykmeldtFormDefaults,
   render: function Sykmeldt({ group }) {
+    const virksomhet = useOptionalVirksomhetContext();
+
     return (
       <>
         <group.AppField name="fodselsnummer">
@@ -29,9 +31,7 @@ export const SykmeldtGroup = withFieldGroup({
         </group.AppField>
         <group.AppField name="orgnummer">
           {(field) =>
-            isLocalOrDemo ? (
-              <div>valgt orgnummer</div>
-            ) : (
+            virksomhet?.showSelector ? null : (
               <field.TextInputField
                 label="Organisasjonsnummer (9 siffer)"
                 className="w-66"

@@ -6,11 +6,6 @@ export const mockOrganisasjoner = [
     navn: "Havna Holding AS",
     underenheter: [
       {
-        orgnr: "000000000",
-        navn: "Velg virksomhet",
-        underenheter: [],
-      },
-      {
         orgnr: "963890095",
         navn: "Shark AS",
         underenheter: [],

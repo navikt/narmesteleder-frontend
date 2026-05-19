@@ -2,15 +2,16 @@
 
 import { BodyShort, Box, ErrorMessage, Label, VStack } from "@navikt/ds-react";
 import { formatOrgNr, Virksomhetsvelger } from "@navikt/virksomhetsvelger";
-import { useCallback, useEffect, useId, useRef } from "react";
+import { type MouseEvent, useCallback, useEffect, useId, useRef } from "react";
 import {
   getHeadingVirksomhetsvelgerAriaDescribedBy,
+  getHeadingVirksomhetsvelgerAriaLabel,
+  shouldClearVirksomhetFromSelectorButton,
   shouldHandleFieldBlur,
+  withEmptyVirksomhetsvalg,
 } from "@/shared/components/HeadingVirksomhetsvelger.logic";
 import { useOptionalVirksomhetContext } from "@/shared/state/virksomhetContext";
 import { UiSelector } from "@/utils/uiSelectors";
-
-const placeholderOrgnr = "000000000";
 
 export function HeadingVirksomhetsvelger() {
   return <HeadingVirksomhetsvelgerContent />;
@@ -38,6 +39,40 @@ export function HeadingVirksomhetsvelgerContent({
     hasBlurredSinceFocusRef.current = true;
     virksomhet?.markSelectorInteracted();
   }, [virksomhet]);
+
+  const handleSelectorClickCapture = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (!virksomhet) {
+        return;
+      }
+
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+
+      const clickedButton = target.closest("button");
+      if (!(clickedButton instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      if (
+        !shouldClearVirksomhetFromSelectorButton({
+          ariaHasPopup: clickedButton.getAttribute("aria-haspopup"),
+          ariaPressed: clickedButton.getAttribute("aria-pressed"),
+          buttonText: clickedButton.textContent ?? "",
+        })
+      ) {
+        return;
+      }
+
+      virksomhet.updateVirksomhet({
+        orgnummer: "",
+        orgnavn: "",
+      });
+    },
+    [virksomhet],
+  );
 
   useEffect(() => {
     const root = virksomhetsvelgerRef.current;
@@ -105,6 +140,13 @@ export function HeadingVirksomhetsvelgerContent({
     trigger.id = triggerId;
     trigger.removeAttribute("aria-labelledby");
     trigger.setAttribute(
+      "aria-label",
+      getHeadingVirksomhetsvelgerAriaLabel({
+        orgnavn: virksomhet.orgnavn,
+        orgnummer: virksomhet.orgnummer,
+      }),
+    );
+    trigger.setAttribute(
       "aria-describedby",
       getHeadingVirksomhetsvelgerAriaDescribedBy({
         labelId,
@@ -135,6 +177,8 @@ export function HeadingVirksomhetsvelgerContent({
     triggerId,
     virksomhet?.description,
     virksomhet?.isRequired,
+    virksomhet?.orgnavn,
+    virksomhet?.orgnummer,
     readOnly,
     virksomhet?.showSelector,
     virksomhet?.validationError,
@@ -171,20 +215,15 @@ export function HeadingVirksomhetsvelgerContent({
           <div
             ref={virksomhetsvelgerRef}
             data-testid={UiSelector.Organisasjonsnummer}
+            onClickCapture={handleSelectorClickCapture}
           >
             <Virksomhetsvelger
-              organisasjoner={virksomhet.organisasjoner}
-              initValgtOrgnr={virksomhet.orgnummer || undefined}
+              organisasjoner={withEmptyVirksomhetsvalg(
+                virksomhet.organisasjoner,
+              )}
+              initValgtOrgnr={virksomhet.orgnummer}
               friKomponent
               onChange={(organisasjon) => {
-                if (organisasjon.orgnr === placeholderOrgnr) {
-                  virksomhet.updateVirksomhet({
-                    orgnummer: "",
-                    orgnavn: "",
-                  });
-                  return;
-                }
-
                 virksomhet.updateVirksomhet({
                   orgnummer: organisasjon.orgnr,
                   orgnavn: organisasjon.navn,

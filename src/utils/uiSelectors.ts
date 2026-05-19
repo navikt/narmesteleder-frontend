@@ -10,6 +10,7 @@ export enum UiSelector {
   LederEtternavn = "lederEtternavn",
   BehovSummary = "behovSummary",
   Mobilnummer = "mobilnummer",
+  OrganisasjonerLoadError = "organisasjonerLoadError",
   Organisasjonsnummer = "organisasjonsnummer",
   SendInn = "sendInn",
   RegistreringSummary = "registreringSummary",

@@ -1,7 +1,5 @@
 "use client";
 import { BehovViewControlProvider } from "@/app/(behov)/[behovId]/state/contextState";
-import { isLocalOrDemo } from "@/env-variables/envHelpers";
-import { mockOrganisasjoner } from "@/mocks/data/mockOrganisasjoner";
 import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
 import { VirksomhetProvider } from "@/shared/state/virksomhetContext";
 import { EditView } from "./EditView";
@@ -19,8 +17,7 @@ export function ViewControl({ lederInfo, behovId }: ViewControlProps) {
         orgnummer: lederInfo.orgnummer,
         orgnavn: lederInfo.orgnavn ?? "",
       }}
-      organisasjoner={isLocalOrDemo ? mockOrganisasjoner : undefined}
-      isSelectable={isLocalOrDemo}
+      isSelectable={false}
     >
       <BehovViewControlProvider
         EditView={EditView}
