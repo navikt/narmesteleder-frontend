@@ -1,5 +1,6 @@
 import { Page, PageBlock } from "@navikt/ds-react/Page";
 import { fetchDecoratorReact } from "@navikt/nav-dekoratoren-moduler/ssr";
+import "@navikt/virksomhetsvelger/dist/assets/style.css";
 import type { Metadata } from "next";
 import Script from "next/script";
 import Providers from "@/app/Providers";
