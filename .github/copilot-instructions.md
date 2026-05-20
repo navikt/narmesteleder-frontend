@@ -2,7 +2,7 @@
 
 ## Build, test, and lint commands
 
-Use `pnpm` (repo is pinned to pnpm 10 / Node 24 via `.mise.toml`).
+Use `pnpm` (repo is pinned to pnpm 11 / Node 24 via `.mise.toml`).
 
 - Install: `pnpm install`
 - Dev server: `pnpm run dev`
