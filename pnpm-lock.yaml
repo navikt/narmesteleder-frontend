@@ -16,7 +16,7 @@ importers:
         version: 8.10.6
       '@navikt/ds-react':
         specifier: ^8.10.6
-        version: 8.10.6(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 8.10.6(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@navikt/ds-tailwind':
         specifier: ^8.10.6
         version: 8.10.6
@@ -25,10 +25,10 @@ importers:
         version: 2.2.1
       '@navikt/lumi-survey':
         specifier: ^0.4.0
-        version: 0.4.0(@navikt/ds-css@8.10.6)(@navikt/ds-react@8.10.6(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 0.4.0(@navikt/ds-css@8.10.6)(@navikt/ds-react@8.10.6(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@navikt/nav-dekoratoren-moduler':
         specifier: ^4.0.0
-        version: 4.0.0(html-react-parser@5.2.17(@types/react@19.2.14)(react@19.2.6))(react@19.2.6)
+        version: 4.0.0(html-react-parser@5.2.17(@types/react@19.2.15)(react@19.2.6))(react@19.2.6)
       '@navikt/next-logger':
         specifier: ^5.0.0
         version: 5.0.0(next@16.2.6(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(pino@10.3.1)
@@ -67,11 +67,11 @@ importers:
         specifier: ^24.12.4
         version: 24.12.4
       '@types/react':
-        specifier: 19.2.14
-        version: 19.2.14
+        specifier: 19.2.15
+        version: 19.2.15
       '@types/react-dom':
         specifier: 19.2.3
-        version: 19.2.3(@types/react@19.2.14)
+        version: 19.2.3(@types/react@19.2.15)
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
@@ -760,8 +760,8 @@ packages:
     peerDependencies:
       '@types/react': ^19.2.0
 
-  '@types/react@19.2.14':
-    resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
+  '@types/react@19.2.15':
+    resolution: {integrity: sha512-eRwcGNHve+E8qtEQSSRl6urh+rFop4v8gm6O8rGv25CodbvFdLjA1vVQ1KkiFE0w0UPOnb8tDiFKL5lp0rtY5Q==}
 
   '@vitest/expect@4.1.6':
     resolution: {integrity: sha512-7EHDquPthALSV0jhhjgEW8FXaviMx7rSqu8W6oqCoAuOhKov814P99QDV1pxMA3QPv21YudvJngIhjrNI4opLg==}
@@ -1637,13 +1637,13 @@ snapshots:
 
   '@navikt/ds-css@8.10.6': {}
 
-  '@navikt/ds-react@8.10.6(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+  '@navikt/ds-react@8.10.6(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@floating-ui/react': 0.27.19(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@floating-ui/react-dom': 2.1.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@navikt/aksel-icons': 8.10.6
       '@navikt/ds-tokens': 8.11.0
-      '@types/react': 19.2.14
+      '@types/react': 19.2.15
       date-fns: 4.2.1
       react: 19.2.6
       react-day-picker: 9.14.0(react@19.2.6)
@@ -1655,18 +1655,18 @@ snapshots:
 
   '@navikt/fnrvalidator@2.2.1': {}
 
-  '@navikt/lumi-survey@0.4.0(@navikt/ds-css@8.10.6)(@navikt/ds-react@8.10.6(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+  '@navikt/lumi-survey@0.4.0(@navikt/ds-css@8.10.6)(@navikt/ds-react@8.10.6(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@navikt/ds-css': 8.10.6
-      '@navikt/ds-react': 8.10.6(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@navikt/ds-react': 8.10.6(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  '@navikt/nav-dekoratoren-moduler@4.0.0(html-react-parser@5.2.17(@types/react@19.2.14)(react@19.2.6))(react@19.2.6)':
+  '@navikt/nav-dekoratoren-moduler@4.0.0(html-react-parser@5.2.17(@types/react@19.2.15)(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@navikt/analytics-types': 0.0.9
       csp-header: 6.3.1
-      html-react-parser: 5.2.17(@types/react@19.2.14)(react@19.2.6)
+      html-react-parser: 5.2.17(@types/react@19.2.15)(react@19.2.6)
       js-cookie: 3.0.5
       react: 19.2.6
 
@@ -1903,11 +1903,11 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
-  '@types/react-dom@19.2.3(@types/react@19.2.14)':
+  '@types/react-dom@19.2.3(@types/react@19.2.15)':
     dependencies:
-      '@types/react': 19.2.14
+      '@types/react': 19.2.15
 
-  '@types/react@19.2.14':
+  '@types/react@19.2.15':
     dependencies:
       csstype: 3.2.3
 
@@ -2047,7 +2047,7 @@ snapshots:
       domhandler: 5.0.3
       htmlparser2: 10.1.0
 
-  html-react-parser@5.2.17(@types/react@19.2.14)(react@19.2.6):
+  html-react-parser@5.2.17(@types/react@19.2.15)(react@19.2.6):
     dependencies:
       domhandler: 5.0.3
       html-dom-parser: 5.1.8
@@ -2055,7 +2055,7 @@ snapshots:
       react-property: 2.0.2
       style-to-js: 1.1.21
     optionalDependencies:
-      '@types/react': 19.2.14
+      '@types/react': 19.2.15
 
   htmlparser2@10.1.0:
     dependencies:
