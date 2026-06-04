@@ -35,6 +35,9 @@ importers:
       '@navikt/oasis':
         specifier: ^4.1.4
         version: 4.1.4
+      '@navikt/virksomhetsvelger':
+        specifier: ^1.0.11
+        version: 1.0.12(@navikt/ds-css@8.11.0)(@navikt/ds-react@8.11.0(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@tanstack/react-form':
         specifier: ^1.32.1
         version: 1.32.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -435,6 +438,14 @@ packages:
   '@navikt/texas@4.1.4':
     resolution: {integrity: sha512-WS+agfWCqHyCtIpn/iQHNBRwn1gzCQDe0NY9Tz5ErrBsWHNxtqIV7W2eAmRUa3DLrZGHczoQhup+PYT6UX/SpQ==, tarball: https://npm.pkg.github.com/download/@navikt/texas/4.1.4/1725aca0fa0b803e0048212c3e202d24c10f3c3b}
     engines: {node: ^20.19.0 || >= 22.12.0 || 24.x || 25.x}
+
+  '@navikt/virksomhetsvelger@1.0.12':
+    resolution: {integrity: sha512-j9wOuAYVBxQHqiMYDG/hunyE1ztt0svTPgt0Smiqfkt7LmbgAISBKGFuiJkoaZ4ZjsiM+GaalLySaTaiLivv9g==, tarball: https://npm.pkg.github.com/download/@navikt/virksomhetsvelger/1.0.12/12777762ff0617f8b90dc0d1da5661308e0c4ed2}
+    peerDependencies:
+      '@navikt/ds-css': '>=6'
+      '@navikt/ds-react': '>=6'
+      react: 18 || 19
+      react-dom: 18 || 19
 
   '@next/env@16.2.6':
     resolution: {integrity: sha512-gd8HoHN4ufj73WmR3JmVolrpJR47ILK6LouP5xElPglaVxir6e1a7VzvTvDWkOoPXT9rkkTzyCxBu4yeZfZwcw==}
@@ -895,6 +906,17 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  focus-trap-react@11.0.4:
+    resolution: {integrity: sha512-tC7jC/yqeAqhe4irNIzdyDf9XCtGSeECHiBSYJBO/vIN0asizbKZCt8TarB6/XqIceu42ajQ/U4lQJ9pZlWjrg==}
+    peerDependencies:
+      '@types/react': ^18.0.0 || ^19.0.0
+      '@types/react-dom': ^18.0.0 || ^19.0.0
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+
+  focus-trap@7.8.0:
+    resolution: {integrity: sha512-/yNdlIkpWbM0ptxno3ONTuf+2g318kh2ez3KSeZN5dZ8YC6AAmgeWz+GasYYiBJPFaYcSAPeu4GfhUaChzIJXA==}
 
   fsevents@2.3.2:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
@@ -1692,6 +1714,17 @@ snapshots:
 
   '@navikt/texas@4.1.4': {}
 
+  '@navikt/virksomhetsvelger@1.0.12(@navikt/ds-css@8.11.0)(@navikt/ds-react@8.11.0(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+    dependencies:
+      '@navikt/ds-css': 8.11.0
+      '@navikt/ds-react': 8.11.0(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      focus-trap-react: 11.0.4(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+
   '@next/env@16.2.6': {}
 
   '@next/swc-darwin-arm64@16.2.6':
@@ -2033,6 +2066,19 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
       picomatch: 4.0.4
+
+  focus-trap-react@11.0.4(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+    dependencies:
+      '@types/react': 19.2.15
+      '@types/react-dom': 19.2.3(@types/react@19.2.15)
+      focus-trap: 7.8.0
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+      tabbable: 6.4.0
+
+  focus-trap@7.8.0:
+    dependencies:
+      tabbable: 6.4.0
 
   fsevents@2.3.2:
     optional: true
