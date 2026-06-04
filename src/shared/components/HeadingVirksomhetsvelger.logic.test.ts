@@ -74,7 +74,7 @@ describe("getHeadingVirksomhetsvelgerAriaLabel", () => {
 });
 
 describe("withEmptyVirksomhetsvalg", () => {
-  it("adds an explicit empty option when none exists", () => {
+  it("adds an explicit empty option as the first underenhet when none exists", () => {
     const result = withEmptyVirksomhetsvalg([
       {
         orgnr: "987654321",
@@ -90,12 +90,17 @@ describe("withEmptyVirksomhetsvalg", () => {
     ]);
 
     expect(result[0]).toEqual({
-      orgnr: "",
-      navn: "Velg virksomhet",
+      orgnr: "987654321",
+      navn: "Nordlys Gruppen AS",
       underenheter: [
         {
           orgnr: "",
           navn: "Velg virksomhet",
+          underenheter: [],
+        },
+        {
+          orgnr: "876543219",
+          navn: "Aurora Consulting AS",
           underenheter: [],
         },
       ],

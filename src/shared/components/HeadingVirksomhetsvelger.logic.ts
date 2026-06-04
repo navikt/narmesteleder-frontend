@@ -29,19 +29,21 @@ export function withEmptyVirksomhetsvalg(
     return organisasjoner;
   }
 
+  const [firstOrganisasjon, ...remainingOrganisasjoner] = organisasjoner;
+
   return [
     {
-      orgnr: EMPTY_VIRKSOMHET_ORGNR,
-      navn: EMPTY_VIRKSOMHET_LABEL,
+      ...firstOrganisasjon,
       underenheter: [
         {
           orgnr: EMPTY_VIRKSOMHET_ORGNR,
           navn: EMPTY_VIRKSOMHET_LABEL,
           underenheter: [],
         },
+        ...firstOrganisasjon.underenheter,
       ],
     },
-    ...organisasjoner,
+    ...remainingOrganisasjoner,
   ];
 }
 
