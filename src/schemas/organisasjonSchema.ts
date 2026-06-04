@@ -7,6 +7,8 @@ export const organisasjonSchema: z.ZodType<Organisasjon> = object({
   underenheter: array(lazy(() => organisasjonSchema)),
 });
 
-export const organisasjonerSchema = array(organisasjonSchema);
+export const organisasjonerSchema = object({
+  organisasjoner: array(organisasjonSchema),
+});
 
 export type OrganisasjonResponse = z.infer<typeof organisasjonSchema>;

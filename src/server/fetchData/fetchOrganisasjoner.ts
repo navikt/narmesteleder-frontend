@@ -28,14 +28,14 @@ const toOrganisasjonerResult = (
 const realFetchOrganisasjoner =
   async (): Promise<FetchOrganisasjonerResult> => {
     try {
-      const organisasjoner = await tokenXFetchGet({
+      const response = await tokenXFetchGet({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
         endpoint: getOrganisasjonerPath(),
         responseDataSchema: organisasjonerSchema,
         redirectAfterLoginUrl: publicEnv.NEXT_PUBLIC_BASE_PATH,
       });
 
-      return toOrganisasjonerResult(organisasjoner);
+      return toOrganisasjonerResult(response.organisasjoner);
     } catch (error) {
       unstable_rethrow(error);
       logger.warn(

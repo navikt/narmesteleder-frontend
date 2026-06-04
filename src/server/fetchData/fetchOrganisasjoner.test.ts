@@ -51,9 +51,14 @@ describe("fetchOrganisasjoner", () => {
   });
 
   it("henter organisasjoner fra backend i dev/prod", async () => {
-    tokenXFetchGetMock.mockResolvedValue(mockOrganisasjoner);
+    tokenXFetchGetMock.mockResolvedValue({
+      organisasjoner: mockOrganisasjoner,
+    });
 
     const { fetchOrganisasjoner } = await importFetchOrganisasjoner(false);
+    const { organisasjonerSchema } = await import(
+      "@/schemas/organisasjonSchema"
+    );
     const result = await fetchOrganisasjoner();
 
     expect(result).toEqual({
@@ -64,12 +69,15 @@ describe("fetchOrganisasjoner", () => {
       expect.objectContaining({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
         endpoint: expect.stringContaining("/api/v1/tilganger"),
+        responseDataSchema: organisasjonerSchema,
       }),
     );
   });
 
-  it("returnerer tom status når backend svarer med tom liste", async () => {
-    tokenXFetchGetMock.mockResolvedValue([]);
+  it("returnerer tom status når backend svarer med tom liste i wrapper-objekt", async () => {
+    tokenXFetchGetMock.mockResolvedValue({
+      organisasjoner: [],
+    });
 
     const { fetchOrganisasjoner } = await importFetchOrganisasjoner(false);
     const result = await fetchOrganisasjoner();
