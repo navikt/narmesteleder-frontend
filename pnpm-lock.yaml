@@ -27,8 +27,8 @@ importers:
         specifier: ^0.4.0
         version: 0.4.0(@navikt/ds-css@8.11.0)(@navikt/ds-react@8.11.0(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@navikt/nav-dekoratoren-moduler':
-        specifier: ^4.2.0
-        version: 4.2.0(html-react-parser@5.2.17(@types/react@19.2.15)(react@19.2.6))(react@19.2.6)
+        specifier: ^4.2.1
+        version: 4.2.1(html-react-parser@5.2.17(@types/react@19.2.15)(react@19.2.6))(react@19.2.6)
       '@navikt/next-logger':
         specifier: ^5.0.0
         version: 5.0.0(next@16.2.6(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(pino@10.3.1)
@@ -408,8 +408,8 @@ packages:
       react: '>=18'
       react-dom: '>=18'
 
-  '@navikt/nav-dekoratoren-moduler@4.2.0':
-    resolution: {integrity: sha512-kmn7Uj4RselUKdYfmpLUxPaMMfgBoqlyuimvOO/sjgUxyWq+qZn1rcZ9JNt58gMCfPI1L6mfnMp+XRvWv4lA1A==, tarball: https://npm.pkg.github.com/download/@navikt/nav-dekoratoren-moduler/4.2.0/f86499ff4bcc9299fa38641ba0906118f7fb1661}
+  '@navikt/nav-dekoratoren-moduler@4.2.1':
+    resolution: {integrity: sha512-7APU6VFygRbt0uvNbc1Qrh8MZ0v6LwTXaybLwgTUxByr9ErtaUnsxvIK/ojvQi9GtXsqPWdrv/qgLwLvR/8OSQ==, tarball: https://npm.pkg.github.com/download/@navikt/nav-dekoratoren-moduler/4.2.1/085010a71cf51cc25abd0572ba569720e866afe2}
     engines: {node: 24.x}
     peerDependencies:
       html-react-parser: '>=5.x'
@@ -1662,7 +1662,7 @@ snapshots:
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  '@navikt/nav-dekoratoren-moduler@4.2.0(html-react-parser@5.2.17(@types/react@19.2.15)(react@19.2.6))(react@19.2.6)':
+  '@navikt/nav-dekoratoren-moduler@4.2.1(html-react-parser@5.2.17(@types/react@19.2.15)(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@navikt/analytics-types': 0.0.9
       csp-header: 6.3.1
