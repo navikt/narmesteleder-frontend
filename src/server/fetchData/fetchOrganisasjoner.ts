@@ -6,12 +6,15 @@ import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { publicEnv } from "@/env-variables/publicEnv";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { mockOrganisasjoner } from "@/mocks/data/mockOrganisasjoner";
-import { organisasjonerSchema } from "@/schemas/organisasjonSchema";
+import {
+  type AccessibleOrganizationResponse,
+  accessibleOrganizationsResponseSchema,
+} from "@/schemas/organisasjonSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 
 const getOrganisasjonerPath = () =>
-  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/tilganger`;
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/access/organizations`;
 
 export interface FetchOrganisasjonerResult {
   status: "available" | "empty" | "error";
@@ -25,17 +28,27 @@ const toOrganisasjonerResult = (
   organisasjoner,
 });
 
+const toOrganisasjon = ({
+  orgNumber,
+  name,
+  subOrganizations,
+}: AccessibleOrganizationResponse): Organisasjon => ({
+  orgnr: orgNumber,
+  navn: name,
+  underenheter: subOrganizations.map(toOrganisasjon),
+});
+
 const realFetchOrganisasjoner =
   async (): Promise<FetchOrganisasjonerResult> => {
     try {
       const response = await tokenXFetchGet({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
         endpoint: getOrganisasjonerPath(),
-        responseDataSchema: organisasjonerSchema,
+        responseDataSchema: accessibleOrganizationsResponseSchema,
         redirectAfterLoginUrl: publicEnv.NEXT_PUBLIC_BASE_PATH,
       });
 
-      return toOrganisasjonerResult(response.organisasjoner);
+      return toOrganisasjonerResult(response.organizations.map(toOrganisasjon));
     } catch (error) {
       unstable_rethrow(error);
       logger.warn(

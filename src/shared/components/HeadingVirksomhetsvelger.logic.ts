@@ -47,6 +47,20 @@ export function withEmptyVirksomhetsvalg(
   ];
 }
 
+export function getVirksomhetsvelgerOrganisasjoner({
+  organisasjoner,
+  orgnummer,
+  hasInitializedSelection,
+}: {
+  organisasjoner: Organisasjon[];
+  orgnummer: string;
+  hasInitializedSelection: boolean;
+}): Organisasjon[] {
+  return !hasInitializedSelection && !orgnummer.trim()
+    ? withEmptyVirksomhetsvalg(organisasjoner)
+    : organisasjoner;
+}
+
 export function shouldClearVirksomhetFromSelectorButton({
   ariaHasPopup,
   ariaPressed,

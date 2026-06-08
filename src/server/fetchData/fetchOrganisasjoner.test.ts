@@ -1,9 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockOrganisasjoner } from "@/mocks/data/mockOrganisasjoner";
+import type { AccessibleOrganizationResponse } from "@/schemas/organisasjonSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 
 const tokenXFetchGetMock = vi.fn();
 const loggerWarnMock = vi.fn();
+
+const toAccessibleOrganization = ({
+  orgnr,
+  navn,
+  underenheter,
+}: (typeof mockOrganisasjoner)[number]): AccessibleOrganizationResponse => ({
+  orgNumber: orgnr,
+  name: navn,
+  subOrganizations: underenheter.map(toAccessibleOrganization),
+});
+
+const mockAccessibleOrganizations = mockOrganisasjoner.map(
+  toAccessibleOrganization,
+);
 
 vi.mock("@navikt/next-logger", () => ({
   logger: {
@@ -52,11 +67,11 @@ describe("fetchOrganisasjoner", () => {
 
   it("henter organisasjoner fra backend i dev/prod", async () => {
     tokenXFetchGetMock.mockResolvedValue({
-      organisasjoner: mockOrganisasjoner,
+      organizations: mockAccessibleOrganizations,
     });
 
     const { fetchOrganisasjoner } = await importFetchOrganisasjoner(false);
-    const { organisasjonerSchema } = await import(
+    const { accessibleOrganizationsResponseSchema } = await import(
       "@/schemas/organisasjonSchema"
     );
     const result = await fetchOrganisasjoner();
@@ -68,15 +83,15 @@ describe("fetchOrganisasjoner", () => {
     expect(tokenXFetchGetMock).toHaveBeenCalledWith(
       expect.objectContaining({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-        endpoint: expect.stringContaining("/api/v1/tilganger"),
-        responseDataSchema: organisasjonerSchema,
+        endpoint: expect.stringContaining("/api/v1/access/organizations"),
+        responseDataSchema: accessibleOrganizationsResponseSchema,
       }),
     );
   });
 
   it("returnerer tom status når backend svarer med tom liste i wrapper-objekt", async () => {
     tokenXFetchGetMock.mockResolvedValue({
-      organisasjoner: [],
+      organizations: [],
     });
 
     const { fetchOrganisasjoner } = await importFetchOrganisasjoner(false);

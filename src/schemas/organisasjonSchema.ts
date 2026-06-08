@@ -1,14 +1,18 @@
-import type { Organisasjon } from "@navikt/virksomhetsvelger";
 import { array, lazy, object, string, type z } from "zod";
 
-export const organisasjonSchema: z.ZodType<Organisasjon> = object({
-  orgnr: string(),
-  navn: string(),
-  underenheter: array(lazy(() => organisasjonSchema)),
-});
+export interface AccessibleOrganizationResponse {
+  orgNumber: string;
+  name: string;
+  subOrganizations: AccessibleOrganizationResponse[];
+}
 
-export const organisasjonerSchema = object({
-  organisasjoner: array(organisasjonSchema),
-});
+export const accessibleOrganizationSchema: z.ZodType<AccessibleOrganizationResponse> =
+  object({
+    orgNumber: string(),
+    name: string(),
+    subOrganizations: array(lazy(() => accessibleOrganizationSchema)),
+  });
 
-export type OrganisasjonResponse = z.infer<typeof organisasjonSchema>;
+export const accessibleOrganizationsResponseSchema = object({
+  organizations: array(accessibleOrganizationSchema),
+});

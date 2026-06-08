@@ -2,13 +2,20 @@
 
 import { BodyShort, Box, ErrorMessage, Label, VStack } from "@navikt/ds-react";
 import { formatOrgNr, Virksomhetsvelger } from "@navikt/virksomhetsvelger";
-import { type MouseEvent, useCallback, useEffect, useId, useRef } from "react";
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 import {
   getHeadingVirksomhetsvelgerAriaDescribedBy,
   getHeadingVirksomhetsvelgerAriaLabel,
+  getVirksomhetsvelgerOrganisasjoner,
   shouldClearVirksomhetFromSelectorButton,
   shouldHandleFieldBlur,
-  withEmptyVirksomhetsvalg,
 } from "@/shared/components/HeadingVirksomhetsvelger.logic";
 import { useOptionalVirksomhetContext } from "@/shared/state/virksomhetContext";
 import { UiSelector } from "@/utils/uiSelectors";
@@ -30,6 +37,11 @@ export function HeadingVirksomhetsvelgerContent({
   const errorId = `${fieldId}-error`;
   const triggerId = `${fieldId}-trigger`;
   const hasBlurredSinceFocusRef = useRef(false);
+  const [hasInitializedSelection, setHasInitializedSelection] = useState(false);
+
+  useEffect(() => {
+    setHasInitializedSelection(true);
+  }, []);
 
   const markSelectorInteracted = useCallback(() => {
     if (!shouldHandleFieldBlur(hasBlurredSinceFocusRef.current)) {
@@ -218,9 +230,11 @@ export function HeadingVirksomhetsvelgerContent({
             onClickCapture={handleSelectorClickCapture}
           >
             <Virksomhetsvelger
-              organisasjoner={withEmptyVirksomhetsvalg(
-                virksomhet.organisasjoner,
-              )}
+              organisasjoner={getVirksomhetsvelgerOrganisasjoner({
+                organisasjoner: virksomhet.organisasjoner,
+                orgnummer: virksomhet.orgnummer,
+                hasInitializedSelection,
+              })}
               initValgtOrgnr={virksomhet.orgnummer}
               friKomponent
               onChange={(organisasjon) => {

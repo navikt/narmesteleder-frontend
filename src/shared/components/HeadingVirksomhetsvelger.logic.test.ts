@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getHeadingVirksomhetsvelgerAriaDescribedBy,
   getHeadingVirksomhetsvelgerAriaLabel,
+  getVirksomhetsvelgerOrganisasjoner,
   shouldClearVirksomhetFromSelectorButton,
   shouldHandleFieldBlur,
   withEmptyVirksomhetsvalg,
@@ -117,6 +118,56 @@ describe("withEmptyVirksomhetsvalg", () => {
     ];
 
     expect(withEmptyVirksomhetsvalg(organisasjoner)).toBe(organisasjoner);
+  });
+});
+
+describe("getVirksomhetsvelgerOrganisasjoner", () => {
+  const organisasjoner = [
+    {
+      orgnr: "987654321",
+      navn: "Nordlys Gruppen AS",
+      underenheter: [
+        {
+          orgnr: "876543219",
+          navn: "Aurora Consulting AS",
+          underenheter: [],
+        },
+      ],
+    },
+  ];
+
+  it("includes the empty option only while initializing an empty selection", () => {
+    const result = getVirksomhetsvelgerOrganisasjoner({
+      organisasjoner,
+      orgnummer: "",
+      hasInitializedSelection: false,
+    });
+
+    expect(result[0]?.underenheter[0]).toEqual({
+      orgnr: "",
+      navn: "Velg virksomhet",
+      underenheter: [],
+    });
+  });
+
+  it("returns the original list after initialization when nothing is selected", () => {
+    expect(
+      getVirksomhetsvelgerOrganisasjoner({
+        organisasjoner,
+        orgnummer: "",
+        hasInitializedSelection: true,
+      }),
+    ).toBe(organisasjoner);
+  });
+
+  it("returns the original list when a virksomhet is already selected", () => {
+    expect(
+      getVirksomhetsvelgerOrganisasjoner({
+        organisasjoner,
+        orgnummer: "876543219",
+        hasInitializedSelection: false,
+      }),
+    ).toBe(organisasjoner);
   });
 });
 
