@@ -33,6 +33,51 @@ const defaultVirksomhet: ValgtVirksomhet = {
   orgnavn: "",
 };
 
+function getFirstSelectableOrganisasjon(
+  organisasjoner: Organisasjon[],
+): Organisasjon | undefined {
+  const [firstOrganisasjon] = organisasjoner;
+
+  if (!firstOrganisasjon) {
+    return undefined;
+  }
+
+  if (firstOrganisasjon.underenheter.length === 0) {
+    return firstOrganisasjon;
+  }
+
+  return getFirstSelectableOrganisasjon(firstOrganisasjon.underenheter);
+}
+
+function getInitialVirksomhet({
+  organisasjoner,
+  initialVirksomhet,
+  isSelectable,
+}: {
+  organisasjoner: Organisasjon[];
+  initialVirksomhet: ValgtVirksomhet;
+  isSelectable: boolean;
+}): ValgtVirksomhet {
+  if (
+    initialVirksomhet.orgnummer ||
+    initialVirksomhet.orgnavn ||
+    !isSelectable
+  ) {
+    return initialVirksomhet;
+  }
+
+  const firstOrganisasjon = getFirstSelectableOrganisasjon(organisasjoner);
+
+  if (!firstOrganisasjon) {
+    return initialVirksomhet;
+  }
+
+  return {
+    orgnummer: firstOrganisasjon.orgnr,
+    orgnavn: firstOrganisasjon.navn,
+  };
+}
+
 const VirksomhetContext = createContext<VirksomhetContextState | undefined>(
   undefined,
 );
@@ -53,8 +98,13 @@ export function VirksomhetProvider({
   isRequired?: boolean;
   isSelectable?: boolean;
 }>) {
-  const [virksomhet, setVirksomhet] =
-    useState<ValgtVirksomhet>(initialVirksomhet);
+  const [virksomhet, setVirksomhet] = useState<ValgtVirksomhet>(() =>
+    getInitialVirksomhet({
+      organisasjoner,
+      initialVirksomhet,
+      isSelectable,
+    }),
+  );
   const [validationError, setValidationError] = useState<string | undefined>();
   const [selectorInteractionCount, setSelectorInteractionCount] = useState(0);
   const showSelector = isSelectable && organisasjoner.length > 0;

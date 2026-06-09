@@ -5,6 +5,25 @@ import {
   VirksomhetProvider,
 } from "@/shared/state/virksomhetContext";
 
+const organisasjoner = [
+  {
+    orgnr: "100000020",
+    navn: "Eksempel AS",
+    underenheter: [
+      {
+        orgnr: "100000002",
+        navn: "Eksempel FLI",
+        underenheter: [],
+      },
+      {
+        orgnr: "100000003",
+        navn: "Eksempel BEDR",
+        underenheter: [],
+      },
+    ],
+  },
+];
+
 function HookConsumer() {
   const {
     orgnummer,
@@ -37,5 +56,15 @@ describe("virksomhetContext", () => {
     );
 
     expect(markup).toContain("||function|0|function");
+  });
+
+  it("preselects the first available underenhet when selector is enabled", () => {
+    const markup = ReactDOMServer.renderToStaticMarkup(
+      <VirksomhetProvider organisasjoner={organisasjoner} isSelectable>
+        <HookConsumer />
+      </VirksomhetProvider>,
+    );
+
+    expect(markup).toContain("100000002|Eksempel FLI|function|0|function");
   });
 });

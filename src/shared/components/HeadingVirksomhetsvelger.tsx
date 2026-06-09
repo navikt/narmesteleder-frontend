@@ -1,8 +1,9 @@
 "use client";
 
-import { BodyShort, Box, ErrorMessage, Label, VStack } from "@navikt/ds-react";
+import { BodyShort, Box, ErrorMessage, VStack } from "@navikt/ds-react";
 import { formatOrgNr, Virksomhetsvelger } from "@navikt/virksomhetsvelger";
 import {
+  type CSSProperties,
   type MouseEvent,
   useCallback,
   useEffect,
@@ -20,9 +21,21 @@ import {
 import { useOptionalVirksomhetContext } from "@/shared/state/virksomhetContext";
 import { UiSelector } from "@/utils/uiSelectors";
 
-export function HeadingVirksomhetsvelger() {
-  return <HeadingVirksomhetsvelgerContent />;
-}
+const visuallyHiddenStyles: CSSProperties = {
+  border: 0,
+  clipPath: "inset(50%)",
+  height: "1px",
+  margin: "-1px",
+  overflow: "hidden",
+  padding: 0,
+  position: "absolute",
+  whiteSpace: "nowrap",
+  width: "1px",
+};
+
+// export function HeadingVirksomhetsvelger() {
+//   return <HeadingVirksomhetsvelgerContent />;
+// }
 
 export function HeadingVirksomhetsvelgerContent({
   readOnly = false,
@@ -202,69 +215,72 @@ export function HeadingVirksomhetsvelgerContent({
 
   return (
     <Box
-      background="accent-soft"
-      borderRadius="8"
       data-testid={UiSelector.HeadingVirksomhet}
-      paddingBlock="space-16"
-      paddingInline="space-16"
+      style={{ width: "min(100%, 30rem)" }}
     >
       {virksomhet.showSelector && !readOnly ? (
-        <VStack gap="space-8">
-          <Label id={labelId} htmlFor={triggerId}>
+        <>
+          <span id={labelId} style={visuallyHiddenStyles}>
             {virksomhet.label}
-            {virksomhet.isRequired ? (
-              <>
-                <span aria-hidden="true"> *</span>
-                <BodyShort as="span" visuallyHidden>
-                  obligatorisk
-                </BodyShort>
-              </>
-            ) : null}
-          </Label>
+            {virksomhet.isRequired ? ", obligatorisk" : ""}
+          </span>
           {virksomhet.description ? (
-            <BodyShort id={descriptionId}>{virksomhet.description}</BodyShort>
+            <span id={descriptionId} style={visuallyHiddenStyles}>
+              {virksomhet.description}
+            </span>
           ) : null}
-          <div
-            ref={virksomhetsvelgerRef}
-            data-testid={UiSelector.Organisasjonsnummer}
-            onClickCapture={handleSelectorClickCapture}
-          >
-            <Virksomhetsvelger
-              organisasjoner={getVirksomhetsvelgerOrganisasjoner({
-                organisasjoner: virksomhet.organisasjoner,
-                orgnummer: virksomhet.orgnummer,
-                hasInitializedSelection,
-              })}
-              initValgtOrgnr={virksomhet.orgnummer}
-              friKomponent
-              onChange={(organisasjon) => {
-                virksomhet.updateVirksomhet({
-                  orgnummer: organisasjon.orgnr,
-                  orgnavn: organisasjon.navn,
-                });
-              }}
-            />
-          </div>
-          {virksomhet.validationError ? (
-            <ErrorMessage id={errorId}>
-              {virksomhet.validationError}
-            </ErrorMessage>
-          ) : null}
-        </VStack>
+          <VStack gap="space-8">
+            <div
+              ref={virksomhetsvelgerRef}
+              data-testid={UiSelector.Organisasjonsnummer}
+              onClickCapture={handleSelectorClickCapture}
+            >
+              <Virksomhetsvelger
+                organisasjoner={getVirksomhetsvelgerOrganisasjoner({
+                  organisasjoner: virksomhet.organisasjoner,
+                  orgnummer: virksomhet.orgnummer,
+                  hasInitializedSelection,
+                })}
+                initValgtOrgnr={virksomhet.orgnummer}
+                onChange={(organisasjon) => {
+                  virksomhet.updateVirksomhet({
+                    orgnummer: organisasjon.orgnr,
+                    orgnavn: organisasjon.navn,
+                  });
+                }}
+              />
+            </div>
+            {virksomhet.validationError ? (
+              <ErrorMessage id={errorId}>
+                {virksomhet.validationError}
+              </ErrorMessage>
+            ) : null}
+          </VStack>
+        </>
       ) : (
-        <VStack gap="space-4">
-          <BodyShort weight="semibold">{virksomhet.label}</BodyShort>
-          <BodyShort>
-            {virksomhet.orgnavn
-              ? `${virksomhet.orgnavn}${
-                  virksomhet.orgnummer
-                    ? ` (${formatOrgNr(virksomhet.orgnummer) ?? virksomhet.orgnummer})`
-                    : ""
-                }`
-              : (formatOrgNr(virksomhet.orgnummer ?? "") ??
-                virksomhet.orgnummer)}
-          </BodyShort>
-        </VStack>
+        <Box
+          background="default"
+          borderColor="neutral-subtle"
+          borderRadius="8"
+          borderWidth="1"
+          padding="space-16"
+        >
+          <VStack gap="space-4">
+            <BodyShort size="small" weight="semibold">
+              {virksomhet.label}
+            </BodyShort>
+            <BodyShort>
+              {virksomhet.orgnavn
+                ? `${virksomhet.orgnavn}${
+                    virksomhet.orgnummer
+                      ? ` (${formatOrgNr(virksomhet.orgnummer) ?? virksomhet.orgnummer})`
+                      : ""
+                  }`
+                : (formatOrgNr(virksomhet.orgnummer ?? "") ??
+                  virksomhet.orgnummer)}
+            </BodyShort>
+          </VStack>
+        </Box>
       )}
     </Box>
   );
