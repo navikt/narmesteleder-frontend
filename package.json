@@ -32,8 +32,8 @@
     "@tanstack/react-form": "^1.33.0",
     "next": "^16.2.6",
     "pino": "^10.3.0",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
     "@playwright/test": "^1.60.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.12.4",
-    "@types/react": "19.2.15",
+    "@types/react": "19.2.16",
     "@types/react-dom": "19.2.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "lefthook": "^2.1.9",
@@ -51,7 +51,7 @@
     "vitest": "^4.1.8"
   },
   "overrides": {
-    "@types/react": "19.2.15",
+    "@types/react": "19.2.16",
     "@types/react-dom": "19.2.3"
   },
   "packageManager": "pnpm@11.1.2"
