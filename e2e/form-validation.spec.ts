@@ -36,7 +36,8 @@ test.describe("Form Validation", () => {
     await getSubmitButton(page).click();
 
     await expectAllCount(page, [
-      [ValidationMessages.RequireField, 3],
+      // Virksomhet is pre-selected by default, so only 2 required-field errors (not 3)
+      [ValidationMessages.RequireField, 2],
       [ValidationMessages.LengthAndNumberFnr, 2],
       [ValidationMessages.InvalidMobilnummer, 1],
       [ValidationMessages.InvalidEmail, 1],
