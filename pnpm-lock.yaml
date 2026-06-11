@@ -37,7 +37,7 @@ importers:
         version: 4.1.4
       '@navikt/virksomhetsvelger':
         specifier: ^2.0.2
-        version: 2.0.2(@navikt/ds-css@8.11.0)(@navikt/ds-react@8.11.0(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        version: 2.0.2(@navikt/ds-css@8.11.1)(@navikt/ds-react@8.11.1(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/react-form':
         specifier: ^1.33.0
         version: 1.33.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -1715,13 +1715,13 @@ snapshots:
 
   '@navikt/texas@4.1.4': {}
 
-  '@navikt/virksomhetsvelger@2.0.2(@navikt/ds-css@8.11.0)(@navikt/ds-react@8.11.0(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+  '@navikt/virksomhetsvelger@2.0.2(@navikt/ds-css@8.11.1)(@navikt/ds-react@8.11.1(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@navikt/ds-css': 8.11.0
-      '@navikt/ds-react': 8.11.0(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      focus-trap-react: 11.0.4(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      react: 19.2.6
-      react-dom: 19.2.6(react@19.2.6)
+      '@navikt/ds-css': 8.11.1
+      '@navikt/ds-react': 8.11.1(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      focus-trap-react: 11.0.4(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
@@ -2068,13 +2068,13 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.4
 
-  focus-trap-react@11.0.4(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  focus-trap-react@11.0.4(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
-      '@types/react': 19.2.15
-      '@types/react-dom': 19.2.3(@types/react@19.2.15)
+      '@types/react': 19.2.16
+      '@types/react-dom': 19.2.3(@types/react@19.2.16)
       focus-trap: 7.8.0
-      react: 19.2.6
-      react-dom: 19.2.6(react@19.2.6)
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
       tabbable: 6.4.0
 
   focus-trap@7.8.0:
