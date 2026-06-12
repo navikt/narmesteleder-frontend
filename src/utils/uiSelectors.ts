@@ -22,4 +22,12 @@ export enum UiSelector {
   SykmeldtBox = "sykmeldtBox",
   BehovForm = "behovForm",
   RegistreringInfoPanel = "registreringInfoPanel",
+  // Oversikt
+  OversiktInfoboks = "oversiktInfoboks",
+  OversiktTabell = "oversiktTabell",
+  OversiktSok = "oversiktSok",
+  OversiktFaner = "oversiktFaner",
+  OversiktLasterSpinner = "oversiktLasterSpinner",
+  OversiktFeilAlert = "oversiktFeilAlert",
+  OversiktTomState = "oversiktTomState",
 }
