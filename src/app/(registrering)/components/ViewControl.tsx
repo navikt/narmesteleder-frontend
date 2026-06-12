@@ -18,7 +18,7 @@ function BlockedOrganisasjonerAlert({
 }) {
   const content =
     status === "empty"
-      ? "Vi fant ingen virksomheter du kan velge mellom. Kontakt NAV hvis du trenger hjelp videre."
+      ? "Vi fant ingen virksomheter du kan velge mellom. Sjekk om du har tilstrekkelig rettigheter i Altinn."
       : "Vi klarte ikke å hente virksomhetene dine. Prøv igjen litt senere.";
 
   return (
