@@ -1,10 +1,20 @@
-import { Heading } from "@navikt/ds-react";
+import { Bleed, Box } from "@navikt/ds-react";
+import { Banner } from "@navikt/virksomhetsvelger";
+import { HeadingVirksomhetsvelgerContent } from "@/shared/components/HeadingVirksomhetsvelger";
 import { UiSelector } from "@/utils/uiSelectors";
 
-export function HeadingLeder() {
+export function HeadingLeder({
+  readOnlyVirksomhet = false,
+}: {
+  readOnlyVirksomhet?: boolean;
+}) {
   return (
-    <Heading size="large" level="1" data-testid={UiSelector.HeadingLeder}>
-      Oppgi nærmeste leder
-    </Heading>
+    <Box as="section" data-testid={UiSelector.HeadingLeder}>
+      <Bleed marginInline="full">
+        <Banner tittel="Oppgi nærmeste leder">
+          <HeadingVirksomhetsvelgerContent readOnly={readOnlyVirksomhet} />
+        </Banner>
+      </Bleed>
+    </Box>
   );
 }

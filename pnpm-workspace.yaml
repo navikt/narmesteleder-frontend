@@ -3,4 +3,7 @@ allowBuilds:
   lefthook: true
   sharp: true
 minimumReleaseAge: 4320
+minimumReleaseAgeExclude:
+  - '@navikt/virksomhetsvelger'
+
 blockExoticSubdeps: true

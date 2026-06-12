@@ -1,0 +1,270 @@
+"use client";
+
+import { BodyShort, Box, ErrorMessage, VStack } from "@navikt/ds-react";
+import { formatOrgNr, Virksomhetsvelger } from "@navikt/virksomhetsvelger";
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
+import {
+  getHeadingVirksomhetsvelgerAriaDescribedBy,
+  getHeadingVirksomhetsvelgerAriaLabel,
+  getVirksomhetsvelgerOrganisasjoner,
+  shouldClearVirksomhetFromSelectorButton,
+  shouldHandleFieldBlur,
+} from "@/shared/components/HeadingVirksomhetsvelger.logic";
+import { useOptionalVirksomhetContext } from "@/shared/state/virksomhetContext";
+import { UiSelector } from "@/utils/uiSelectors";
+
+export function HeadingVirksomhetsvelgerContent({
+  readOnly = false,
+}: {
+  readOnly?: boolean;
+}) {
+  const virksomhet = useOptionalVirksomhetContext();
+  const virksomhetsvelgerRef = useRef<HTMLDivElement>(null);
+  const fieldId = useId();
+  const labelId = `${fieldId}-label`;
+  const descriptionId = `${fieldId}-description`;
+  const errorId = `${fieldId}-error`;
+  const triggerId = `${fieldId}-trigger`;
+  const hasBlurredSinceFocusRef = useRef(false);
+  const [hasInitializedSelection, setHasInitializedSelection] = useState(false);
+
+  useEffect(() => {
+    setHasInitializedSelection(true);
+  }, []);
+
+  const markSelectorInteracted = useCallback(() => {
+    if (!shouldHandleFieldBlur(hasBlurredSinceFocusRef.current)) {
+      return;
+    }
+
+    hasBlurredSinceFocusRef.current = true;
+    virksomhet?.markSelectorInteracted();
+  }, [virksomhet]);
+
+  const handleSelectorClickCapture = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (!virksomhet) {
+        return;
+      }
+
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) {
+        return;
+      }
+
+      const clickedButton = target.closest("button");
+      if (!(clickedButton instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      if (
+        !shouldClearVirksomhetFromSelectorButton({
+          ariaHasPopup: clickedButton.getAttribute("aria-haspopup"),
+          ariaPressed: clickedButton.getAttribute("aria-pressed"),
+          buttonText: clickedButton.textContent ?? "",
+        })
+      ) {
+        return;
+      }
+
+      virksomhet.updateVirksomhet({
+        orgnummer: "",
+        orgnavn: "",
+      });
+    },
+    [virksomhet],
+  );
+
+  useEffect(() => {
+    const root = virksomhetsvelgerRef.current;
+    const trigger = root?.querySelector<HTMLButtonElement>(
+      'button[aria-haspopup="true"]',
+    );
+
+    if (!root || !trigger || !virksomhet?.showSelector || readOnly) {
+      return;
+    }
+
+    const onFocusIn = () => {
+      hasBlurredSinceFocusRef.current = false;
+    };
+
+    const onFocusOut = (event: FocusEvent) => {
+      const nextTarget = event.relatedTarget;
+
+      if (nextTarget instanceof Node && root.contains(nextTarget)) {
+        return;
+      }
+
+      if (trigger.getAttribute("aria-expanded") === "true") {
+        return;
+      }
+
+      markSelectorInteracted();
+    };
+
+    let wasExpanded = trigger.getAttribute("aria-expanded") === "true";
+    const expandedObserver = new MutationObserver(() => {
+      const isExpanded = trigger.getAttribute("aria-expanded") === "true";
+
+      if (!isExpanded && wasExpanded) {
+        markSelectorInteracted();
+      }
+
+      wasExpanded = isExpanded;
+    });
+
+    root.addEventListener("focusin", onFocusIn);
+    root.addEventListener("focusout", onFocusOut);
+    expandedObserver.observe(trigger, {
+      attributes: true,
+      attributeFilter: ["aria-expanded"],
+    });
+
+    return () => {
+      root.removeEventListener("focusin", onFocusIn);
+      root.removeEventListener("focusout", onFocusOut);
+      expandedObserver.disconnect();
+    };
+  }, [markSelectorInteracted, readOnly, virksomhet?.showSelector]);
+
+  useEffect(() => {
+    const trigger =
+      virksomhetsvelgerRef.current?.querySelector<HTMLButtonElement>(
+        'button[aria-haspopup="true"]',
+      );
+
+    if (!trigger || !virksomhet?.showSelector || readOnly) {
+      return;
+    }
+
+    trigger.id = triggerId;
+    trigger.removeAttribute("aria-labelledby");
+    trigger.setAttribute(
+      "aria-label",
+      getHeadingVirksomhetsvelgerAriaLabel({
+        orgnavn: virksomhet.orgnavn,
+        orgnummer: virksomhet.orgnummer,
+      }),
+    );
+    trigger.setAttribute(
+      "aria-describedby",
+      getHeadingVirksomhetsvelgerAriaDescribedBy({
+        labelId,
+        descriptionId,
+        errorId,
+        hasDescription: Boolean(virksomhet.description),
+        hasError: Boolean(virksomhet.validationError),
+      }),
+    );
+
+    if (virksomhet.isRequired) {
+      trigger.setAttribute("aria-required", "true");
+    } else {
+      trigger.removeAttribute("aria-required");
+    }
+
+    if (virksomhet.validationError) {
+      trigger.setAttribute("aria-errormessage", errorId);
+      trigger.setAttribute("aria-invalid", "true");
+    } else {
+      trigger.removeAttribute("aria-errormessage");
+      trigger.removeAttribute("aria-invalid");
+    }
+  }, [
+    descriptionId,
+    errorId,
+    labelId,
+    triggerId,
+    virksomhet?.description,
+    virksomhet?.isRequired,
+    virksomhet?.orgnavn,
+    virksomhet?.orgnummer,
+    readOnly,
+    virksomhet?.showSelector,
+    virksomhet?.validationError,
+  ]);
+
+  if (!virksomhet?.hasVirksomhetContent) {
+    return null;
+  }
+
+  return (
+    <Box
+      data-testid={UiSelector.HeadingVirksomhet}
+      style={{ width: "min(100%, 30rem)" }}
+    >
+      {virksomhet.showSelector && !readOnly ? (
+        <>
+          <span id={labelId} className="sr-only">
+            {virksomhet.label}
+            {virksomhet.isRequired ? ", obligatorisk" : ""}
+          </span>
+          {virksomhet.description ? (
+            <span id={descriptionId} className="sr-only">
+              {virksomhet.description}
+            </span>
+          ) : null}
+          <VStack gap="space-8">
+            <div
+              ref={virksomhetsvelgerRef}
+              data-testid={UiSelector.Organisasjonsnummer}
+              onClickCapture={handleSelectorClickCapture}
+            >
+              <Virksomhetsvelger
+                organisasjoner={getVirksomhetsvelgerOrganisasjoner({
+                  organisasjoner: virksomhet.organisasjoner,
+                  orgnummer: virksomhet.orgnummer,
+                  hasInitializedSelection,
+                })}
+                initValgtOrgnr={virksomhet.orgnummer}
+                onChange={(organisasjon) => {
+                  virksomhet.updateVirksomhet({
+                    orgnummer: organisasjon.orgnr,
+                    orgnavn: organisasjon.navn,
+                  });
+                }}
+              />
+            </div>
+            {virksomhet.validationError ? (
+              <ErrorMessage id={errorId}>
+                {virksomhet.validationError}
+              </ErrorMessage>
+            ) : null}
+          </VStack>
+        </>
+      ) : (
+        <Box
+          background="default"
+          borderColor="neutral-subtle"
+          borderRadius="8"
+          borderWidth="1"
+          padding="space-16"
+        >
+          <VStack gap="space-4">
+            <BodyShort size="small" weight="semibold">
+              {virksomhet.label}
+            </BodyShort>
+            <BodyShort>
+              {virksomhet.orgnavn
+                ? `${virksomhet.orgnavn}${
+                    virksomhet.orgnummer
+                      ? ` (${formatOrgNr(virksomhet.orgnummer) ?? virksomhet.orgnummer})`
+                      : ""
+                  }`
+                : (formatOrgNr(virksomhet.orgnummer ?? "") ??
+                  virksomhet.orgnummer)}
+            </BodyShort>
+          </VStack>
+        </Box>
+      )}
+    </Box>
+  );
+}

@@ -2,7 +2,12 @@ import { type Page, test } from "@playwright/test";
 import { UiSelector } from "@/utils/uiSelectors";
 import { ValidationMessages } from "@/utils/validationMessages";
 import { invalidTestData } from "./fixtures/testData";
-import { expectAllCount, fillAll, getByUiSelector } from "./utils";
+import {
+  expectAllCount,
+  fillAll,
+  getByUiSelector,
+  searchVirksomhetWithoutChoosing,
+} from "./utils";
 
 const getSubmitButton = (page: Page) =>
   getByUiSelector(page, UiSelector.SendInn);
@@ -20,17 +25,21 @@ test.describe("Form Validation", () => {
       [UiSelector.LederEtternavn, invalidTestData.etternavn],
       [UiSelector.Epost, invalidTestData.email],
       [UiSelector.Mobilnummer, invalidTestData.mobilnummer],
-      [UiSelector.Organisasjonsnummer, invalidTestData.orgnummer],
       [UiSelector.SykmeldtFodselsnummer, invalidTestData.fnr],
       [UiSelector.SykmeldtEtternavn, invalidTestData.etternavn],
     ]);
+    await searchVirksomhetWithoutChoosing(
+      page,
+      invalidTestData.virksomhetSoketekst,
+    );
 
     await getSubmitButton(page).click();
 
     await expectAllCount(page, [
+      // Virksomhet is pre-selected by default, so only 2 required-field errors (not 3)
+      [ValidationMessages.RequireField, 2],
       [ValidationMessages.LengthAndNumberFnr, 2],
       [ValidationMessages.InvalidMobilnummer, 1],
-      [ValidationMessages.InvalidOrgnummer, 1],
       [ValidationMessages.InvalidEmail, 1],
     ]);
   });

@@ -11,7 +11,7 @@ export function SubmitView() {
   return (
     <>
       <VStack gap="space-24">
-        <HeadingLeder />
+        <HeadingLeder readOnlyVirksomhet />
         <ThankYouAlert />
         <InfoDescription />
         <Summary />

@@ -1,5 +1,5 @@
 import { expect, type Page } from "@playwright/test";
-import type { UiSelector } from "@/utils/uiSelectors";
+import { UiSelector } from "@/utils/uiSelectors";
 import type { ValidationMessages } from "@/utils/validationMessages";
 
 const getByText = (page: Page, validationMessage: ValidationMessages) =>
@@ -33,4 +33,38 @@ export const fillAll = async (
   for (const [uiSelector, value] of fields) {
     await getByUiSelector(page, uiSelector).fill(value);
   }
+};
+
+const openVirksomhetsvelger = async (page: Page) => {
+  await getByUiSelector(page, UiSelector.Organisasjonsnummer)
+    .getByRole("button")
+    .first()
+    .click();
+};
+
+export const chooseVirksomhet = async (
+  page: Page,
+  {
+    hovedenhetNavn,
+    virksomhetNavn,
+    soketekst,
+  }: {
+    hovedenhetNavn: string;
+    virksomhetNavn: string;
+    soketekst: string;
+  },
+) => {
+  await openVirksomhetsvelger(page);
+  await page.getByLabel("Søk på virksomhet").fill(soketekst);
+  await page.getByRole("button", { name: new RegExp(hovedenhetNavn) }).click();
+  await page.getByRole("button", { name: new RegExp(virksomhetNavn) }).click();
+};
+
+export const searchVirksomhetWithoutChoosing = async (
+  page: Page,
+  soketekst: string,
+) => {
+  await openVirksomhetsvelger(page);
+  await page.getByLabel("Søk på virksomhet").fill(soketekst);
+  await page.getByRole("button", { name: "lukk virksomhetsvelger" }).click();
 };
