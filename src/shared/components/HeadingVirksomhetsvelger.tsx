@@ -3,7 +3,6 @@
 import { BodyShort, Box, ErrorMessage, VStack } from "@navikt/ds-react";
 import { formatOrgNr, Virksomhetsvelger } from "@navikt/virksomhetsvelger";
 import {
-  type CSSProperties,
   type MouseEvent,
   useCallback,
   useEffect,
@@ -20,22 +19,6 @@ import {
 } from "@/shared/components/HeadingVirksomhetsvelger.logic";
 import { useOptionalVirksomhetContext } from "@/shared/state/virksomhetContext";
 import { UiSelector } from "@/utils/uiSelectors";
-
-const visuallyHiddenStyles: CSSProperties = {
-  border: 0,
-  clipPath: "inset(50%)",
-  height: "1px",
-  margin: "-1px",
-  overflow: "hidden",
-  padding: 0,
-  position: "absolute",
-  whiteSpace: "nowrap",
-  width: "1px",
-};
-
-// export function HeadingVirksomhetsvelger() {
-//   return <HeadingVirksomhetsvelgerContent />;
-// }
 
 export function HeadingVirksomhetsvelgerContent({
   readOnly = false,
@@ -220,12 +203,12 @@ export function HeadingVirksomhetsvelgerContent({
     >
       {virksomhet.showSelector && !readOnly ? (
         <>
-          <span id={labelId} style={visuallyHiddenStyles}>
+          <span id={labelId} className="sr-only">
             {virksomhet.label}
             {virksomhet.isRequired ? ", obligatorisk" : ""}
           </span>
           {virksomhet.description ? (
-            <span id={descriptionId} style={visuallyHiddenStyles}>
+            <span id={descriptionId} className="sr-only">
               {virksomhet.description}
             </span>
           ) : null}
