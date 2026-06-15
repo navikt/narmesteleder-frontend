@@ -7,7 +7,7 @@ import { getServerEnv } from "@/env-variables/serverEnv";
 import { mockRequirementsList } from "@/mocks/data/mockRequirementsList";
 import { simulateBackendDelay } from "@/mocks/simulateBackendDelay";
 import {
-  lineManagerRequirementsListSchema,
+  lineManagerRequirementsCollectionSchema,
   type RequirementsListItem,
 } from "@/schemas/lineManagerRequirementsListSchema";
 import { TokenXTargetApi } from "@/server/helpers";
@@ -50,11 +50,11 @@ const realFetchRequirementsList = async (
     const response = await tokenXFetchGet({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
       endpoint: getRequirementsListPath(orgNumber),
-      responseDataSchema: lineManagerRequirementsListSchema,
+      responseDataSchema: lineManagerRequirementsCollectionSchema,
       redirectAfterLoginUrl: publicEnv.NEXT_PUBLIC_BASE_PATH,
     });
 
-    return toResult(response);
+    return toResult(response.linemanagerRequirements);
   } catch (error) {
     unstable_rethrow(error);
     logger.warn(

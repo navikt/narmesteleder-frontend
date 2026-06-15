@@ -5,6 +5,15 @@ import { TokenXTargetApi } from "@/server/helpers";
 const tokenXFetchGetMock = vi.fn();
 const loggerWarnMock = vi.fn();
 
+const collectionResponse = (requirements = mockRequirementsList) => ({
+  linemanagerRequirements: requirements,
+  meta: {
+    size: requirements.length,
+    pageSize: 50,
+    hasMore: false,
+  },
+});
+
 vi.mock("@navikt/next-logger", () => ({
   logger: {
     warn: loggerWarnMock,
@@ -66,10 +75,10 @@ describe("fetchRequirementsList", () => {
   });
 
   it("henter requirements fra backend i dev/prod", async () => {
-    tokenXFetchGetMock.mockResolvedValue(mockRequirementsList);
+    tokenXFetchGetMock.mockResolvedValue(collectionResponse());
 
     const { fetchRequirementsList } = await importFetchRequirementsList(false);
-    const { lineManagerRequirementsListSchema } = await import(
+    const { lineManagerRequirementsCollectionSchema } = await import(
       "@/schemas/lineManagerRequirementsListSchema"
     );
 
@@ -83,13 +92,13 @@ describe("fetchRequirementsList", () => {
         endpoint: expect.stringMatching(
           /\/api\/v1\/linemanager\/requirement\?orgNumber=963890095&createdAfter=\d{4}-\d{2}-\d{2}T\d{2}%3A\d{2}%3A\d{2}\.\d{3}Z/,
         ),
-        responseDataSchema: lineManagerRequirementsListSchema,
+        responseDataSchema: lineManagerRequirementsCollectionSchema,
       }),
     );
   });
 
   it("returnerer tom status når backend svarer med tom liste", async () => {
-    tokenXFetchGetMock.mockResolvedValue([]);
+    tokenXFetchGetMock.mockResolvedValue(collectionResponse([]));
 
     const { fetchRequirementsList } = await importFetchRequirementsList(false);
     const result = await fetchRequirementsList("963890095");
