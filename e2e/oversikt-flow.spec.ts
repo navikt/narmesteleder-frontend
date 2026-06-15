@@ -34,26 +34,27 @@ test.describe("Oversikt-flow", () => {
   });
 
   test("søk filtrerer på navn", async ({ page }) => {
+    const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
+    const firstRow = tabell.getByRole("row").nth(1);
+    const firstName = await firstRow.getByRole("rowheader").innerText();
     const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
 
-    // Kari Nordmann finnes i mock-data
-    await sokFelt.fill("Kari");
+    await sokFelt.fill(firstName);
 
-    const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
-    await expect(tabell.getByText("Nordmann")).toBeVisible();
+    await expect(
+      tabell.getByRole("rowheader", { name: firstName }),
+    ).toBeVisible();
   });
 
   test("søk filtrerer på fødselsnummer", async ({ page }) => {
-    // Bytt til aktive-fane for bredere søk
-    const faner = getByUiSelector(page, UiSelector.OversiktFaner);
-    await faner.getByRole("tab", { name: /Aktive sykefravær/ }).click();
-
-    const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
-    // Bruk deler av FNR til Ingrid Berg
-    await sokFelt.fill("12057932464");
-
     const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
-    await expect(tabell.getByText("Berg")).toBeVisible();
+    const firstRow = tabell.getByRole("row").nth(1);
+    const fnr = await firstRow.getByText(/\d{6}\s\d{5}/).innerText();
+    const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
+
+    await sokFelt.fill(fnr.replace(/\s/g, ""));
+
+    await expect(tabell.getByText(fnr)).toBeVisible();
   });
 
   test("viser tom tilstand ved ingen treff", async ({ page }) => {
@@ -67,45 +68,29 @@ test.describe("Oversikt-flow", () => {
 
   test("Oppgi leder-knapp navigerer til behov-side", async ({ page }) => {
     const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
-    const oppgiLederLink = tabell
-      .getByRole("link", { name: /Oppgi leder/ })
+    const oppgiLederKnapp = tabell
+      .getByRole("button", { name: /Oppgi leder/ })
       .first();
-    await expect(oppgiLederLink).toBeVisible();
+    await expect(oppgiLederKnapp).toBeVisible();
 
-    const href = await oppgiLederLink.getAttribute("href");
-    expect(href).toMatch(/11111111-1111-1111-1111-111111111111/);
+    const href = await oppgiLederKnapp.getAttribute("href");
+    expect(href).toMatch(
+      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+    );
   });
 
-  test("tab-bytte viser riktige ansatte", async ({ page }) => {
-    const faner = getByUiSelector(page, UiSelector.OversiktFaner);
-
-    await faner.getByRole("tab", { name: /Ikke aktive/ }).click();
-
-    // Lars Johansen og Silje Pedersen er isActive: false i mock-data
-    const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
-    await expect(tabell.getByText("Johansen")).toBeVisible();
-  });
-
-  test("søk nullstilles ved tab-bytte", async ({ page }) => {
-    const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
-    await sokFelt.fill("Kari");
-
-    const faner = getByUiSelector(page, UiSelector.OversiktFaner);
-    await faner.getByRole("tab", { name: /Aktive sykefravær/ }).click();
-
-    await expect(sokFelt).toHaveValue("");
-  });
-
-  test("Endre leder-knapp vises for ansatte med nærmeste leder", async ({
+  test("aktive og ikke aktive faner er deaktivert til backend støtter status", async ({
     page,
   }) => {
     const faner = getByUiSelector(page, UiSelector.OversiktFaner);
-    await faner.getByRole("tab", { name: /Aktive sykefravær/ }).click();
+    const aktiveTab = faner.getByRole("tab", {
+      name: /Aktive sykefravær.*Kommer snart/,
+    });
+    const ikkeAktiveTab = faner.getByRole("tab", {
+      name: /Ikke aktive.*Kommer snart/,
+    });
 
-    const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
-    const endreLederLink = tabell
-      .getByRole("link", { name: /Endre leder/ })
-      .first();
-    await expect(endreLederLink).toBeVisible();
+    await expect(aktiveTab).toBeDisabled();
+    await expect(ikkeAktiveTab).toBeDisabled();
   });
 });

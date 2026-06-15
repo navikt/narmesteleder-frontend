@@ -7,7 +7,6 @@ import {
   Tag,
   VStack,
 } from "@navikt/ds-react";
-import Link from "next/link";
 import { publicEnv } from "@/env-variables/publicEnv";
 import type { RequirementsListItem } from "@/schemas/lineManagerRequirementsListSchema";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
@@ -47,7 +46,7 @@ function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
 
   return (
     <Button
-      as={Link}
+      as="a"
       href={behovUrl}
       variant={harLeder ? "secondary" : "primary"}
       size="small"

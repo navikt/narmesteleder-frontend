@@ -1,6 +1,13 @@
 "use client";
 
-import { LocalAlert, Tabs, TextField, VStack } from "@navikt/ds-react";
+import {
+  HStack,
+  LocalAlert,
+  Tabs,
+  Tag,
+  TextField,
+  VStack,
+} from "@navikt/ds-react";
 import type { Organisasjon } from "@navikt/virksomhetsvelger";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -84,6 +91,7 @@ function OversiktContent({
 
   // Nullstill søk ved tab-bytte for å unngå forvirring
   const handleTabChange = (val: string) => {
+    if (val !== "ingen-leder") return;
     setActiveTab(val as TabVerdi);
     setSearch("");
   };
@@ -108,14 +116,6 @@ function OversiktContent({
   const ingenLederCount = useMemo(
     () =>
       requirements.filter((r) => r.managerIdentificationNumber === null).length,
-    [requirements],
-  );
-  const aktiveCount = useMemo(
-    () => requirements.filter((r) => r.isActive === true).length,
-    [requirements],
-  );
-  const ikkeAktiveCount = useMemo(
-    () => requirements.filter((r) => r.isActive === false).length,
     [requirements],
   );
 
@@ -158,11 +158,27 @@ function OversiktContent({
           />
           <Tabs.Tab
             value="aktive"
-            label={`Aktive sykefravær (${aktiveCount})`}
+            aria-disabled
+            label={
+              <HStack gap="space-8" align="center" wrap={false}>
+                <span>Aktive sykefravær</span>
+                <Tag variant="neutral" size="small">
+                  Kommer snart
+                </Tag>
+              </HStack>
+            }
           />
           <Tabs.Tab
             value="ikke-aktive"
-            label={`Ikke aktive (${ikkeAktiveCount})`}
+            aria-disabled
+            label={
+              <HStack gap="space-8" align="center" wrap={false}>
+                <span>Ikke aktive</span>
+                <Tag variant="neutral" size="small">
+                  Kommer snart
+                </Tag>
+              </HStack>
+            }
           />
         </Tabs.List>
 
