@@ -80,8 +80,8 @@ describe("fetchRequirementsList", () => {
     expect(tokenXFetchGetMock).toHaveBeenCalledWith(
       expect.objectContaining({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-        endpoint: expect.stringContaining(
-          "/api/v1/linemanager/requirement?orgNumber=963890095",
+        endpoint: expect.stringMatching(
+          /\/api\/v1\/linemanager\/requirement\?orgNumber=963890095&createdAfter=\d{4}-\d{2}-\d{2}T\d{2}%3A\d{2}%3A\d{2}\.\d{3}Z/,
         ),
         responseDataSchema: lineManagerRequirementsListSchema,
       }),

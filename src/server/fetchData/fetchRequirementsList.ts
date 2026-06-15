@@ -18,18 +18,16 @@ export interface FetchRequirementsListResult {
   requirements: RequirementsListItem[];
 }
 
-const getFromDate = (): string => {
-  const from = new Date();
-  //Jeg valgte å hente siste året. Tanken er at sykepenger kan generelt sett være i 52 uker.
-  //Men er åpent for å sette dato til 01.01.2000 f.eks.
-  from.setFullYear(from.getFullYear() - 1);
-  return from.toISOString().split("T")[0];
+const getCreatedAfter = (): string => {
+  const createdAfter = new Date();
+  createdAfter.setFullYear(createdAfter.getFullYear() - 1);
+  return createdAfter.toISOString();
 };
 
 const getRequirementsListPath = (orgNumber: string): string => {
   const params = new URLSearchParams({
     orgNumber,
-    from: getFromDate(),
+    createdAfter: getCreatedAfter(),
   });
   return `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/requirement?${params}`;
 };
