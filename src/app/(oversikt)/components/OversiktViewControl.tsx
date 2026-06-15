@@ -78,16 +78,17 @@ function filterBySearch(
  * Detekterer orgnummer-endringer i headingen og navigerer til ny URL.
  */
 function OversiktContent({
-  requirements,
+  requirementsResult,
   selectedOrgnr,
 }: {
-  requirements: RequirementsListItem[];
+  requirementsResult: FetchRequirementsListResult;
   selectedOrgnr: string;
 }) {
   const router = useRouter();
   const virksomhet = useVirksomhetContext();
   const [activeTab, setActiveTab] = useState<TabVerdi>("ingen-leder");
   const [search, setSearch] = useState("");
+  const requirements = requirementsResult.requirements;
 
   // Nullstill søk ved tab-bytte for å unngå forvirring
   const handleTabChange = (val: string) => {
@@ -123,75 +124,90 @@ function OversiktContent({
     <VStack gap="space-32">
       <OversiktHeadingLeder />
 
-      <LocalAlert
-        status="announcement"
-        data-testid={UiSelector.OversiktInfoboks}
-      >
-        <LocalAlert.Header>
-          <LocalAlert.Title>Oversikt over sykmeldte ansatte</LocalAlert.Title>
-        </LocalAlert.Header>
-        <LocalAlert.Content>
-          Her ser du sykmeldte ansatte i valgt virksomhet. Ansatte som mangler
-          nærmeste leder vises i fanen «Mangler nærmeste leder». Du kan oppgi
-          eller endre nærmeste leder direkte i tabellen.
-        </LocalAlert.Content>
-      </LocalAlert>
+      {requirementsResult.status === "error" ? (
+        <LocalAlert status="error" data-testid={UiSelector.OversiktFeilAlert}>
+          <LocalAlert.Header>
+            <LocalAlert.Title>Noe gikk galt</LocalAlert.Title>
+          </LocalAlert.Header>
+          <LocalAlert.Content>
+            Vi klarte ikke å hente oversikten. Prøv igjen litt senere.
+          </LocalAlert.Content>
+        </LocalAlert>
+      ) : (
+        <>
+          <LocalAlert
+            status="announcement"
+            data-testid={UiSelector.OversiktInfoboks}
+          >
+            <LocalAlert.Header>
+              <LocalAlert.Title>
+                Oversikt over sykmeldte ansatte
+              </LocalAlert.Title>
+            </LocalAlert.Header>
+            <LocalAlert.Content>
+              Her ser du sykmeldte ansatte i valgt virksomhet. Ansatte som
+              mangler nærmeste leder vises i fanen «Mangler nærmeste leder». Du
+              kan oppgi eller endre nærmeste leder direkte i tabellen.
+            </LocalAlert.Content>
+          </LocalAlert>
 
-      <TextField
-        label="Søk på navn eller fødselsnummer"
-        size="medium"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        data-testid={UiSelector.OversiktSok}
-        autoComplete="off"
-      />
+          <TextField
+            label="Søk på navn eller fødselsnummer"
+            size="medium"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            data-testid={UiSelector.OversiktSok}
+            autoComplete="off"
+          />
 
-      <Tabs
-        value={activeTab}
-        onChange={handleTabChange}
-        data-testid={UiSelector.OversiktFaner}
-      >
-        <Tabs.List>
-          <Tabs.Tab
-            value="ingen-leder"
-            label={`Mangler nærmeste leder (${ingenLederCount})`}
-          />
-          <Tabs.Tab
-            value="aktive"
-            aria-disabled
-            label={
-              <HStack gap="space-8" align="center" wrap={false}>
-                <span>Aktive sykefravær</span>
-                <Tag variant="neutral" size="small">
-                  Kommer snart
-                </Tag>
-              </HStack>
-            }
-          />
-          <Tabs.Tab
-            value="ikke-aktive"
-            aria-disabled
-            label={
-              <HStack gap="space-8" align="center" wrap={false}>
-                <span>Ikke aktive</span>
-                <Tag variant="neutral" size="small">
-                  Kommer snart
-                </Tag>
-              </HStack>
-            }
-          />
-        </Tabs.List>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            data-testid={UiSelector.OversiktFaner}
+          >
+            <Tabs.List>
+              <Tabs.Tab
+                value="ingen-leder"
+                label={`Mangler nærmeste leder (${ingenLederCount})`}
+              />
+              <Tabs.Tab
+                value="aktive"
+                aria-disabled
+                label={
+                  <HStack gap="space-8" align="center" wrap={false}>
+                    <span>Aktive sykefravær</span>
+                    <Tag variant="neutral" size="small">
+                      Kommer snart
+                    </Tag>
+                  </HStack>
+                }
+              />
+              <Tabs.Tab
+                value="ikke-aktive"
+                aria-disabled
+                label={
+                  <HStack gap="space-8" align="center" wrap={false}>
+                    <span>Ikke aktive</span>
+                    <Tag variant="neutral" size="small">
+                      Kommer snart
+                    </Tag>
+                  </HStack>
+                }
+              />
+            </Tabs.List>
 
-        <Tabs.Panel value="ingen-leder">
-          <OversiktTabell requirements={filtered} />
-        </Tabs.Panel>
-        <Tabs.Panel value="aktive">
-          <OversiktTabell requirements={filtered} />
-        </Tabs.Panel>
-        <Tabs.Panel value="ikke-aktive">
-          <OversiktTabell requirements={filtered} />
-        </Tabs.Panel>
-      </Tabs>
+            <Tabs.Panel value="ingen-leder">
+              <OversiktTabell requirements={filtered} />
+            </Tabs.Panel>
+            <Tabs.Panel value="aktive">
+              <OversiktTabell requirements={filtered} />
+            </Tabs.Panel>
+            <Tabs.Panel value="ikke-aktive">
+              <OversiktTabell requirements={filtered} />
+            </Tabs.Panel>
+          </Tabs>
+        </>
+      )}
     </VStack>
   );
 }
@@ -222,22 +238,6 @@ export function OversiktViewControl({
     );
   }
 
-  if (requirementsResult.status === "error") {
-    return (
-      <VStack gap="space-32">
-        <OversiktHeadingLeder readOnlyVirksomhet />
-        <LocalAlert status="error" data-testid={UiSelector.OversiktFeilAlert}>
-          <LocalAlert.Header>
-            <LocalAlert.Title>Noe gikk galt</LocalAlert.Title>
-          </LocalAlert.Header>
-          <LocalAlert.Content>
-            Vi klarte ikke å hente oversikten. Prøv igjen litt senere.
-          </LocalAlert.Content>
-        </LocalAlert>
-      </VStack>
-    );
-  }
-
   const orgnavn = findOrgNavn(
     selectedOrgnr,
     organisasjonerResult.organisasjoner,
@@ -252,7 +252,7 @@ export function OversiktViewControl({
       description="Velg virksomheten du vil se oversikt for."
     >
       <OversiktContent
-        requirements={requirementsResult.requirements}
+        requirementsResult={requirementsResult}
         selectedOrgnr={selectedOrgnr}
       />
     </VirksomhetProvider>
