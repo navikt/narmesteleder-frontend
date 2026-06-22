@@ -36,8 +36,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4
       '@navikt/virksomhetsvelger':
-        specifier: ^2.0.2
-        version: 2.0.2(@navikt/ds-css@8.12.1)(@navikt/ds-react@8.12.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.0.3
+        version: 2.0.3(@navikt/ds-css@8.12.1)(@navikt/ds-react@8.12.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/react-form':
         specifier: ^1.33.0
         version: 1.33.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -442,8 +442,8 @@ packages:
     resolution: {integrity: sha512-WS+agfWCqHyCtIpn/iQHNBRwn1gzCQDe0NY9Tz5ErrBsWHNxtqIV7W2eAmRUa3DLrZGHczoQhup+PYT6UX/SpQ==, tarball: https://npm.pkg.github.com/download/@navikt/texas/4.1.4/1725aca0fa0b803e0048212c3e202d24c10f3c3b}
     engines: {node: ^20.19.0 || >= 22.12.0 || 24.x || 25.x}
 
-  '@navikt/virksomhetsvelger@2.0.2':
-    resolution: {integrity: sha512-or0BrPFkL5rcFkT1w1SKc7oA+kzatzrQKSddf7lY+u3J3eQ1vr62+qEBgrPDuAavdCiwuyGlmhPbugNkomvA/w==, tarball: https://npm.pkg.github.com/download/@navikt/virksomhetsvelger/2.0.2/bc71f7608691a27d6bfe199330bb31a96964ec91}
+  '@navikt/virksomhetsvelger@2.0.3':
+    resolution: {integrity: sha512-AqXq5nDrppnKLvRNxOP0bC+b+0aKcImwxzakCv7IM6svpvKx/5mJiiLX6x00Sxrk7gjcICqapHI4BhWXAKaT0g==, tarball: https://npm.pkg.github.com/download/@navikt/virksomhetsvelger/2.0.3/3c18ae58c14a2afc102260125057b68ae57e42d4}
     peerDependencies:
       '@navikt/ds-css': '>=7'
       '@navikt/ds-react': '>=7'
@@ -1727,7 +1727,7 @@ snapshots:
 
   '@navikt/texas@4.1.4': {}
 
-  '@navikt/virksomhetsvelger@2.0.2(@navikt/ds-css@8.12.1)(@navikt/ds-react@8.12.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@navikt/virksomhetsvelger@2.0.3(@navikt/ds-css@8.12.1)(@navikt/ds-react@8.12.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@navikt/ds-css': 8.12.1
       '@navikt/ds-react': 8.12.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
