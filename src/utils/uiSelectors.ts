@@ -30,4 +30,6 @@ export enum UiSelector {
   OversiktLasterSpinner = "oversiktLasterSpinner",
   OversiktFeilAlert = "oversiktFeilAlert",
   OversiktTomState = "oversiktTomState",
+  // Behov
+  BehovLasterSpinner = "behovLasterSpinner",
 }

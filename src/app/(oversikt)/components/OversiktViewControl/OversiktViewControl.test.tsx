@@ -28,15 +28,22 @@ vi.mock("@/shared/state/virksomhetContext", () => ({
     orgnummer: "963890095",
     orgnavn: "Shark AS",
   }),
+  useOptionalVirksomhetContext: () => ({
+    orgnummer: "963890095",
+    orgnavn: "Shark AS",
+  }),
 }));
 
-vi.mock("@/app/(oversikt)/components/OversiktHeadingLeder", () => ({
-  OversiktHeadingLeder: () => (
-    <div data-testid="headingVirksomhet">Virksomhetsvelger</div>
-  ),
-}));
+vi.mock(
+  "@/app/(oversikt)/components/OversiktViewControl/OversiktHeadingLeder",
+  () => ({
+    OversiktHeadingLeder: () => (
+      <div data-testid="headingVirksomhet">Virksomhetsvelger</div>
+    ),
+  }),
+);
 
-import { OversiktViewControl } from "@/app/(oversikt)/components/OversiktViewControl";
+import { OversiktViewControl } from "@/app/(oversikt)/components/OversiktViewControl/OversiktViewControl";
 
 const organisasjoner = [
   {

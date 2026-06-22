@@ -14,23 +14,12 @@ test.describe("Oversikt-flow", () => {
       UiSelector.HeadingLeder,
       UiSelector.OversiktInfoboks,
       UiSelector.OversiktSok,
-      UiSelector.OversiktFaner,
     ]);
   });
 
-  test("default-fane er Mangler nærmeste leder", async ({ page }) => {
-    const faner = getByUiSelector(page, UiSelector.OversiktFaner);
-    const aktivFane = faner.getByRole("tab", { selected: true });
-    await expect(aktivFane).toContainText("Mangler nærmeste leder");
-  });
-
-  test("tabell viser ansatte uten leder på default-fane", async ({ page }) => {
+  test("tabell viser ansatte ", async ({ page }) => {
     const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
     await expect(tabell).toBeVisible();
-
-    // Verifiser at "Ingen leder"-markering er synlig
-    const ingenLederTags = page.getByText("Ingen leder");
-    await expect(ingenLederTags.first()).toBeVisible();
   });
 
   test("søk filtrerer på navn", async ({ page }) => {
@@ -77,20 +66,5 @@ test.describe("Oversikt-flow", () => {
     expect(href).toMatch(
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
     );
-  });
-
-  test("aktive og ikke aktive faner er deaktivert til backend støtter status", async ({
-    page,
-  }) => {
-    const faner = getByUiSelector(page, UiSelector.OversiktFaner);
-    const aktiveTab = faner.getByRole("tab", {
-      name: /Aktive sykefravær.*Kommer snart/,
-    });
-    const ikkeAktiveTab = faner.getByRole("tab", {
-      name: /Ikke aktive.*Kommer snart/,
-    });
-
-    await expect(aktiveTab).toBeDisabled();
-    await expect(ikkeAktiveTab).toBeDisabled();
   });
 });

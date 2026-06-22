@@ -1,12 +1,4 @@
-import { ExclamationmarkTriangleIcon } from "@navikt/aksel-icons";
-import {
-  BodyShort,
-  Button,
-  HStack,
-  Table,
-  Tag,
-  VStack,
-} from "@navikt/ds-react";
+import { BodyShort, Button, Table, VStack } from "@navikt/ds-react";
 import { publicEnv } from "@/env-variables/publicEnv";
 import type { RequirementsListItem } from "@/schemas/lineManagerRequirementsListSchema";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
@@ -16,39 +8,15 @@ interface OversiktTabellProps {
   requirements: RequirementsListItem[];
 }
 
-function buildBehovUrl(id: string): string {
-  return `${publicEnv.NEXT_PUBLIC_BASE_PATH}/${id}`;
-}
-
-function LederCell({
-  managerIdentificationNumber,
-}: {
-  managerIdentificationNumber: string | null;
-}) {
-  if (!managerIdentificationNumber) {
-    return (
-      <HStack gap="space-4" align="center" wrap={false}>
-        <ExclamationmarkTriangleIcon aria-hidden fontSize="1.25rem" />
-        <Tag variant="warning" size="small">
-          Ingen leder
-        </Tag>
-      </HStack>
-    );
-  }
-
-  return <BodyShort>{formatFnr(managerIdentificationNumber)}</BodyShort>;
-}
-
 function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
-  const behovUrl = buildBehovUrl(requirement.id);
-  const harLeder = requirement.managerIdentificationNumber !== null;
-  const label = harLeder ? "Endre leder" : "Oppgi leder";
+  const behovUrl = `${publicEnv.NEXT_PUBLIC_BASE_PATH}/${requirement.id}`;
+  const label = "Oppgi leder";
 
   return (
     <Button
       as="a"
       href={behovUrl}
-      variant={harLeder ? "secondary" : "primary"}
+      variant="primary"
       size="small"
       aria-label={`${label} for ${joinNonEmpty([requirement.name.firstName, requirement.name.middleName, requirement.name.lastName])}`}
     >
@@ -77,7 +45,6 @@ export function OversiktTabell({ requirements }: OversiktTabellProps) {
         <Table.Row>
           <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
           <Table.HeaderCell scope="col">Fødselsnummer</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Nærmeste leder</Table.HeaderCell>
           <Table.HeaderCell scope="col">
             <span className="sr-only">Handlinger</span>
           </Table.HeaderCell>
@@ -96,11 +63,6 @@ export function OversiktTabell({ requirements }: OversiktTabellProps) {
               <Table.HeaderCell scope="row">{fullnavn}</Table.HeaderCell>
               <Table.DataCell>
                 {formatFnr(req.employeeIdentificationNumber)}
-              </Table.DataCell>
-              <Table.DataCell>
-                <LederCell
-                  managerIdentificationNumber={req.managerIdentificationNumber}
-                />
               </Table.DataCell>
               <Table.DataCell>
                 <HandlingCell requirement={req} />

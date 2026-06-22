@@ -1,7 +1,7 @@
 import type { Organisasjon } from "@navikt/virksomhetsvelger";
 import { fetchOrganisasjoner } from "@/server/fetchData/fetchOrganisasjoner";
 import { fetchRequirementsList } from "@/server/fetchData/fetchRequirementsList";
-import { OversiktViewControl } from "./OversiktViewControl";
+import { OversiktViewControl } from "./OversiktViewControl/OversiktViewControl";
 
 interface OversiktLoaderProps {
   orgnr?: string;

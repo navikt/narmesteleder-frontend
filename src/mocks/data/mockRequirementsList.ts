@@ -6,7 +6,7 @@ import type { LineManagerRequirementsList } from "@/schemas/lineManagerRequireme
  */
 export const mockRequirementsList: LineManagerRequirementsList = [
   {
-    id: "11111111-1111-1111-1111-111111111111",
+    id: "699e9702-b042-493d-8c20-a02c7c6c86ba",
     employeeIdentificationNumber: "26095514420",
     orgNumber: "963890095",
     orgName: "Shark AS",
@@ -16,7 +16,7 @@ export const mockRequirementsList: LineManagerRequirementsList = [
     isActive: true,
   },
   {
-    id: "22222222-2222-2222-2222-222222222222",
+    id: "14484846-b69b-49fe-95d6-23ff820afddf",
     employeeIdentificationNumber: "19048938755",
     orgNumber: "963890095",
     orgName: "Shark AS",
@@ -26,7 +26,7 @@ export const mockRequirementsList: LineManagerRequirementsList = [
     isActive: true,
   },
   {
-    id: "33333333-3333-3333-3333-333333333333",
+    id: "05bf9732-78de-4c7e-ae1c-bee755d515c6",
     employeeIdentificationNumber: "12057932464",
     orgNumber: "963890095",
     orgName: "Shark AS",
@@ -36,7 +36,7 @@ export const mockRequirementsList: LineManagerRequirementsList = [
     isActive: true,
   },
   {
-    id: "44444444-4444-4444-4444-444444444444",
+    id: "fc897d5d-2f7c-4c4b-8c01-09d53c84428e",
     employeeIdentificationNumber: "07068718054",
     orgNumber: "963890095",
     orgName: "Shark AS",
@@ -46,7 +46,7 @@ export const mockRequirementsList: LineManagerRequirementsList = [
     isActive: false,
   },
   {
-    id: "55555555-5555-5555-5555-555555555555",
+    id: "8e1e3a99-e953-4d14-ad2a-c0f2755884b5",
     employeeIdentificationNumber: "08084312345",
     orgNumber: "963890095",
     orgName: "Shark AS",
