@@ -1,6 +1,6 @@
 import { LocalAlert, TextField, VStack } from "@navikt/ds-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import type { FetchRequirementsListResult } from "@/server/fetchData/fetchRequirementsList";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { useVirksomhetContext } from "@/shared/state/virksomhetContext";
@@ -22,11 +22,14 @@ export function OversiktContent({
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
   const requirements = requirementsResult.requirements;
+  const [isPending, startTransition] = useTransition();
 
   // Naviger til ny URL når virksomhet endres i heading → trigger ny server-fetch
   useEffect(() => {
     if (virksomhet.orgnummer && virksomhet.orgnummer !== selectedOrgnr) {
-      router.push(`?orgnr=${virksomhet.orgnummer}`);
+      startTransition(() => {
+        router.push(`?orgnr=${virksomhet.orgnummer}`);
+      });
     }
   }, [virksomhet.orgnummer, selectedOrgnr, router]);
 
@@ -75,7 +78,7 @@ export function OversiktContent({
             autoComplete="off"
           />
 
-          <OversiktTabell requirements={filtered} />
+          <OversiktTabell requirements={filtered} loading={isPending} />
         </>
       )}
     </VStack>

@@ -3,9 +3,11 @@ import { publicEnv } from "@/env-variables/publicEnv";
 import type { RequirementsListItem } from "@/schemas/lineManagerRequirementsListSchema";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
 import { UiSelector } from "@/utils/uiSelectors";
+import { OversiktSpinner } from "../OversiktSpinner";
 
 interface OversiktTabellProps {
   requirements: RequirementsListItem[];
+  loading?: boolean;
 }
 
 function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
@@ -25,7 +27,11 @@ function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
   );
 }
 
-export function OversiktTabell({ requirements }: OversiktTabellProps) {
+export function OversiktTabell({ requirements, loading }: OversiktTabellProps) {
+  if (loading) {
+    return <OversiktSpinner />;
+  }
+
   if (requirements.length === 0) {
     return (
       <VStack
