@@ -217,6 +217,7 @@ export function HeadingVirksomhetsvelgerContent({
               ref={virksomhetsvelgerRef}
               data-testid={UiSelector.Organisasjonsnummer}
               onClickCapture={handleSelectorClickCapture}
+              className="relative"
             >
               <Virksomhetsvelger
                 organisasjoner={getVirksomhetsvelgerOrganisasjoner({

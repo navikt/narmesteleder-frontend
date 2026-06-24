@@ -13,7 +13,8 @@
       "!.next",
       "!dist",
       "!build",
-      "!.github/skills/**/scripts"
+      "!.github/skills/**/scripts",
+      "!.github/skills/**/references"
     ]
   },
   "formatter": {
