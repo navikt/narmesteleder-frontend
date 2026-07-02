@@ -36,8 +36,8 @@ importers:
         specifier: ^4.1.4
         version: 4.1.4
       '@navikt/virksomhetsvelger':
-        specifier: ^2.0.3
-        version: 2.0.3(@navikt/ds-css@8.13.1)(@navikt/ds-react@8.13.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.0.4
+        version: 2.0.4(@navikt/ds-css@8.13.1)(@navikt/ds-react@8.13.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/react-form':
         specifier: ^1.33.0
         version: 1.33.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -439,8 +439,8 @@ packages:
     resolution: {integrity: sha512-WS+agfWCqHyCtIpn/iQHNBRwn1gzCQDe0NY9Tz5ErrBsWHNxtqIV7W2eAmRUa3DLrZGHczoQhup+PYT6UX/SpQ==, tarball: https://npm.pkg.github.com/download/@navikt/texas/4.1.4/1725aca0fa0b803e0048212c3e202d24c10f3c3b}
     engines: {node: ^20.19.0 || >= 22.12.0 || 24.x || 25.x}
 
-  '@navikt/virksomhetsvelger@2.0.3':
-    resolution: {integrity: sha512-AqXq5nDrppnKLvRNxOP0bC+b+0aKcImwxzakCv7IM6svpvKx/5mJiiLX6x00Sxrk7gjcICqapHI4BhWXAKaT0g==, tarball: https://npm.pkg.github.com/download/@navikt/virksomhetsvelger/2.0.3/3c18ae58c14a2afc102260125057b68ae57e42d4}
+  '@navikt/virksomhetsvelger@2.0.4':
+    resolution: {integrity: sha512-8VUIRFCwUz+2eod8zZR3lu1+h5snSp5wZSQAIN8Q2h5wO/gcFalUQtSE8ZKc0LXbbo3N93WWWQKJveUr4+Nsvg==, tarball: https://npm.pkg.github.com/download/@navikt/virksomhetsvelger/2.0.4/7a4e41f43eddbfa520488289c87e1149826fb2f4}
     peerDependencies:
       '@navikt/ds-css': '>=7'
       '@navikt/ds-react': '>=7'
@@ -1292,9 +1292,6 @@ packages:
       babel-plugin-macros:
         optional: true
 
-  tabbable@6.4.0:
-    resolution: {integrity: sha512-05PUHKSNE8ou2dwIxTngl4EzcnsCDZGJ/iCLtDflR/SHB/ny14rXc+qU5P4mG9JkusiV7EivzY9Mhm55AzAvCg==}
-
   tabbable@6.5.0:
     resolution: {integrity: sha512-wieBHXygIm7OyQOu5hQlkk62/WyCFYGlWg7L6/ZCUZwx0o398Zkn4pVmMyfYhfMG8kGrj/Krt8eIk6UKC6VzwA==}
 
@@ -1719,7 +1716,7 @@ snapshots:
 
   '@navikt/texas@4.1.4': {}
 
-  '@navikt/virksomhetsvelger@2.0.3(@navikt/ds-css@8.13.1)(@navikt/ds-react@8.13.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@navikt/virksomhetsvelger@2.0.4(@navikt/ds-css@8.13.1)(@navikt/ds-react@8.13.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@navikt/ds-css': 8.13.1
       '@navikt/ds-react': 8.13.1(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -2079,11 +2076,11 @@ snapshots:
       focus-trap: 7.8.0
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
-      tabbable: 6.4.0
+      tabbable: 6.5.0
 
   focus-trap@7.8.0:
     dependencies:
-      tabbable: 6.4.0
+      tabbable: 6.5.0
 
   fsevents@2.3.2:
     optional: true
@@ -2460,8 +2457,6 @@ snapshots:
     dependencies:
       client-only: 0.0.1
       react: 19.2.7
-
-  tabbable@6.4.0: {}
 
   tabbable@6.5.0: {}
 
