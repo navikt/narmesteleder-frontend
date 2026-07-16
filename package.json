@@ -30,7 +30,7 @@
     "@navikt/next-logger": "^5.0.0",
     "@navikt/oasis": "^4.1.4",
     "@navikt/virksomhetsvelger": "^2.0.4",
-    "@tanstack/react-form": "^1.33.0",
+    "@tanstack/react-form": "^1.33.1",
     "next": "^16.2.10",
     "pino": "^10.3.0",
     "react": "19.2.7",
