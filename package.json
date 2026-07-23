@@ -47,7 +47,7 @@
     "babel-plugin-react-compiler": "^1.0.0",
     "lefthook": "^2.1.10",
     "tailwindcss": "^4",
-    "typescript": "^6",
+    "typescript": "^7",
     "vite": "^8.1.4",
     "vitest": "^4.1.10"
   },
