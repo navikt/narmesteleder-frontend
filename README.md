@@ -56,6 +56,8 @@ For å komme i gang med å bygge og kjøre appen, se vår [Wiki for frontendappe
 
 Når appen er startet, åpne http://localhost:3000/arbeidsgiver/ansatte/narmesteleder
 
+For å vise siden for oversikt over de som har behov for å sette leder, åpne http://localhost:3000/arbeidsgiver/ansatte/narmesteleder/oversikt
+
 ## For Nav-ansatte
 
 Interne henvendelser kan sendes via Slack i kanalen [#esyfo](https://nav-it.slack.com/archives/C012X796B4L).
