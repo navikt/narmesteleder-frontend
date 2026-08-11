@@ -79,13 +79,13 @@ export function OversiktContent({
               >
                 <LocalAlert.Header>
                   <LocalAlert.Title>
-                    Oversikt over sykmeldte ansatte
+                    Oversikt over sykmeldte ansatte uten leder
                   </LocalAlert.Title>
                 </LocalAlert.Header>
                 <LocalAlert.Content>
-                  Her ser du en oversikt over sykmeldte ansatte i virksomheten.
-                  Klikk på "Oppgi leder" for å legge til nærmeste leder for en
-                  ansatt.
+                  Her ser du en oversikt over sykmeldte ansatte i virksomheten
+                  med behov for å bli tildelt nærmeste leder. Klikk på "Oppgi
+                  leder" for å legge til nærmeste leder for en ansatt.
                 </LocalAlert.Content>
               </LocalAlert>
 
