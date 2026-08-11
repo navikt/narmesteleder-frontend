@@ -3,6 +3,16 @@ import ReactDOMServer from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { UiSelector } from "@/utils/uiSelectors";
 
+vi.mock("server-only", () => ({}));
+
+vi.mock("@/app/(oversikt)/actions/searchLinemanagers", () => ({
+  searchLinemanagersAction: vi.fn().mockResolvedValue({
+    status: "empty",
+    linemanagers: [],
+    meta: null,
+  }),
+}));
+
 const mockState = vi.hoisted(() => ({
   virksomhetProviderProps: undefined as Record<string, unknown> | undefined,
 }));
