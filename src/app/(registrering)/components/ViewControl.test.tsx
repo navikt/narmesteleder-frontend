@@ -4,6 +4,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockState = vi.hoisted(() => ({
   virksomhetProviderProps: undefined as Record<string, unknown> | undefined,
+  registreringViewControlProviderProps: undefined as
+    | Record<string, unknown>
+    | undefined,
 }));
 
 vi.mock("@/shared/state/virksomhetContext", () => ({
@@ -20,9 +23,14 @@ vi.mock("@/shared/state/virksomhetContext", () => ({
 }));
 
 vi.mock("@/app/(registrering)/state/contextState", () => ({
-  RegistreringViewControlProvider: () => (
-    <div>RegistreringViewControlProvider</div>
-  ),
+  RegistreringViewControlProvider: ({
+    ...props
+  }: {
+    [key: string]: unknown;
+  }) => {
+    mockState.registreringViewControlProviderProps = props;
+    return <div>RegistreringViewControlProvider</div>;
+  },
 }));
 
 vi.mock("@/app/(registrering)/components/EditView", () => ({
@@ -47,6 +55,7 @@ const organisasjoner = [
 describe("Registrering ViewControl", () => {
   beforeEach(() => {
     mockState.virksomhetProviderProps = undefined;
+    mockState.registreringViewControlProviderProps = undefined;
   });
 
   it("viser virksomhetsvelger når organisasjoner finnes", () => {
@@ -106,5 +115,33 @@ describe("Registrering ViewControl", () => {
     );
     expect(markup).not.toContain("RegistreringViewControlProvider");
     expect(mockState.virksomhetProviderProps).toBeUndefined();
+  });
+
+  it("setter initial virksomhet og sender prefill props videre", () => {
+    ReactDOMServer.renderToStaticMarkup(
+      <ViewControl
+        organisasjonerResult={{
+          status: "available",
+          organisasjoner,
+        }}
+        initialOrgnr="912345678"
+        prefillEmployeeIdentificationNumber="12345678910"
+        prefillEmployeeLastName="Nordmann"
+        returnTo="/arbeidsgiver/ansatte/narmesteleder/oversikt?orgnr=912345678&tab=aktiv-sykmelding"
+      />,
+    );
+
+    expect(mockState.virksomhetProviderProps).toMatchObject({
+      initialVirksomhet: {
+        orgnummer: "912345678",
+        orgnavn: "Testbedrift AS",
+      },
+    });
+    expect(mockState.registreringViewControlProviderProps).toMatchObject({
+      prefillEmployeeIdentificationNumber: "12345678910",
+      prefillEmployeeLastName: "Nordmann",
+      returnTo:
+        "/arbeidsgiver/ansatte/narmesteleder/oversikt?orgnr=912345678&tab=aktiv-sykmelding",
+    });
   });
 });
