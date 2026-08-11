@@ -2,9 +2,11 @@
 
 import { Button, LocalAlert, TextField, VStack } from "@navikt/ds-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
+import type { LinemanagerSearchItem } from "@/schemas/lineManagerSearchSchema";
 import type { FetchLinemanagerSearchResult } from "@/server/fetchData/fetchLinemanagerSearch";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { UiSelector } from "@/utils/uiSelectors";
+import { revokeLinemanagerAction } from "../../actions/revokeLinemanager";
 import { searchLinemanagersAction } from "../../actions/searchLinemanagers";
 import { LinemanagerTabell } from "./LinemanagerTabell";
 
@@ -19,6 +21,10 @@ const emptyResult: FetchLinemanagerSearchResult = {
   meta: null,
 };
 
+function getRowKey(item: LinemanagerSearchItem): string {
+  return `${item.orgNumber}-${item.employee.nationalIdentificationNumber}-${item.manager.nationalIdentificationNumber}`;
+}
+
 export function LinemanagerContent({
   orgNumber,
   hasActiveSickLeave,
@@ -26,6 +32,8 @@ export function LinemanagerContent({
   const [result, setResult] =
     useState<FetchLinemanagerSearchResult>(emptyResult);
   const [search, setSearch] = useState("");
+  const [revokeError, setRevokeError] = useState<string | null>(null);
+  const [revokingKey, setRevokingKey] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const debouncedSearch = useDebounce(search, 1000);
 
@@ -37,6 +45,7 @@ export function LinemanagerContent({
         hasActiveSickLeave,
         text: debouncedSearch || null,
       });
+      setRevokeError(null);
       setResult(fresh);
     });
   }, [orgNumber, hasActiveSickLeave, debouncedSearch]);
@@ -62,6 +71,61 @@ export function LinemanagerContent({
     hasActiveSickLeave,
     debouncedSearch,
   ]);
+
+  const handleRevoke = useCallback((item: LinemanagerSearchItem) => {
+    const lastName = item.employee.name?.lastName;
+    if (!lastName) {
+      setRevokeError(
+        "Vi kan ikke bryte koblingen fordi etternavn mangler for den ansatte.",
+      );
+      return;
+    }
+
+    const rowKey = getRowKey(item);
+    setRevokeError(null);
+
+    startTransition(async () => {
+      setRevokingKey(rowKey);
+      try {
+        const revokeResult = await revokeLinemanagerAction({
+          employeeIdentificationNumber:
+            item.employee.nationalIdentificationNumber,
+          orgNumber: item.orgNumber,
+          lastName,
+        });
+
+        if (!revokeResult.success) {
+          setRevokeError(
+            revokeResult.errorDetail.message ||
+              "Vi klarte ikke å bryte koblingen. Prøv igjen senere.",
+          );
+          return;
+        }
+
+        setResult((prev) => {
+          const nextLinemanagers = prev.linemanagers.filter(
+            (candidate) => getRowKey(candidate) !== rowKey,
+          );
+
+          return {
+            ...prev,
+            status: nextLinemanagers.length > 0 ? "available" : "empty",
+            linemanagers: nextLinemanagers,
+            meta: prev.meta
+              ? {
+                  ...prev.meta,
+                  size: Math.max(0, prev.meta.size - 1),
+                }
+              : null,
+          };
+        });
+      } catch {
+        setRevokeError("Vi klarte ikke å bryte koblingen. Prøv igjen senere.");
+      } finally {
+        setRevokingKey(null);
+      }
+    });
+  }, []);
 
   return (
     <VStack gap="space-32">
@@ -97,6 +161,18 @@ export function LinemanagerContent({
             </LocalAlert.Content>
           </LocalAlert>
 
+          {revokeError && (
+            <LocalAlert
+              status="error"
+              data-testid={UiSelector.LinemanagerFeilAlert}
+            >
+              <LocalAlert.Header>
+                <LocalAlert.Title>Kunne ikke bryte koblingen</LocalAlert.Title>
+              </LocalAlert.Header>
+              <LocalAlert.Content>{revokeError}</LocalAlert.Content>
+            </LocalAlert>
+          )}
+
           <TextField
             label="Søk på navn eller fødselsnummer"
             size="medium"
@@ -109,6 +185,9 @@ export function LinemanagerContent({
           <LinemanagerTabell
             linemanagers={result.linemanagers}
             loading={isPending}
+            revokingKey={revokingKey}
+            showEditAction={hasActiveSickLeave}
+            onRevoke={handleRevoke}
           />
 
           {result.meta?.hasMore && (

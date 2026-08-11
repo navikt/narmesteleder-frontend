@@ -21,6 +21,7 @@ export function OversiktViewControl({
   organisasjonerResult,
   requirementsResult,
   selectedOrgnr,
+  selectedTab,
 }: OversiktViewControlProps) {
   if (organisasjonerResult.status !== "available") {
     const content =
@@ -59,6 +60,7 @@ export function OversiktViewControl({
       <OversiktContent
         requirementsResult={requirementsResult}
         selectedOrgnr={selectedOrgnr}
+        selectedTab={selectedTab}
       />
     </VirksomhetProvider>
   );
@@ -68,4 +70,5 @@ interface OversiktViewControlProps {
   organisasjonerResult: FetchOrganisasjonerResult;
   requirementsResult: FetchRequirementsListResult;
   selectedOrgnr: string;
+  selectedTab?: "mangler-leder" | "aktiv-sykmelding" | "ikke-aktiv-sykmelding";
 }

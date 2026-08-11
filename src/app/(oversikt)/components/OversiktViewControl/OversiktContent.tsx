@@ -18,6 +18,7 @@ import { OversiktTabell } from "./OversiktTabell";
 export function OversiktContent({
   requirementsResult,
   selectedOrgnr,
+  selectedTab,
 }: OversiktContentProps) {
   const router = useRouter();
   const virksomhet = useVirksomhetContext();
@@ -39,6 +40,10 @@ export function OversiktContent({
     () => filterBySearch(requirements, debouncedSearch),
     [requirements, debouncedSearch],
   );
+  const defaultTabValue =
+    isNonProd || !selectedTab || selectedTab === "mangler-leder"
+      ? (selectedTab ?? "mangler-leder")
+      : "mangler-leder";
 
   return (
     <VStack gap="space-32">
@@ -55,7 +60,7 @@ export function OversiktContent({
         </LocalAlert>
       ) : (
         <Tabs
-          defaultValue="mangler-leder"
+          defaultValue={defaultTabValue}
           data-testid={UiSelector.OversiktFaner}
         >
           <Tabs.List>
@@ -132,4 +137,5 @@ export function OversiktContent({
 interface OversiktContentProps {
   requirementsResult: FetchRequirementsListResult;
   selectedOrgnr: string;
+  selectedTab?: "mangler-leder" | "aktiv-sykmelding" | "ikke-aktiv-sykmelding";
 }

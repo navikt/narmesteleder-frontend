@@ -1,3 +1,4 @@
+import { PersonPlusIcon } from "@navikt/aksel-icons";
 import { BodyShort, Button, Table, VStack } from "@navikt/ds-react";
 import { publicEnv } from "@/env-variables/publicEnv";
 import type { RequirementsListItem } from "@/schemas/lineManagerRequirementsListSchema";
@@ -20,6 +21,7 @@ function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
       href={behovUrl}
       variant="primary"
       size="small"
+      icon={<PersonPlusIcon aria-hidden />}
       aria-label={`${label} for ${joinNonEmpty([requirement.name.firstName, requirement.name.middleName, requirement.name.lastName])}`}
     >
       {label}
@@ -66,8 +68,10 @@ export function OversiktTabell({ requirements, loading }: OversiktTabellProps) {
 
           return (
             <Table.Row key={req.id}>
-              <Table.HeaderCell scope="row">{fullnavn}</Table.HeaderCell>
-              <Table.DataCell>
+              <Table.HeaderCell scope="row" style={{ whiteSpace: "nowrap" }}>
+                {fullnavn}
+              </Table.HeaderCell>
+              <Table.DataCell style={{ whiteSpace: "nowrap" }}>
                 {formatFnr(req.employeeIdentificationNumber)}
               </Table.DataCell>
               <Table.DataCell>

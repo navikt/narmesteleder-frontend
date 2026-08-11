@@ -4,7 +4,16 @@ import {
 } from "@/schemas/nærmestelederFormSchema";
 import { createContextState } from "@/shared/state/createContextState";
 
+type RegistreringContextProps = {
+  prefillEmployeeIdentificationNumber?: string;
+  prefillEmployeeLastName?: string;
+  returnTo?: string;
+};
+
 export const {
   useContextState: useRegistreringContextState,
   ViewControl: RegistreringViewControlProvider,
-} = createContextState<NarmesteLederInfo>(narmesteLederInfoDefaults);
+} = createContextState<NarmesteLederInfo, RegistreringContextProps>(
+  narmesteLederInfoDefaults,
+  (props) => props,
+);

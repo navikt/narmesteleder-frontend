@@ -5,6 +5,7 @@ import { OversiktViewControl } from "./OversiktViewControl/OversiktViewControl";
 
 interface OversiktLoaderProps {
   orgnr?: string;
+  tab?: "mangler-leder" | "aktiv-sykmelding" | "ikke-aktiv-sykmelding";
 }
 
 function getFirstLeafOrgnr(organisasjoner: Organisasjon[]): string {
@@ -22,7 +23,7 @@ function isOrgnrInTree(orgnr: string, organisasjoner: Organisasjon[]): boolean {
   return false;
 }
 
-export async function OversiktLoader({ orgnr }: OversiktLoaderProps) {
+export async function OversiktLoader({ orgnr, tab }: OversiktLoaderProps) {
   const organisasjonerResult = await fetchOrganisasjoner();
 
   const validatedOrgnr =
@@ -40,6 +41,7 @@ export async function OversiktLoader({ orgnr }: OversiktLoaderProps) {
       organisasjonerResult={organisasjonerResult}
       requirementsResult={requirementsResult}
       selectedOrgnr={selectedOrgnr}
+      selectedTab={tab}
     />
   );
 }

@@ -2,7 +2,7 @@
 
 import { Box, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   getOrgnummerValidationError,
   shouldMarkOrgnummerTouchedFromHeadingSelector,
@@ -36,9 +36,15 @@ function VirksomhetValidationSync({
 }
 
 export default function RegistreringForm() {
-  const { submittedData, handleSuccess } = useRegistreringContextState();
+  const {
+    submittedData,
+    handleSuccess,
+    prefillEmployeeIdentificationNumber,
+    prefillEmployeeLastName,
+  } = useRegistreringContextState();
   const { startOpprettNarmesteLeder, error } = useRegistreringAction();
   const headingVirksomhet = useOptionalVirksomhetContext();
+  const hasPrefilledFromContextRef = useRef(false);
 
   const form = useAppForm({
     defaultValues: submittedData,
@@ -81,6 +87,30 @@ export default function RegistreringForm() {
     headingVirksomhet?.selectorInteractionCount,
     headingVirksomhet?.showSelector,
   ]);
+
+  useEffect(() => {
+    if (hasPrefilledFromContextRef.current) {
+      return;
+    }
+
+    const prefillFnr = prefillEmployeeIdentificationNumber?.trim();
+    const prefillLastName = prefillEmployeeLastName?.trim();
+
+    if (!prefillFnr && !prefillLastName) {
+      hasPrefilledFromContextRef.current = true;
+      return;
+    }
+
+    if (prefillFnr) {
+      form.setFieldValue("sykmeldt.fodselsnummer", prefillFnr);
+    }
+
+    if (prefillLastName) {
+      form.setFieldValue("sykmeldt.etternavn", prefillLastName);
+    }
+
+    hasPrefilledFromContextRef.current = true;
+  }, [form, prefillEmployeeIdentificationNumber, prefillEmployeeLastName]);
 
   return (
     <VStack gap="space-24">

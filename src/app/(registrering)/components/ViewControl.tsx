@@ -1,5 +1,6 @@
 "use client";
 import { LocalAlert } from "@navikt/ds-react";
+import type { Organisasjon } from "@navikt/virksomhetsvelger";
 import { RegistreringViewControlProvider } from "@/app/(registrering)/state/contextState";
 import type { FetchOrganisasjonerResult } from "@/server/fetchData/fetchOrganisasjoner";
 import { VirksomhetProvider } from "@/shared/state/virksomhetContext";
@@ -9,7 +10,20 @@ import { SubmitView } from "./SubmitView";
 
 type ViewControlProps = {
   organisasjonerResult: FetchOrganisasjonerResult;
+  initialOrgnr?: string;
+  prefillEmployeeIdentificationNumber?: string;
+  prefillEmployeeLastName?: string;
+  returnTo?: string;
 };
+
+function findOrgNavn(orgnr: string, organisasjoner: Organisasjon[]): string {
+  for (const org of organisasjoner) {
+    if (org.orgnr === orgnr) return org.navn;
+    const nested = findOrgNavn(orgnr, org.underenheter);
+    if (nested) return nested;
+  }
+  return "";
+}
 
 function BlockedOrganisasjonerAlert({
   status,
@@ -33,20 +47,43 @@ function BlockedOrganisasjonerAlert({
   );
 }
 
-export function ViewControl({ organisasjonerResult }: ViewControlProps) {
+export function ViewControl({
+  organisasjonerResult,
+  initialOrgnr,
+  prefillEmployeeIdentificationNumber,
+  prefillEmployeeLastName,
+  returnTo,
+}: ViewControlProps) {
   if (organisasjonerResult.status !== "available") {
     return <BlockedOrganisasjonerAlert status={organisasjonerResult.status} />;
   }
 
+  const initialOrgnavn = initialOrgnr
+    ? findOrgNavn(initialOrgnr, organisasjonerResult.organisasjoner)
+    : "";
+  const initialVirksomhet =
+    initialOrgnr && initialOrgnavn
+      ? {
+          orgnummer: initialOrgnr,
+          orgnavn: initialOrgnavn,
+        }
+      : undefined;
+
   return (
     <VirksomhetProvider
       organisasjoner={organisasjonerResult.organisasjoner}
+      initialVirksomhet={initialVirksomhet}
       isRequired
       isSelectable
     >
       <RegistreringViewControlProvider
         EditView={EditView}
         SubmitView={SubmitView}
+        prefillEmployeeIdentificationNumber={
+          prefillEmployeeIdentificationNumber
+        }
+        prefillEmployeeLastName={prefillEmployeeLastName}
+        returnTo={returnTo}
       />
     </VirksomhetProvider>
   );

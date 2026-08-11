@@ -7,13 +7,16 @@ export const dynamic = "force-dynamic";
 export default async function OversiktPage({
   searchParams,
 }: {
-  searchParams: Promise<{ orgnr?: string }>;
+  searchParams: Promise<{
+    orgnr?: string;
+    tab?: "mangler-leder" | "aktiv-sykmelding" | "ikke-aktiv-sykmelding";
+  }>;
 }) {
-  const { orgnr } = await searchParams;
+  const { orgnr, tab } = await searchParams;
 
   return (
     <Suspense fallback={<OversiktSpinner />}>
-      <OversiktLoader orgnr={orgnr} />
+      <OversiktLoader orgnr={orgnr} tab={tab} />
     </Suspense>
   );
 }
