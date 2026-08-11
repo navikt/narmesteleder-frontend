@@ -1,7 +1,6 @@
 import { LocalAlert, Tabs, TextField, VStack } from "@navikt/ds-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { isNonProd } from "@/env-variables/envHelpers";
 import type { FetchRequirementsListResult } from "@/server/fetchData/fetchRequirementsList";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { useVirksomhetContext } from "@/shared/state/virksomhetContext";
@@ -40,10 +39,7 @@ export function OversiktContent({
     () => filterBySearch(requirements, debouncedSearch),
     [requirements, debouncedSearch],
   );
-  const defaultTabValue =
-    isNonProd || !selectedTab || selectedTab === "mangler-leder"
-      ? (selectedTab ?? "mangler-leder")
-      : "mangler-leder";
+  const defaultTabValue = selectedTab ?? "mangler-leder";
 
   return (
     <VStack gap="space-32">
@@ -65,15 +61,11 @@ export function OversiktContent({
         >
           <Tabs.List>
             <Tabs.Tab value="mangler-leder" label="Mangler leder" />
-            {isNonProd && (
-              <Tabs.Tab value="aktiv-sykmelding" label="Aktiv sykmelding" />
-            )}
-            {isNonProd && (
-              <Tabs.Tab
-                value="ikke-aktiv-sykmelding"
-                label="Ikke aktiv sykmelding"
-              />
-            )}
+            <Tabs.Tab value="aktiv-sykmelding" label="Aktiv sykmelding" />
+            <Tabs.Tab
+              value="ikke-aktiv-sykmelding"
+              label="Ikke aktiv sykmelding"
+            />
           </Tabs.List>
 
           <Tabs.Panel value="mangler-leder">
@@ -107,27 +99,23 @@ export function OversiktContent({
             </VStack>
           </Tabs.Panel>
 
-          {isNonProd && (
-            <Tabs.Panel value="aktiv-sykmelding">
-              <VStack paddingBlock="space-24 space-0">
-                <LinemanagerContent
-                  orgNumber={selectedOrgnr}
-                  hasActiveSickLeave={true}
-                />
-              </VStack>
-            </Tabs.Panel>
-          )}
+          <Tabs.Panel value="aktiv-sykmelding">
+            <VStack paddingBlock="space-24 space-0">
+              <LinemanagerContent
+                orgNumber={selectedOrgnr}
+                hasActiveSickLeave={true}
+              />
+            </VStack>
+          </Tabs.Panel>
 
-          {isNonProd && (
-            <Tabs.Panel value="ikke-aktiv-sykmelding">
-              <VStack paddingBlock="space-24 space-0">
-                <LinemanagerContent
-                  orgNumber={selectedOrgnr}
-                  hasActiveSickLeave={false}
-                />
-              </VStack>
-            </Tabs.Panel>
-          )}
+          <Tabs.Panel value="ikke-aktiv-sykmelding">
+            <VStack paddingBlock="space-24 space-0">
+              <LinemanagerContent
+                orgNumber={selectedOrgnr}
+                hasActiveSickLeave={false}
+              />
+            </VStack>
+          </Tabs.Panel>
         </Tabs>
       )}
     </VStack>
