@@ -1,5 +1,12 @@
 import { LinkBrokenIcon, PencilIcon } from "@navikt/aksel-icons";
-import { BodyShort, Button, HStack, Table, VStack } from "@navikt/ds-react";
+import {
+  BodyShort,
+  Button,
+  HStack,
+  Table,
+  Tooltip,
+  VStack,
+} from "@navikt/ds-react";
 import { publicEnv } from "@/env-variables/publicEnv";
 import type { LinemanagerSearchItem } from "@/schemas/lineManagerSearchSchema";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
@@ -99,36 +106,40 @@ export function LinemanagerTabell({
             <Table.DataCell style={{ whiteSpace: "nowrap" }}>
               <HStack gap="space-8">
                 {showEditAction && (
+                  <Tooltip content="Endre eller bytt leder">
+                    <Button
+                      as="a"
+                      href={getEditUrl(item)}
+                      variant="tertiary"
+                      size="small"
+                      icon={<PencilIcon aria-hidden />}
+                      disabled={!item.employee.name?.lastName}
+                      aria-label={`Endre eller bytt leder for ${formatNavn(item.employee.name)}`}
+                      title={
+                        item.employee.name?.lastName
+                          ? undefined
+                          : "Kan ikke endre leder fordi etternavn mangler for ansatt"
+                      }
+                    />
+                  </Tooltip>
+                )}
+                <Tooltip content="Bryt kobling til leder">
                   <Button
-                    as="a"
-                    href={getEditUrl(item)}
-                    variant="tertiary"
+                    variant="tertiary-neutral"
+                    data-color="danger"
                     size="small"
-                    icon={<PencilIcon aria-hidden />}
+                    icon={<LinkBrokenIcon aria-hidden />}
+                    loading={revokingKey === getRowKey(item)}
                     disabled={!item.employee.name?.lastName}
-                    aria-label={`Endre eller bytt leder for ${formatNavn(item.employee.name)}`}
+                    onClick={() => onRevoke(item)}
+                    aria-label={`Bryt kobling til leder for ${formatNavn(item.employee.name)}`}
                     title={
                       item.employee.name?.lastName
                         ? undefined
-                        : "Kan ikke endre leder fordi etternavn mangler for ansatt"
+                        : "Kan ikke bryte kobling fordi etternavn mangler for ansatt"
                     }
                   />
-                )}
-                <Button
-                  variant="tertiary-neutral"
-                  data-color="danger"
-                  size="small"
-                  icon={<LinkBrokenIcon aria-hidden />}
-                  loading={revokingKey === getRowKey(item)}
-                  disabled={!item.employee.name?.lastName}
-                  onClick={() => onRevoke(item)}
-                  aria-label={`Bryt kobling til leder for ${formatNavn(item.employee.name)}`}
-                  title={
-                    item.employee.name?.lastName
-                      ? undefined
-                      : "Kan ikke bryte kobling fordi etternavn mangler for ansatt"
-                  }
-                />
+                </Tooltip>
               </HStack>
             </Table.DataCell>
           </Table.Row>

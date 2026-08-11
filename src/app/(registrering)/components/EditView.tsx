@@ -1,17 +1,13 @@
 import { Button, HStack, VStack } from "@navikt/ds-react";
 import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
-import { publicEnv } from "@/env-variables/publicEnv";
+import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 import { HeadingLeder } from "@/shared/components/HeadingLeder";
 import InfoPanel from "./InfoPanel";
 import RegistreringForm from "./RegistreringForm";
 
-function isSafeReturnTo(url: string): boolean {
-  return url.startsWith(`${publicEnv.NEXT_PUBLIC_BASE_PATH}/`);
-}
-
 export function EditView() {
   const { returnTo } = useRegistreringContextState();
-  const returnToUrl = returnTo && isSafeReturnTo(returnTo) ? returnTo : null;
+  const returnToUrl = getSafeReturnTo(returnTo);
 
   return (
     <VStack gap="space-32">

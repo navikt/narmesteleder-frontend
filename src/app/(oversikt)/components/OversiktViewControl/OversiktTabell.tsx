@@ -53,9 +53,7 @@ export function OversiktTabell({ requirements, loading }: OversiktTabellProps) {
         <Table.Row>
           <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
           <Table.HeaderCell scope="col">Fødselsnummer</Table.HeaderCell>
-          <Table.HeaderCell scope="col">
-            <span className="sr-only">Handlinger</span>
-          </Table.HeaderCell>
+          <Table.HeaderCell scope="col">Handlinger</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
