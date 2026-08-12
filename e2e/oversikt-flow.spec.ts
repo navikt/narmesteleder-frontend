@@ -71,7 +71,9 @@ test.describe("Oversikt-flow", () => {
   test("aktiv sykmelding-fane viser linemanager-tabell med handlinger", async ({
     page,
   }) => {
-    await page.getByRole("tab", { name: "Aktiv sykmelding" }).click();
+    await page
+      .getByRole("tab", { name: "Aktiv sykmelding", exact: true })
+      .click();
 
     const linemanagerTabell = getByUiSelector(
       page,
@@ -80,7 +82,7 @@ test.describe("Oversikt-flow", () => {
     await expect(linemanagerTabell).toBeVisible();
 
     await expect(
-      page.getByRole("link", { name: /Endre eller bytt leder for/i }).first(),
+      page.getByRole("button", { name: /Endre eller bytt leder for/i }).first(),
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: /Bryt kobling til leder for/i }).first(),
@@ -99,20 +101,22 @@ test.describe("Oversikt-flow", () => {
       page.getByRole("button", { name: /Bryt kobling til leder for/i }).first(),
     ).toBeVisible();
     await expect(
-      page.getByRole("link", { name: /Endre eller bytt leder for/i }),
+      page.getByRole("button", { name: /Endre eller bytt leder for/i }),
     ).toHaveCount(0);
   });
 
   test("endre leder fra aktiv fane prefyller skjema og tilbakeknapp går til aktiv fane", async ({
     page,
   }) => {
-    await page.getByRole("tab", { name: "Aktiv sykmelding" }).click();
+    await page
+      .getByRole("tab", { name: "Aktiv sykmelding", exact: true })
+      .click();
     await expect(
       getByUiSelector(page, UiSelector.LinemanagerTabell),
     ).toBeVisible();
 
     await page
-      .getByRole("link", { name: /Endre eller bytt leder for/i })
+      .getByRole("button", { name: /Endre eller bytt leder for/i })
       .first()
       .click();
 
@@ -121,10 +125,10 @@ test.describe("Oversikt-flow", () => {
       getByUiSelector(page, UiSelector.SykmeldtFodselsnummer),
     ).toHaveValue(/\d{11}/);
     await expect(
-      page.getByRole("link", { name: "Tilbake til oversikt" }),
+      page.getByRole("button", { name: "Tilbake til oversikt" }),
     ).toBeVisible();
 
-    await page.getByRole("link", { name: "Tilbake til oversikt" }).click();
+    await page.getByRole("button", { name: "Tilbake til oversikt" }).click();
 
     await expect(page).toHaveURL(
       /\/oversikt\?orgnr=\d{9}&tab=aktiv-sykmelding/,

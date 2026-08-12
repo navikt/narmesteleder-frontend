@@ -1,19 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 
+const BASE = "/arbeidsgiver/ansatte/narmesteleder";
+
 describe("getSafeReturnTo", () => {
-  it("strips basePath prefix and returns relative path", () => {
+  it("returns full path when input already has basePath prefix", () => {
     expect(
-      getSafeReturnTo(
-        "/arbeidsgiver/ansatte/narmesteleder/oversikt?orgnr=912345678&tab=aktiv-sykmelding",
-      ),
-    ).toBe("/oversikt?orgnr=912345678&tab=aktiv-sykmelding");
+      getSafeReturnTo(`${BASE}/oversikt?orgnr=912345678&tab=aktiv-sykmelding`),
+    ).toBe(`${BASE}/oversikt?orgnr=912345678&tab=aktiv-sykmelding`);
   });
 
-  it("returns relative path as-is when already without basePath", () => {
+  it("prepends basePath when input is a relative path", () => {
     expect(
       getSafeReturnTo("/oversikt?orgnr=912345678&tab=aktiv-sykmelding"),
-    ).toBe("/oversikt?orgnr=912345678&tab=aktiv-sykmelding");
+    ).toBe(`${BASE}/oversikt?orgnr=912345678&tab=aktiv-sykmelding`);
   });
 
   it("returns null for missing returnTo", () => {

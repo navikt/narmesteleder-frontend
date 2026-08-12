@@ -1,5 +1,4 @@
 import { Button, HStack, VStack } from "@navikt/ds-react";
-import Link from "next/link";
 import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
 import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 import { HeadingLeder } from "@/shared/components/HeadingLeder";
@@ -16,7 +15,7 @@ export function EditView() {
       <InfoPanel />
       {returnToUrl && (
         <HStack>
-          <Button as={Link} href={returnToUrl} variant="secondary" size="small">
+          <Button as="a" href={returnToUrl} variant="secondary" size="small">
             Tilbake til oversikt
           </Button>
         </HStack>
