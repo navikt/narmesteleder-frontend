@@ -1,4 +1,11 @@
-import { LocalAlert, Tabs, TextField, VStack } from "@navikt/ds-react";
+import {
+  BodyLong,
+  Heading,
+  LocalAlert,
+  Tabs,
+  TextField,
+  VStack,
+} from "@navikt/ds-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import type { FetchRequirementsListResult } from "@/server/fetchData/fetchRequirementsList";
@@ -95,21 +102,14 @@ export function OversiktContent({
 
           <Tabs.Panel value="mangler-leder">
             <VStack gap="space-32" paddingBlock="space-24 space-0">
-              <LocalAlert
-                status="announcement"
-                data-testid={UiSelector.OversiktInfoboks}
-              >
-                <LocalAlert.Header>
-                  <LocalAlert.Title>
-                    Oversikt over sykmeldte ansatte uten leder
-                  </LocalAlert.Title>
-                </LocalAlert.Header>
-                <LocalAlert.Content>
-                  Her ser du en oversikt over sykmeldte ansatte i virksomheten
-                  med behov for å bli tildelt nærmeste leder. Klikk på "Oppgi
-                  leder" for å legge til nærmeste leder for en ansatt.
-                </LocalAlert.Content>
-              </LocalAlert>
+              <Heading level="2" size="small">
+                Sykmeldte ansatte uten leder
+              </Heading>
+              <BodyLong>
+                Her ser du en oversikt over sykmeldte ansatte i virksomheten med
+                behov for å bli tildelt nærmeste leder. Klikk på "Oppgi leder"
+                for å legge til nærmeste leder for en ansatt.
+              </BodyLong>
 
               <TextField
                 label="Søk på navn eller fødselsnummer"

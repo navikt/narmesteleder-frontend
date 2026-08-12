@@ -23,7 +23,6 @@ export enum UiSelector {
   BehovForm = "behovForm",
   RegistreringInfoPanel = "registreringInfoPanel",
   // Oversikt
-  OversiktInfoboks = "oversiktInfoboks",
   OversiktTabell = "oversiktTabell",
   OversiktSok = "oversiktSok",
   OversiktFaner = "oversiktFaner",

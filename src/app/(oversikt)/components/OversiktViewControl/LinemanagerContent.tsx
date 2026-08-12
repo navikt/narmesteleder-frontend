@@ -1,6 +1,13 @@
 "use client";
 
-import { Button, LocalAlert, TextField, VStack } from "@navikt/ds-react";
+import {
+  BodyLong,
+  Button,
+  Heading,
+  LocalAlert,
+  TextField,
+  VStack,
+} from "@navikt/ds-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import type { LinemanagerSearchItem } from "@/schemas/lineManagerSearchSchema";
@@ -174,23 +181,16 @@ export function LinemanagerContent({
         </LocalAlert>
       ) : (
         <>
-          <LocalAlert
-            status="announcement"
-            data-testid={UiSelector.OversiktInfoboks}
-          >
-            <LocalAlert.Header>
-              <LocalAlert.Title>
-                {hasActiveSickLeave
-                  ? "Oversikt over ansatte med aktiv sykmelding"
-                  : "Oversikt over ansatte uten aktiv sykmelding"}
-              </LocalAlert.Title>
-            </LocalAlert.Header>
-            <LocalAlert.Content>
-              {hasActiveSickLeave
-                ? "Her ser du ansatte som har registrert nærmeste leder. Du kan endre eller bytte leder, og bryte koblingen mellom ansatt og leder, fra «Handlinger»."
-                : "Her ser du ansatte som har registrert nærmeste leder. Du kan bryte koblingen mellom ansatt og leder fra «Handlinger»."}
-            </LocalAlert.Content>
-          </LocalAlert>
+          <Heading level="2" size="small">
+            {hasActiveSickLeave
+              ? "Ansatte med aktiv sykmelding"
+              : "Ansatte uten aktiv sykmelding"}
+          </Heading>
+          <BodyLong>
+            {hasActiveSickLeave
+              ? "Her ser du ansatte som har registrert nærmeste leder. Du kan endre eller bytte leder, og bryte koblingen mellom ansatt og leder, fra «Handlinger»."
+              : "Her ser du ansatte som har registrert nærmeste leder. Du kan bryte koblingen mellom ansatt og leder fra «Handlinger»."}
+          </BodyLong>
 
           {revokeError && (
             <LocalAlert

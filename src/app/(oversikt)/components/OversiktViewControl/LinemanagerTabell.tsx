@@ -70,9 +70,8 @@ export function LinemanagerTabell({
           <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
           <Table.HeaderCell scope="col">F.nr på ansatt</Table.HeaderCell>
           <Table.HeaderCell scope="col">Navn på leder</Table.HeaderCell>
-          <Table.HeaderCell scope="col">
-            Når leder ble meldt inn
-          </Table.HeaderCell>
+          <Table.HeaderCell scope="col">F.nr på leder</Table.HeaderCell>
+          <Table.HeaderCell scope="col">Leder fra</Table.HeaderCell>
           <Table.HeaderCell scope="col">E-post leder</Table.HeaderCell>
           <Table.HeaderCell scope="col">Telefonnummer leder</Table.HeaderCell>
           <Table.HeaderCell scope="col">Handlinger</Table.HeaderCell>
@@ -89,6 +88,9 @@ export function LinemanagerTabell({
             </Table.DataCell>
             <Table.DataCell style={{ whiteSpace: "nowrap" }}>
               {formatNavn(item.manager.name)}
+            </Table.DataCell>
+            <Table.DataCell style={{ whiteSpace: "nowrap" }}>
+              {formatFnr(item.manager.nationalIdentificationNumber)}
             </Table.DataCell>
             <Table.DataCell>{formatActiveFrom(item.activeFrom)}</Table.DataCell>
             <Table.DataCell>{item.manager.email}</Table.DataCell>

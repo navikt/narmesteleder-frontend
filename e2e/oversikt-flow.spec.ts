@@ -9,10 +9,9 @@ test.describe("Oversikt-flow", () => {
     await page.goto(OVERSIKT_URL);
   });
 
-  test("viser heading, infoboks, søk og faner", async ({ page }) => {
+  test("viser heading, søk og faner", async ({ page }) => {
     await expectAllVisible(page, [
       UiSelector.HeadingLeder,
-      UiSelector.OversiktInfoboks,
       UiSelector.OversiktSok,
       UiSelector.OversiktFaner,
     ]);
