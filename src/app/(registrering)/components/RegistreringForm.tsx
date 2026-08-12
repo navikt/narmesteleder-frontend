@@ -15,6 +15,7 @@ import { useAppForm } from "@/shared/components/form/hooks/form";
 import { LederGroup } from "@/shared/components/form/LederGroup";
 import { SykmeldtGroup } from "@/shared/components/form/SykmeldtGroup";
 import { useOptionalVirksomhetContext } from "@/shared/state/virksomhetContext";
+import { consumeLinemanagerEditSession } from "@/utils/linemanagerEditSession";
 import { UiSelector } from "@/utils/uiSelectors";
 
 function VirksomhetValidationSync({
@@ -36,15 +37,11 @@ function VirksomhetValidationSync({
 }
 
 export default function RegistreringForm() {
-  const {
-    submittedData,
-    handleSuccess,
-    prefillEmployeeIdentificationNumber,
-    prefillEmployeeLastName,
-  } = useRegistreringContextState();
+  const { submittedData, handleSuccess, editId } =
+    useRegistreringContextState();
   const { startOpprettNarmesteLeder, error } = useRegistreringAction();
   const headingVirksomhet = useOptionalVirksomhetContext();
-  const hasPrefilledFromContextRef = useRef(false);
+  const hasPrefilledFromSessionRef = useRef(false);
 
   const form = useAppForm({
     defaultValues: submittedData,
@@ -89,28 +86,29 @@ export default function RegistreringForm() {
   ]);
 
   useEffect(() => {
-    if (hasPrefilledFromContextRef.current) {
+    if (hasPrefilledFromSessionRef.current) {
       return;
     }
 
-    const prefillFnr = prefillEmployeeIdentificationNumber?.trim();
-    const prefillLastName = prefillEmployeeLastName?.trim();
-
-    if (!prefillFnr && !prefillLastName) {
-      hasPrefilledFromContextRef.current = true;
+    if (!editId) {
+      hasPrefilledFromSessionRef.current = true;
       return;
     }
 
-    if (prefillFnr) {
-      form.setFieldValue("sykmeldt.fodselsnummer", prefillFnr);
+    const payload = consumeLinemanagerEditSession(editId);
+    if (!payload) {
+      hasPrefilledFromSessionRef.current = true;
+      return;
     }
 
-    if (prefillLastName) {
-      form.setFieldValue("sykmeldt.etternavn", prefillLastName);
-    }
+    form.setFieldValue(
+      "sykmeldt.fodselsnummer",
+      payload.employeeIdentificationNumber,
+    );
+    form.setFieldValue("sykmeldt.etternavn", payload.lastName);
 
-    hasPrefilledFromContextRef.current = true;
-  }, [form, prefillEmployeeIdentificationNumber, prefillEmployeeLastName]);
+    hasPrefilledFromSessionRef.current = true;
+  }, [form, editId]);
 
   return (
     <VStack gap="space-24">

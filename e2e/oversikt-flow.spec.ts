@@ -117,8 +117,7 @@ test.describe("Oversikt-flow", () => {
       .first()
       .click();
 
-    await expect(page).toHaveURL(/employeeIdentificationNumber=\d{11}/);
-    await expect(page).toHaveURL(/lastName=/);
+    await expect(page).toHaveURL(/editId=/);
     await expect(
       getByUiSelector(page, UiSelector.SykmeldtFodselsnummer),
     ).toHaveValue(/\d{11}/);

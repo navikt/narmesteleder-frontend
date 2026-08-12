@@ -1,4 +1,5 @@
 import { Button, HStack, VStack } from "@navikt/ds-react";
+import Link from "next/link";
 import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
 import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 import { ExitButton } from "@/shared/components/ExitButton";
@@ -22,7 +23,12 @@ export function SubmitView() {
         <Summary />
         <HStack gap="space-12">
           {returnToUrl && (
-            <Button as="a" href={returnToUrl} variant="secondary" size="small">
+            <Button
+              as={Link}
+              href={returnToUrl}
+              variant="secondary"
+              size="small"
+            >
               Tilbake til oversikt
             </Button>
           )}

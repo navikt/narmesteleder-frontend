@@ -7,7 +7,6 @@ import {
   Tooltip,
   VStack,
 } from "@navikt/ds-react";
-import { publicEnv } from "@/env-variables/publicEnv";
 import type { LinemanagerSearchItem } from "@/schemas/lineManagerSearchSchema";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
 import { UiSelector } from "@/utils/uiSelectors";
@@ -19,6 +18,7 @@ interface LinemanagerTabellProps {
   revokingKey?: string | null;
   showEditAction?: boolean;
   onRevoke: (item: LinemanagerSearchItem) => void;
+  onEdit: (item: LinemanagerSearchItem) => void;
 }
 
 function formatNavn(name: LinemanagerSearchItem["employee"]["name"]): string {
@@ -36,23 +36,13 @@ function getRowKey(item: LinemanagerSearchItem): string {
   return `${item.orgNumber}-${item.employee.nationalIdentificationNumber}-${item.manager.nationalIdentificationNumber}`;
 }
 
-function getEditUrl(item: LinemanagerSearchItem): string {
-  const params = new URLSearchParams({
-    orgnr: item.orgNumber,
-    employeeIdentificationNumber: item.employee.nationalIdentificationNumber,
-    lastName: item.employee.name?.lastName ?? "",
-    returnTo: `${publicEnv.NEXT_PUBLIC_BASE_PATH}/oversikt?orgnr=${item.orgNumber}&tab=aktiv-sykmelding`,
-  });
-
-  return `${publicEnv.NEXT_PUBLIC_BASE_PATH}?${params}`;
-}
-
 export function LinemanagerTabell({
   linemanagers,
   loading,
   revokingKey,
   showEditAction = false,
   onRevoke,
+  onEdit,
 }: LinemanagerTabellProps) {
   if (loading) {
     return (
@@ -108,12 +98,11 @@ export function LinemanagerTabell({
                 {showEditAction && (
                   <Tooltip content="Endre eller bytt leder">
                     <Button
-                      as="a"
-                      href={getEditUrl(item)}
                       variant="tertiary"
                       size="small"
                       icon={<PencilIcon aria-hidden />}
                       disabled={!item.employee.name?.lastName}
+                      onClick={() => onEdit(item)}
                       aria-label={`Endre eller bytt leder for ${formatNavn(item.employee.name)}`}
                       title={
                         item.employee.name?.lastName

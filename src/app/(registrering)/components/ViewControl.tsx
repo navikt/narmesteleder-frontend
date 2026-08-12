@@ -11,8 +11,7 @@ import { SubmitView } from "./SubmitView";
 type ViewControlProps = {
   organisasjonerResult: FetchOrganisasjonerResult;
   initialOrgnr?: string;
-  prefillEmployeeIdentificationNumber?: string;
-  prefillEmployeeLastName?: string;
+  editId?: string;
   returnTo?: string;
 };
 
@@ -50,8 +49,7 @@ function BlockedOrganisasjonerAlert({
 export function ViewControl({
   organisasjonerResult,
   initialOrgnr,
-  prefillEmployeeIdentificationNumber,
-  prefillEmployeeLastName,
+  editId,
   returnTo,
 }: ViewControlProps) {
   if (organisasjonerResult.status !== "available") {
@@ -79,10 +77,7 @@ export function ViewControl({
       <RegistreringViewControlProvider
         EditView={EditView}
         SubmitView={SubmitView}
-        prefillEmployeeIdentificationNumber={
-          prefillEmployeeIdentificationNumber
-        }
-        prefillEmployeeLastName={prefillEmployeeLastName}
+        editId={editId}
         returnTo={returnTo}
       />
     </VirksomhetProvider>

@@ -8,21 +8,18 @@ export default async function Home({
 }: {
   searchParams: Promise<{
     orgnr?: string;
-    employeeIdentificationNumber?: string;
-    lastName?: string;
+    editId?: string;
     returnTo?: string;
   }>;
 }) {
-  const { orgnr, employeeIdentificationNumber, lastName, returnTo } =
-    await searchParams;
+  const { orgnr, editId, returnTo } = await searchParams;
   const organisasjonerResult = await fetchOrganisasjoner();
 
   return (
     <ViewControl
       organisasjonerResult={organisasjonerResult}
       initialOrgnr={orgnr}
-      prefillEmployeeIdentificationNumber={employeeIdentificationNumber}
-      prefillEmployeeLastName={lastName}
+      editId={editId}
       returnTo={returnTo}
     />
   );

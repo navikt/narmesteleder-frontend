@@ -5,8 +5,7 @@ import {
 import { createContextState } from "@/shared/state/createContextState";
 
 type RegistreringContextProps = {
-  prefillEmployeeIdentificationNumber?: string;
-  prefillEmployeeLastName?: string;
+  editId?: string;
   returnTo?: string;
 };
 

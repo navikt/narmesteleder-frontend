@@ -117,7 +117,7 @@ describe("Registrering ViewControl", () => {
     expect(mockState.virksomhetProviderProps).toBeUndefined();
   });
 
-  it("setter initial virksomhet og sender prefill props videre", () => {
+  it("setter initial virksomhet og sender editId og returnTo videre", () => {
     ReactDOMServer.renderToStaticMarkup(
       <ViewControl
         organisasjonerResult={{
@@ -125,8 +125,7 @@ describe("Registrering ViewControl", () => {
           organisasjoner,
         }}
         initialOrgnr="912345678"
-        prefillEmployeeIdentificationNumber="12345678910"
-        prefillEmployeeLastName="Nordmann"
+        editId="edit-session-id"
         returnTo="/arbeidsgiver/ansatte/narmesteleder/oversikt?orgnr=912345678&tab=aktiv-sykmelding"
       />,
     );
@@ -138,8 +137,7 @@ describe("Registrering ViewControl", () => {
       },
     });
     expect(mockState.registreringViewControlProviderProps).toMatchObject({
-      prefillEmployeeIdentificationNumber: "12345678910",
-      prefillEmployeeLastName: "Nordmann",
+      editId: "edit-session-id",
       returnTo:
         "/arbeidsgiver/ansatte/narmesteleder/oversikt?orgnr=912345678&tab=aktiv-sykmelding",
     });
