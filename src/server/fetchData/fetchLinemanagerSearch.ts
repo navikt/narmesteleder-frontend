@@ -22,7 +22,6 @@ export interface FetchLinemanagerSearchParams {
   hasActiveSickLeave: boolean;
   text?: string | null;
   pageToken?: string | null;
-  pageSize?: number;
 }
 
 export interface FetchLinemanagerSearchResult {
@@ -61,7 +60,6 @@ const realFetchLinemanagerSearch = async (
         hasActiveSickLeave: params.hasActiveSickLeave,
         text: params.text ?? undefined,
         pageToken: params.pageToken ?? undefined,
-        pageSize: params.pageSize ?? 2,
       },
       responseDataSchema: linemanagerSearchResponseSchema,
       redirectAfterLoginUrl: publicEnv.NEXT_PUBLIC_BASE_PATH,
