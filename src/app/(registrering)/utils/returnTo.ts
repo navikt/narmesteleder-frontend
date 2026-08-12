@@ -1,17 +1,35 @@
 import { publicEnv } from "@/env-variables/publicEnv";
 
+const BASE = publicEnv.NEXT_PUBLIC_BASE_PATH;
+
+/**
+ * Returns a safe relative path (without basePath prefix) for use with Next.js
+ * Link or router.push(), which add basePath automatically.
+ *
+ * Accepts:
+ * - Absolute paths with basePath prefix:  "/arbeidsgiver/ansatte/narmesteleder/oversikt?..."
+ * - Relative paths within the app:        "/oversikt?..."
+ *
+ * Returns null for external URLs or paths outside basePath.
+ */
 export function getSafeReturnTo(returnTo?: string): string | null {
   if (!returnTo) return null;
 
-  // Relative path starting with basePath (e.g. "/oversikt?...")
-  if (returnTo.startsWith("/")) {
-    return returnTo;
+  // Absolute path with basePath prefix — strip prefix and return relative
+  if (returnTo.startsWith(`${BASE}/`) || returnTo === BASE) {
+    return returnTo.slice(BASE.length) || "/";
   }
 
-  // Absolute URL starting with basePath (legacy)
-  if (returnTo.startsWith(`${publicEnv.NEXT_PUBLIC_BASE_PATH}/`)) {
-    // Return just the path portion so Next.js Link/router handles basePath automatically
-    return returnTo.slice(publicEnv.NEXT_PUBLIC_BASE_PATH.length);
+  // Already a relative path within the app (starts with /)
+  if (returnTo.startsWith("/") && !returnTo.startsWith("//")) {
+    // Must look like an app-relative path — no absolute URLs disguised as relative
+    try {
+      // If it parses as a full URL, reject it
+      new URL(returnTo);
+      return null;
+    } catch {
+      return returnTo;
+    }
   }
 
   return null;
