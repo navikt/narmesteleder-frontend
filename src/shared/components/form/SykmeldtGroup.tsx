@@ -17,6 +17,7 @@ export const SykmeldtGroup = withFieldGroup({
               className="w-66"
               uiSelector={UiSelector.SykmeldtFodselsnummer}
               isRequired
+              trim
             />
           )}
         </group.AppField>
