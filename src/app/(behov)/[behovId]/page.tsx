@@ -26,11 +26,10 @@ export default async function Home({
   searchParams,
 }: {
   params: Promise<{ behovId: string }>;
-  // Only used in dev and demo environments
-  searchParams: Promise<{ mockScenario?: MockScenario }>;
+  searchParams: Promise<{ mockScenario?: MockScenario; returnTo?: string }>;
 }) {
   const { behovId } = await params;
-  const { mockScenario } = await searchParams;
+  const { mockScenario, returnTo } = await searchParams;
 
   if (!isValidBehovId(behovId)) {
     return notFound();
@@ -38,7 +37,11 @@ export default async function Home({
 
   return (
     <Suspense fallback={<InfoSpinner />}>
-      <InfoLoader behovId={behovId} mockScenario={mockScenario} />
+      <InfoLoader
+        behovId={behovId}
+        mockScenario={mockScenario}
+        returnTo={returnTo}
+      />
     </Suspense>
   );
 }

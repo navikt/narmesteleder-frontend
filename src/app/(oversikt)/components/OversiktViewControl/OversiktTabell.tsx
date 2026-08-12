@@ -8,11 +8,20 @@ import { OversiktSpinner } from "../OversiktSpinner";
 
 interface OversiktTabellProps {
   requirements: RequirementsListItem[];
+  orgnr: string;
   loading?: boolean;
 }
 
-function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
-  const behovUrl = `${publicEnv.NEXT_PUBLIC_BASE_PATH}/${requirement.id}`;
+function HandlingCell({
+  requirement,
+  orgnr,
+}: {
+  requirement: RequirementsListItem;
+  orgnr: string;
+}) {
+  const returnTo = `/oversikt?orgnr=${orgnr}&tab=mangler-leder`;
+  const params = new URLSearchParams({ returnTo });
+  const behovUrl = `${publicEnv.NEXT_PUBLIC_BASE_PATH}/${requirement.id}?${params}`;
   const label = "Oppgi leder";
 
   return (
@@ -29,7 +38,11 @@ function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
   );
 }
 
-export function OversiktTabell({ requirements, loading }: OversiktTabellProps) {
+export function OversiktTabell({
+  requirements,
+  orgnr,
+  loading,
+}: OversiktTabellProps) {
   if (loading) {
     return <OversiktSpinner />;
   }
@@ -73,7 +86,7 @@ export function OversiktTabell({ requirements, loading }: OversiktTabellProps) {
                 {formatFnr(req.employeeIdentificationNumber)}
               </Table.DataCell>
               <Table.DataCell>
-                <HandlingCell requirement={req} />
+                <HandlingCell requirement={req} orgnr={orgnr} />
               </Table.DataCell>
             </Table.Row>
           );

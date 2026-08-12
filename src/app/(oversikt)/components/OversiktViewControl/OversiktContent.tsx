@@ -120,7 +120,11 @@ export function OversiktContent({
                 autoComplete="off"
               />
 
-              <OversiktTabell requirements={filtered} loading={isPending} />
+              <OversiktTabell
+                requirements={filtered}
+                orgnr={selectedOrCurrentOrgnr ?? ""}
+                loading={isPending}
+              />
             </VStack>
           </Tabs.Panel>
 
