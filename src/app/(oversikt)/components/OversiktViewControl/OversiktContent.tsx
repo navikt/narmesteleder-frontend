@@ -10,6 +10,17 @@ import { LinemanagerContent } from "./LinemanagerContent";
 import { OversiktHeadingLeder } from "./OversiktHeadingLeder";
 import { OversiktTabell } from "./OversiktTabell";
 
+type OversiktTabValue =
+  | "mangler-leder"
+  | "aktiv-sykmelding"
+  | "ikke-aktiv-sykmelding";
+
+function getValidTabValue(tab?: string): OversiktTabValue {
+  return tab === "aktiv-sykmelding" || tab === "ikke-aktiv-sykmelding"
+    ? tab
+    : "mangler-leder";
+}
+
 /**
  * Må ligge inne i VirksomhetProvider.
  * Detekterer orgnummer-endringer i headingen og navigerer til ny URL.
@@ -25,21 +36,28 @@ export function OversiktContent({
   const debouncedSearch = useDebounce(search, 300);
   const requirements = requirementsResult.requirements;
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState<OversiktTabValue>(
+    getValidTabValue(selectedTab),
+  );
+
+  useEffect(() => {
+    setActiveTab(getValidTabValue(selectedTab));
+  }, [selectedTab]);
 
   // Naviger til ny URL når virksomhet endres i heading → trigger ny server-fetch
   useEffect(() => {
     if (virksomhet.orgnummer && virksomhet.orgnummer !== selectedOrgnr) {
       startTransition(() => {
-        router.push(`?orgnr=${virksomhet.orgnummer}`);
+        router.push(`?orgnr=${virksomhet.orgnummer}&tab=${activeTab}`);
       });
     }
-  }, [virksomhet.orgnummer, selectedOrgnr, router]);
+  }, [virksomhet.orgnummer, selectedOrgnr, activeTab, router]);
 
   const filtered = useMemo(
     () => filterBySearch(requirements, debouncedSearch),
     [requirements, debouncedSearch],
   );
-  const defaultTabValue = selectedTab ?? "mangler-leder";
+  const selectedOrCurrentOrgnr = virksomhet.orgnummer || selectedOrgnr;
 
   return (
     <VStack gap="space-32">
@@ -56,7 +74,14 @@ export function OversiktContent({
         </LocalAlert>
       ) : (
         <Tabs
-          defaultValue={defaultTabValue}
+          value={activeTab}
+          onChange={(value) => {
+            const nextTab = getValidTabValue(value);
+            setActiveTab(nextTab);
+            startTransition(() => {
+              router.push(`?orgnr=${selectedOrCurrentOrgnr}&tab=${nextTab}`);
+            });
+          }}
           data-testid={UiSelector.OversiktFaner}
         >
           <Tabs.List>
