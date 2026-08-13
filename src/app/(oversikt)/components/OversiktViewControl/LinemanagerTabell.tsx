@@ -71,9 +71,9 @@ export function LinemanagerTabell({
           <Table.HeaderCell scope="col">F.nr på ansatt</Table.HeaderCell>
           <Table.HeaderCell scope="col">Navn på leder</Table.HeaderCell>
           <Table.HeaderCell scope="col">F.nr på leder</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Leder fra</Table.HeaderCell>
           <Table.HeaderCell scope="col">E-post leder</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Telefonnummer leder</Table.HeaderCell>
+          <Table.HeaderCell scope="col">Tlf. leder</Table.HeaderCell>
+          <Table.HeaderCell scope="col">Leder fra</Table.HeaderCell>
           <Table.HeaderCell scope="col">Handlinger</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
@@ -92,9 +92,9 @@ export function LinemanagerTabell({
             <Table.DataCell style={{ whiteSpace: "nowrap" }}>
               {formatFnr(item.manager.nationalIdentificationNumber)}
             </Table.DataCell>
-            <Table.DataCell>{formatActiveFrom(item.activeFrom)}</Table.DataCell>
             <Table.DataCell>{item.manager.email}</Table.DataCell>
             <Table.DataCell>{item.manager.mobile}</Table.DataCell>
+            <Table.DataCell>{formatActiveFrom(item.activeFrom)}</Table.DataCell>
             <Table.DataCell style={{ whiteSpace: "nowrap" }}>
               <HStack gap="space-8">
                 {showEditAction && (
