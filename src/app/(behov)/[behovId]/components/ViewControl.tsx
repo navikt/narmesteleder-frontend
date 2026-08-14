@@ -8,9 +8,14 @@ import { SubmitView } from "./SubmitView";
 type ViewControlProps = {
   lederInfo: LederInfo;
   behovId: string;
+  returnTo?: string;
 };
 
-export function ViewControl({ lederInfo, behovId }: ViewControlProps) {
+export function ViewControl({
+  lederInfo,
+  behovId,
+  returnTo,
+}: ViewControlProps) {
   return (
     <VirksomhetProvider
       initialVirksomhet={{
@@ -24,6 +29,7 @@ export function ViewControl({ lederInfo, behovId }: ViewControlProps) {
         SubmitView={SubmitView}
         lederInfo={lederInfo}
         behovId={behovId}
+        returnTo={returnTo}
       />
     </VirksomhetProvider>
   );

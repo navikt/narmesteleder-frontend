@@ -2,13 +2,20 @@ import { type Leder, lederDefaults } from "@/schemas/nærmestelederFormSchema";
 import type { LederInfo } from "@/server/fetchData/fetchLederInfo";
 import { createContextState } from "@/shared/state/createContextState";
 
+type BehovContextProps = {
+  lederInfo: LederInfo;
+  behovId: string;
+  returnTo?: string;
+};
+
 export const {
   useContextState: useBehovContextState,
   ViewControl: BehovViewControlProvider,
-} = createContextState<Leder, { lederInfo: LederInfo; behovId: string }>(
+} = createContextState<Leder, BehovContextProps>(
   lederDefaults,
-  (props: { lederInfo: LederInfo; behovId: string }) => ({
+  (props: BehovContextProps) => ({
     lederInfo: props.lederInfo,
     behovId: props.behovId,
+    returnTo: props.returnTo,
   }),
 );

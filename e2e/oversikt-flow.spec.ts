@@ -9,11 +9,11 @@ test.describe("Oversikt-flow", () => {
     await page.goto(OVERSIKT_URL);
   });
 
-  test("viser heading, infoboks, søk og faner", async ({ page }) => {
+  test("viser heading, søk og faner", async ({ page }) => {
     await expectAllVisible(page, [
       UiSelector.HeadingLeder,
-      UiSelector.OversiktInfoboks,
       UiSelector.OversiktSok,
+      UiSelector.OversiktFaner,
     ]);
   });
 
@@ -66,5 +66,42 @@ test.describe("Oversikt-flow", () => {
     expect(href).toMatch(
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
     );
+  });
+
+  test("aktiv sykmelding-fane viser linemanager-tabell med bryt kobling", async ({
+    page,
+  }) => {
+    await page
+      .getByRole("tab", { name: "Aktiv sykmelding", exact: true })
+      .click();
+
+    const linemanagerTabell = getByUiSelector(
+      page,
+      UiSelector.LinemanagerTabell,
+    );
+    await expect(linemanagerTabell).toBeVisible();
+
+    await expect(
+      page.getByRole("button", { name: /Bryt kobling til leder for/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Endre eller bytt leder for/i }),
+    ).toHaveCount(0);
+  });
+
+  test("ikke aktiv sykmelding-fane viser bryt kobling, men ikke endre leder", async ({
+    page,
+  }) => {
+    await page.getByRole("tab", { name: "Ikke aktiv sykmelding" }).click();
+
+    await expect(
+      getByUiSelector(page, UiSelector.LinemanagerTabell),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Bryt kobling til leder for/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Endre eller bytt leder for/i }),
+    ).toHaveCount(0);
   });
 });

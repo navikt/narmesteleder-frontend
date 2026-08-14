@@ -7,6 +7,7 @@ export type TextInputFieldProps = {
   className?: string;
   uiSelector?: string;
   isRequired?: boolean;
+  trim?: boolean;
 };
 
 export function TextInputField({
@@ -15,6 +16,7 @@ export function TextInputField({
   className,
   uiSelector,
   isRequired = false,
+  trim = false,
 }: TextInputFieldProps) {
   const field = useFieldContext<string>();
 
@@ -23,7 +25,12 @@ export function TextInputField({
       label={label}
       value={field.state.value}
       onChange={(e) => field.handleChange(e.target.value)}
-      onBlur={field.handleBlur}
+      onBlur={() => {
+        if (trim) {
+          field.handleChange(field.state.value.replace(/\s/g, ""));
+        }
+        field.handleBlur();
+      }}
       error={field.state.meta.errors[0]?.message}
       type={type}
       className={className}

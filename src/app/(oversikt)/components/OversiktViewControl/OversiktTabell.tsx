@@ -1,3 +1,4 @@
+import { PersonPlusIcon } from "@navikt/aksel-icons";
 import { BodyShort, Button, Table, VStack } from "@navikt/ds-react";
 import { publicEnv } from "@/env-variables/publicEnv";
 import type { RequirementsListItem } from "@/schemas/lineManagerRequirementsListSchema";
@@ -7,11 +8,20 @@ import { OversiktSpinner } from "../OversiktSpinner";
 
 interface OversiktTabellProps {
   requirements: RequirementsListItem[];
+  orgnr: string;
   loading?: boolean;
 }
 
-function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
-  const behovUrl = `${publicEnv.NEXT_PUBLIC_BASE_PATH}/${requirement.id}`;
+function HandlingCell({
+  requirement,
+  orgnr,
+}: {
+  requirement: RequirementsListItem;
+  orgnr: string;
+}) {
+  const returnTo = `/oversikt?orgnr=${orgnr}&tab=mangler-leder`;
+  const params = new URLSearchParams({ returnTo });
+  const behovUrl = `${publicEnv.NEXT_PUBLIC_BASE_PATH}/${requirement.id}?${params}`;
   const label = "Oppgi leder";
 
   return (
@@ -20,6 +30,7 @@ function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
       href={behovUrl}
       variant="primary"
       size="small"
+      icon={<PersonPlusIcon aria-hidden />}
       aria-label={`${label} for ${joinNonEmpty([requirement.name.firstName, requirement.name.middleName, requirement.name.lastName])}`}
     >
       {label}
@@ -27,7 +38,11 @@ function HandlingCell({ requirement }: { requirement: RequirementsListItem }) {
   );
 }
 
-export function OversiktTabell({ requirements, loading }: OversiktTabellProps) {
+export function OversiktTabell({
+  requirements,
+  orgnr,
+  loading,
+}: OversiktTabellProps) {
   if (loading) {
     return <OversiktSpinner />;
   }
@@ -51,9 +66,7 @@ export function OversiktTabell({ requirements, loading }: OversiktTabellProps) {
         <Table.Row>
           <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
           <Table.HeaderCell scope="col">Fødselsnummer</Table.HeaderCell>
-          <Table.HeaderCell scope="col">
-            <span className="sr-only">Handlinger</span>
-          </Table.HeaderCell>
+          <Table.HeaderCell scope="col">Handlinger</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -66,12 +79,14 @@ export function OversiktTabell({ requirements, loading }: OversiktTabellProps) {
 
           return (
             <Table.Row key={req.id}>
-              <Table.HeaderCell scope="row">{fullnavn}</Table.HeaderCell>
-              <Table.DataCell>
+              <Table.HeaderCell scope="row" style={{ whiteSpace: "nowrap" }}>
+                {fullnavn}
+              </Table.HeaderCell>
+              <Table.DataCell style={{ whiteSpace: "nowrap" }}>
                 {formatFnr(req.employeeIdentificationNumber)}
               </Table.DataCell>
               <Table.DataCell>
-                <HandlingCell requirement={req} />
+                <HandlingCell requirement={req} orgnr={orgnr} />
               </Table.DataCell>
             </Table.Row>
           );

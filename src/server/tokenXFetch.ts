@@ -83,6 +83,41 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   return parseAndValidateResponse(response, endpoint, responseDataSchema);
 }
 
+export async function tokenXFetchPost<S extends z.ZodType>({
+  targetApi,
+  endpoint,
+  requestBody,
+  responseDataSchema,
+  redirectAfterLoginUrl,
+}: {
+  targetApi: TokenXTargetApi;
+  endpoint: string;
+  requestBody: unknown;
+  responseDataSchema: S;
+  redirectAfterLoginUrl: string;
+}): Promise<z.infer<S>> {
+  const oboToken = await validateTokenAndGetTokenXOrRedirect(
+    redirectAfterLoginUrl,
+    targetApi,
+  );
+
+  const response = await fetch(endpoint, {
+    method: "POST",
+    body: JSON.stringify(requestBody),
+    headers: getBackendRequestHeaders(oboToken),
+  });
+
+  if (!response.ok) {
+    const frontendError = await toFrontendError(response);
+    logErrorMessageAndThrowError(
+      `Fetch failed: method=POST endpoint=${endpoint} status=${response.status} ${response.statusText}`,
+      frontendError,
+    );
+  }
+
+  return parseAndValidateResponse(response, endpoint, responseDataSchema);
+}
+
 export type TokenXFetchUpdateResult =
   | { success: true }
   | {

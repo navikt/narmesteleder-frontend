@@ -14,6 +14,7 @@ export const LederGroup = withFieldGroup({
               className="w-66"
               uiSelector={UiSelector.LederFodselsnummer}
               isRequired
+              trim
             />
           )}
         </group.AppField>

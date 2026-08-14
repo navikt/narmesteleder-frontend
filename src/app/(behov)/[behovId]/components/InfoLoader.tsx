@@ -10,15 +10,26 @@ import { ViewControl } from "./ViewControl";
 interface InfoLoaderProps {
   behovId: string;
   mockScenario?: MockScenario;
+  returnTo?: string;
 }
 
-export const InfoLoader = async ({ behovId, mockScenario }: InfoLoaderProps) =>
+export const InfoLoader = async ({
+  behovId,
+  mockScenario,
+  returnTo,
+}: InfoLoaderProps) =>
   fetchLederInfo(behovId, mockScenario)
     .then((lederInfo) => {
       if (!lederInfo) {
         return notFound();
       }
-      return <ViewControl lederInfo={lederInfo} behovId={behovId} />;
+      return (
+        <ViewControl
+          lederInfo={lederInfo}
+          behovId={behovId}
+          returnTo={returnTo}
+        />
+      );
     })
     .catch((error) => {
       if (isFrontendError(error)) {

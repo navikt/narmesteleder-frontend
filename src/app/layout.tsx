@@ -61,7 +61,7 @@ export default async function RootLayout({
         <Providers>
           <Page footer={<Decorator.Footer />}>
             <Decorator.Header />
-            <PageBlock as="main" width="md" gutters>
+            <PageBlock as="main" width="xl" gutters>
               {children}
             </PageBlock>
             <Decorator.Scripts loader={Script} />

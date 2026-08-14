@@ -23,13 +23,19 @@ export enum UiSelector {
   BehovForm = "behovForm",
   RegistreringInfoPanel = "registreringInfoPanel",
   // Oversikt
-  OversiktInfoboks = "oversiktInfoboks",
   OversiktTabell = "oversiktTabell",
   OversiktSok = "oversiktSok",
   OversiktFaner = "oversiktFaner",
   OversiktLasterSpinner = "oversiktLasterSpinner",
   OversiktFeilAlert = "oversiktFeilAlert",
   OversiktTomState = "oversiktTomState",
+  // Lederkobling-oversikt (fane 2 og 3)
+  LinemanagerTabell = "linemanagerTabell",
+  LinemanagerSok = "linemanagerSok",
+  LinemanagerLasterSpinner = "linemanagerLasterSpinner",
+  LinemanagerTomState = "linemanagerTomState",
+  LinemanagerFeilAlert = "linemanagerFeilAlert",
+  LinemanagerLastFlere = "linemanagerLastFlere",
   // Behov
   BehovLasterSpinner = "behovLasterSpinner",
 }
