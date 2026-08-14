@@ -68,7 +68,7 @@ test.describe("Oversikt-flow", () => {
     );
   });
 
-  test("aktiv sykmelding-fane viser linemanager-tabell med handlinger", async ({
+  test("aktiv sykmelding-fane viser linemanager-tabell med bryt kobling", async ({
     page,
   }) => {
     await page
@@ -82,11 +82,11 @@ test.describe("Oversikt-flow", () => {
     await expect(linemanagerTabell).toBeVisible();
 
     await expect(
-      page.getByRole("button", { name: /Endre eller bytt leder for/i }).first(),
-    ).toBeVisible();
-    await expect(
       page.getByRole("button", { name: /Bryt kobling til leder for/i }).first(),
     ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Endre eller bytt leder for/i }),
+    ).toHaveCount(0);
   });
 
   test("ikke aktiv sykmelding-fane viser bryt kobling, men ikke endre leder", async ({
@@ -103,38 +103,5 @@ test.describe("Oversikt-flow", () => {
     await expect(
       page.getByRole("button", { name: /Endre eller bytt leder for/i }),
     ).toHaveCount(0);
-  });
-
-  test("endre leder fra aktiv fane prefyller skjema og tilbakeknapp går til aktiv fane", async ({
-    page,
-  }) => {
-    await page
-      .getByRole("tab", { name: "Aktiv sykmelding", exact: true })
-      .click();
-    await expect(
-      getByUiSelector(page, UiSelector.LinemanagerTabell),
-    ).toBeVisible();
-
-    await page
-      .getByRole("button", { name: /Endre eller bytt leder for/i })
-      .first()
-      .click();
-
-    await expect(page).toHaveURL(/editId=/);
-    await expect(
-      getByUiSelector(page, UiSelector.SykmeldtFodselsnummer),
-    ).toHaveValue(/\d{11}/);
-    await expect(
-      page.getByRole("button", { name: "Tilbake til oversikt" }),
-    ).toBeVisible();
-
-    await page.getByRole("button", { name: "Tilbake til oversikt" }).click();
-
-    await expect(page).toHaveURL(
-      /\/oversikt\?orgnr=\d{9}&tab=aktiv-sykmelding/,
-    );
-    await expect(
-      page.getByRole("tab", { name: "Aktiv sykmelding", selected: true }),
-    ).toBeVisible();
   });
 });

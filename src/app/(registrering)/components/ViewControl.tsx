@@ -11,7 +11,6 @@ import { SubmitView } from "./SubmitView";
 type ViewControlProps = {
   organisasjonerResult: FetchOrganisasjonerResult;
   initialOrgnr?: string;
-  editId?: string;
   returnTo?: string;
 };
 
@@ -49,7 +48,6 @@ function BlockedOrganisasjonerAlert({
 export function ViewControl({
   organisasjonerResult,
   initialOrgnr,
-  editId,
   returnTo,
 }: ViewControlProps) {
   if (organisasjonerResult.status !== "available") {
@@ -77,7 +75,6 @@ export function ViewControl({
       <RegistreringViewControlProvider
         EditView={EditView}
         SubmitView={SubmitView}
-        editId={editId}
         returnTo={returnTo}
       />
     </VirksomhetProvider>

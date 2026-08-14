@@ -2,7 +2,7 @@
 
 import { Box, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   getOrgnummerValidationError,
   shouldMarkOrgnummerTouchedFromHeadingSelector,
@@ -15,7 +15,6 @@ import { useAppForm } from "@/shared/components/form/hooks/form";
 import { LederGroup } from "@/shared/components/form/LederGroup";
 import { SykmeldtGroup } from "@/shared/components/form/SykmeldtGroup";
 import { useOptionalVirksomhetContext } from "@/shared/state/virksomhetContext";
-import { consumeLinemanagerEditSession } from "@/utils/linemanagerEditSession";
 import { UiSelector } from "@/utils/uiSelectors";
 
 function VirksomhetValidationSync({
@@ -37,11 +36,9 @@ function VirksomhetValidationSync({
 }
 
 export default function RegistreringForm() {
-  const { submittedData, handleSuccess, editId } =
-    useRegistreringContextState();
+  const { submittedData, handleSuccess } = useRegistreringContextState();
   const { startOpprettNarmesteLeder, error } = useRegistreringAction();
   const headingVirksomhet = useOptionalVirksomhetContext();
-  const hasPrefilledFromSessionRef = useRef(false);
 
   const form = useAppForm({
     defaultValues: submittedData,
@@ -84,31 +81,6 @@ export default function RegistreringForm() {
     headingVirksomhet?.selectorInteractionCount,
     headingVirksomhet?.showSelector,
   ]);
-
-  useEffect(() => {
-    if (hasPrefilledFromSessionRef.current) {
-      return;
-    }
-
-    if (!editId) {
-      hasPrefilledFromSessionRef.current = true;
-      return;
-    }
-
-    const payload = consumeLinemanagerEditSession(editId);
-    if (!payload) {
-      hasPrefilledFromSessionRef.current = true;
-      return;
-    }
-
-    form.setFieldValue(
-      "sykmeldt.fodselsnummer",
-      payload.employeeIdentificationNumber,
-    );
-    form.setFieldValue("sykmeldt.etternavn", payload.lastName);
-
-    hasPrefilledFromSessionRef.current = true;
-  }, [form, editId]);
 
   return (
     <VStack gap="space-24">

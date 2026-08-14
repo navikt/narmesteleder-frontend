@@ -8,12 +8,10 @@ import {
   TextField,
   VStack,
 } from "@navikt/ds-react";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import type { LinemanagerSearchItem } from "@/schemas/lineManagerSearchSchema";
 import type { FetchLinemanagerSearchResult } from "@/server/fetchData/fetchLinemanagerSearch";
 import { useDebounce } from "@/shared/hooks/useDebounce";
-import { createLinemanagerEditSession } from "@/utils/linemanagerEditSession";
 import { UiSelector } from "@/utils/uiSelectors";
 import { revokeLinemanagerAction } from "../../actions/revokeLinemanager";
 import { searchLinemanagersAction } from "../../actions/searchLinemanagers";
@@ -38,7 +36,6 @@ export function LinemanagerContent({
   orgNumber,
   hasActiveSickLeave,
 }: LinemanagerContentProps) {
-  const router = useRouter();
   const [result, setResult] =
     useState<FetchLinemanagerSearchResult>(emptyResult);
   const [search, setSearch] = useState("");
@@ -137,34 +134,6 @@ export function LinemanagerContent({
     });
   }, []);
 
-  const handleEdit = useCallback(
-    (item: LinemanagerSearchItem) => {
-      const lastName = item.employee.name?.lastName;
-      if (!lastName) {
-        setRevokeError(
-          "Vi kan ikke endre leder fordi etternavn mangler for den ansatte.",
-        );
-        return;
-      }
-
-      const editId = createLinemanagerEditSession({
-        employeeIdentificationNumber:
-          item.employee.nationalIdentificationNumber,
-        lastName,
-        orgnr: item.orgNumber,
-      });
-
-      const returnTo = `/oversikt?orgnr=${item.orgNumber}&tab=aktiv-sykmelding`;
-      const params = new URLSearchParams({
-        orgnr: item.orgNumber,
-        editId,
-        returnTo,
-      });
-      router.push(`/?${params}`);
-    },
-    [router],
-  );
-
   return (
     <VStack gap="space-32">
       {result.status === "error" ? (
@@ -187,9 +156,9 @@ export function LinemanagerContent({
               : "Ansatte uten aktiv sykmelding"}
           </Heading>
           <BodyLong>
-            {hasActiveSickLeave
-              ? "Her ser du ansatte som har registrert nærmeste leder. Du kan endre eller bytte leder, og bryte koblingen mellom ansatt og leder, fra «Handlinger»."
-              : "Her ser du ansatte som har registrert nærmeste leder. Du kan bryte koblingen mellom ansatt og leder fra «Handlinger»."}
+            Her ser du ansatte som har registrert nærmeste leder. Du kan bryte
+            koblingen mellom ansatt og leder fra «Handlinger». Du kan deretter
+            registrere ny leder fra fanen «Mangler leder».
           </BodyLong>
 
           {revokeError && (
@@ -217,9 +186,7 @@ export function LinemanagerContent({
             linemanagers={result.linemanagers}
             loading={isPending}
             revokingKey={revokingKey}
-            showEditAction={hasActiveSickLeave}
             onRevoke={handleRevoke}
-            onEdit={handleEdit}
           />
 
           {result.meta?.hasMore && (

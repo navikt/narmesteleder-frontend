@@ -5,7 +5,6 @@ import {
 import { createContextState } from "@/shared/state/createContextState";
 
 type RegistreringContextProps = {
-  editId?: string;
   returnTo?: string;
 };
 

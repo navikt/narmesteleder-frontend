@@ -1,4 +1,4 @@
-import { LinkBrokenIcon, PencilIcon } from "@navikt/aksel-icons";
+import { LinkBrokenIcon } from "@navikt/aksel-icons";
 import {
   BodyShort,
   Button,
@@ -16,9 +16,7 @@ interface LinemanagerTabellProps {
   linemanagers: LinemanagerSearchItem[];
   loading?: boolean;
   revokingKey?: string | null;
-  showEditAction?: boolean;
   onRevoke: (item: LinemanagerSearchItem) => void;
-  onEdit: (item: LinemanagerSearchItem) => void;
 }
 
 function formatNavn(name: LinemanagerSearchItem["employee"]["name"]): string {
@@ -40,9 +38,7 @@ export function LinemanagerTabell({
   linemanagers,
   loading,
   revokingKey,
-  showEditAction = false,
   onRevoke,
-  onEdit,
 }: LinemanagerTabellProps) {
   if (loading) {
     return (
@@ -97,23 +93,6 @@ export function LinemanagerTabell({
             <Table.DataCell>{formatActiveFrom(item.activeFrom)}</Table.DataCell>
             <Table.DataCell style={{ whiteSpace: "nowrap" }}>
               <HStack gap="space-8">
-                {showEditAction && (
-                  <Tooltip content="Endre eller bytt leder">
-                    <Button
-                      variant="tertiary"
-                      size="small"
-                      icon={<PencilIcon aria-hidden />}
-                      disabled={!item.employee.name?.lastName}
-                      onClick={() => onEdit(item)}
-                      aria-label={`Endre eller bytt leder for ${formatNavn(item.employee.name)}`}
-                      title={
-                        item.employee.name?.lastName
-                          ? undefined
-                          : "Kan ikke endre leder fordi etternavn mangler for ansatt"
-                      }
-                    />
-                  </Tooltip>
-                )}
                 <Tooltip content="Bryt kobling til leder">
                   <Button
                     variant="tertiary-neutral"
