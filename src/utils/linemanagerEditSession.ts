@@ -5,7 +5,7 @@ export interface LinemanagerEditSessionPayload {
 }
 
 const LINEMANAGER_EDIT_SESSION_KEY_PREFIX = "linemanager-edit:";
-const TEN_MINUTES_IN_MS = 10 * 60 * 1000;
+const THIRTY_SECONDS_IN_MS = 30 * 1000;
 
 interface StoredLinemanagerEditSession extends LinemanagerEditSessionPayload {
   createdAtMs: number;
@@ -53,7 +53,7 @@ export function consumeLinemanagerEditSession(
       return null;
     }
 
-    if (Date.now() - parsed.createdAtMs > TEN_MINUTES_IN_MS) {
+    if (Date.now() - parsed.createdAtMs > THIRTY_SECONDS_IN_MS) {
       return null;
     }
 
