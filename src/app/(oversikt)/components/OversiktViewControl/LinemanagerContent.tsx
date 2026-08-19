@@ -157,8 +157,9 @@ export function LinemanagerContent({
           </Heading>
           <BodyLong>
             Her ser du ansatte som har registrert nærmeste leder. Du kan bryte
-            koblingen mellom ansatt og leder fra «Handlinger». Du kan deretter
-            registrere ny leder fra fanen «Mangler leder».
+            koblingen mellom ansatt og leder fra «Handlinger».
+            {hasActiveSickLeave &&
+              " Du kan deretter registrere ny leder fra fanen «Mangler leder»."}
           </BodyLong>
 
           {revokeError && (
