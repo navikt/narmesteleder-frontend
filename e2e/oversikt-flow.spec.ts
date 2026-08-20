@@ -87,6 +87,11 @@ test.describe("Oversikt-flow", () => {
     await expect(
       page.getByRole("button", { name: /Endre eller bytt leder for/i }),
     ).toHaveCount(0);
+    await expect(
+      page.getByText(
+        /Du kan deretter registrere ny leder fra fanen «Mangler leder»\./,
+      ),
+    ).toBeVisible();
   });
 
   test("ikke aktiv sykmelding-fane viser bryt kobling, men ikke endre leder", async ({
@@ -102,6 +107,11 @@ test.describe("Oversikt-flow", () => {
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: /Endre eller bytt leder for/i }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText(
+        /Du kan deretter registrere ny leder fra fanen «Mangler leder»\./,
+      ),
     ).toHaveCount(0);
   });
 });
