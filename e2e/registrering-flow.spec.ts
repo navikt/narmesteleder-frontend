@@ -64,6 +64,24 @@ test.describe("Registrering flow", () => {
       UiSelector.RegistreringSummary,
       UiSelector.ExitButton,
     ]);
+
+    await expect(
+      page.getByRole("heading", {
+        name: "Hvor enkelt var det å melde inn nærmesteleder?",
+      }),
+    ).toBeVisible();
+
+    await page.getByRole("radio", { name: "4. Bra" }).click();
+    const begrunnelse = page.getByRole("textbox", {
+      name: "Legg gjerne til en begrunnelse",
+    });
+    await expect(begrunnelse).toBeVisible();
+    await begrunnelse.fill("Det fungerte fint.");
+    await page.getByRole("button", { name: "Send", exact: true }).click();
+
+    await expect(
+      page.getByRole("heading", { name: "Takk for tilbakemeldingen!" }),
+    ).toBeVisible();
   });
 
   test("should keep selected virksomhet when returning to edit view", async ({

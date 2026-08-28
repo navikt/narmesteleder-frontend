@@ -4,6 +4,7 @@ allowBuilds:
   sharp: true
 minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
+  - '@navikt/lumi-survey'
   - '@navikt/virksomhetsvelger'
 
 blockExoticSubdeps: true

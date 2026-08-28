@@ -1,7 +1,7 @@
 import {
-  type LumiSurveyConfig,
   LumiSurveyDock,
   type LumiSurveyTransport,
+  type SurveyDocumentV1,
 } from "@navikt/lumi-survey";
 import { opprettSurveyFeedback } from "@/server/actions/opprettSurveyFeedback";
 
@@ -13,7 +13,7 @@ const transport: LumiSurveyTransport = {
 
 interface Props {
   feedbackId: string;
-  survey: LumiSurveyConfig;
+  survey: SurveyDocumentV1;
 }
 
 export const Lumi = ({ feedbackId, survey }: Props) => (
