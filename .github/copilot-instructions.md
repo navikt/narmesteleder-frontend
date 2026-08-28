@@ -32,7 +32,7 @@ Single-test commands:
 - Auth path: IdPorten token validation (`src/auth/validateIdPortenToken.ts`) -> TokenX exchange (`src/auth/tokenX.ts`) -> backend call.
 - Environment behavior split:
   - `local`/`demo` uses mocks (`src/mocks/*`) and supports `mockScenario` in `[behovId]` route.
-  - other envs call real backend/Lumi endpoints from `getServerEnv()`.
+  - other envs call real backend endpoints from `getServerEnv()`.
 - Internal routes:
   - health: `/api/internal/isAlive`, `/api/internal/isReady`
   - frontend logging ingestion: `/api/logger` via `@navikt/next-logger/app-dir`.
