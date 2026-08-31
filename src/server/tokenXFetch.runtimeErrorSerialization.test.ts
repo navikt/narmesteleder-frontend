@@ -256,6 +256,24 @@ describe("serialized TokenX GET runtime errors", () => {
     });
   });
 
+  it("eier teknisk tokenvalideringsfeil i stedet for å redirecte", async () => {
+    const tokenValidationError = new Error(ERROR_DETAIL);
+    tokenValidationError.name = "IdPortenTokenValidationError";
+    validateTokenAndGetTokenXOrRedirectMock.mockRejectedValue(
+      tokenValidationError,
+    );
+
+    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_BEHOV,
+      errorCode: RuntimeErrorCode.TOKEN_VALIDATION_FAILED,
+      message: "Kunne ikke hente behovet for nærmeste leder",
+    });
+  });
+
   it("logger nettverksfeil uten error.message eller oppdiktet HTTP-status", async () => {
     fetchMock.mockRejectedValue(new Error(ERROR_DETAIL));
 

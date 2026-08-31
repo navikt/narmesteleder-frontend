@@ -1,7 +1,10 @@
 import { requestOboToken } from "@navikt/oasis";
 import { cache } from "react";
 import { redirectToLogin } from "@/server/auth/redirectToLogin";
-import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
+import {
+  TokenValidationFailureReason,
+  validateIdPortenToken,
+} from "@/server/auth/validateIdPortenToken";
 import {
   getClientIdForTokenXTargetApi,
   type TokenXTargetApi,
@@ -31,15 +34,27 @@ const validateAndGetIdPortenTokenWithoutLogging = async (): Promise<string> => {
 
 const validateAndGetIdPortenTokenOrRedirectToLogin = async (
   redirectAfterLoginUrl: string,
-) => {
+): Promise<string> => {
   const validationResult = await validateIdPortenToken();
 
-  if (!validationResult.success) {
-    return redirectToLogin(redirectAfterLoginUrl);
+  if (validationResult.success) {
+    return validationResult.token;
   }
 
-  return validationResult.token;
+  switch (validationResult.reason) {
+    case TokenValidationFailureReason.MISSING_TOKEN:
+    case TokenValidationFailureReason.INVALID_TOKEN:
+      return redirectToLogin(redirectAfterLoginUrl);
+    case TokenValidationFailureReason.VALIDATION_ERROR:
+      throw new IdPortenTokenValidationError();
+    default:
+      return assertNeverTokenValidationReason(validationResult.reason);
+  }
 };
+
+function assertNeverTokenValidationReason(_reason: never): never {
+  throw new IdPortenTokenValidationError();
+}
 
 export class TokenXExchangeError extends Error {
   constructor() {

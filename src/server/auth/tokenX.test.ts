@@ -52,6 +52,11 @@ const failIdPortenValidation = {
   reason: TokenValidationFailureReason.INVALID_TOKEN,
 };
 
+const technicalIdPortenValidationFailure = {
+  success: false as const,
+  reason: TokenValidationFailureReason.VALIDATION_ERROR,
+};
+
 const validateIdPortenTokenMock = vi.mocked(validateIdPortenToken);
 const requestOboTokenMock = vi.mocked(requestOboToken);
 const redirectMock = vi.mocked(redirect);
@@ -152,6 +157,25 @@ describe("validateTokenAndGetTokenXOrRedirectWithoutLogging", () => {
     expect(redirectMock).toHaveBeenCalledWith(
       "/oauth2/login?redirect=%2Fdummy-redirect",
     );
+    expect(requestOboTokenMock).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
+  });
+
+  it("throws a typed technical validation failure instead of redirecting", async () => {
+    validateIdPortenTokenMock.mockResolvedValue(
+      technicalIdPortenValidationFailure,
+    );
+
+    const rejection = await validateTokenAndGetTokenXOrRedirectWithoutLogging(
+      "/dummy-redirect",
+      TokenXTargetApi.NARMESTELEDER_BACKEND,
+    ).catch((error: unknown) => error);
+
+    expect(rejection).toBeInstanceOf(IdPortenTokenValidationError);
+    expect((rejection as Error).message).toBe(
+      "Kunne ikke validere ID-porten-token",
+    );
+    expect(redirectMock).not.toHaveBeenCalled();
     expect(requestOboTokenMock).not.toHaveBeenCalled();
     expect(logger.error).not.toHaveBeenCalled();
   });
