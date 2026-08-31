@@ -89,9 +89,7 @@ describe("toFrontendErrorResponse", () => {
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
-    expect(loggerErrorMock).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to parse backend error response as JSON"),
-    );
+    expect(loggerErrorMock).not.toHaveBeenCalled();
   });
 
   it("falls back when response body cannot be read", async () => {
@@ -106,8 +104,6 @@ describe("toFrontendErrorResponse", () => {
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
-    expect(loggerErrorMock).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to parse backend error response as JSON"),
-    );
+    expect(loggerErrorMock).not.toHaveBeenCalled();
   });
 });
