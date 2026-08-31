@@ -78,6 +78,30 @@ export type FrontendErrorResponse = {
   errorDetail: ErrorDetail;
 };
 
+const expectedStatusByBackendErrorType = {
+  [BackendErrorType.MISSING_ORG_ACCESS]: [403],
+  [BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS]: [403],
+  [BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH]: [
+    400,
+  ],
+  [BackendErrorType.EMPLOYEE_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH]: [
+    400,
+  ],
+  [BackendErrorType.NO_ACTIVE_SICK_LEAVE]: [400],
+  [BackendErrorType.EMPLOYEE_MISSING_EMPLOYMENT_IN_ORG]: [400],
+  [BackendErrorType.LINEMANAGER_MISSING_EMPLOYMENT_IN_ORG]: [400],
+} as const satisfies Record<BackendErrorType, readonly number[]>;
+
+/** Kjente type- og statuskombinasjoner er brukerutfall, ikke driftsfeil. */
+export const isKnownDomainRejection = (
+  status: number,
+  type: BackendErrorType | undefined,
+): boolean =>
+  type !== undefined &&
+  (expectedStatusByBackendErrorType[type] as readonly number[]).includes(
+    status,
+  );
+
 export type FrontendError = Error & { errorDetail: ErrorDetail };
 
 export const createFrontendError = (

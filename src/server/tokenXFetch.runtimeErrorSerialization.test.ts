@@ -1,6 +1,26 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  type Context,
+  type ContextManager,
+  context,
+  ROOT_CONTEXT,
+  TraceFlags,
+  trace,
+} from "@opentelemetry/api";
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import { z } from "zod";
 import { TokenXTargetApi } from "@/server/helpers";
+import {
+  BackendErrorType,
+  errorTypeToDetail,
+} from "@/server/narmesteLederErrorUtils";
 import {
   RuntimeErrorCode,
   RuntimeErrorEvent,
@@ -35,11 +55,13 @@ vi.mock("@navikt/next-logger", async (importOriginal) => {
 });
 
 vi.mock("@/server/auth/tokenX", () => ({
+  isTokenXExchangeError: (error: unknown) =>
+    error instanceof Error && error.name === "TokenXExchangeError",
   validateTokenAndGetTokenX: vi.fn(),
-  validateTokenAndGetTokenXOrRedirect: validateTokenAndGetTokenXOrRedirectMock,
+  validateTokenAndGetTokenXOrRedirect: vi.fn(),
+  validateTokenAndGetTokenXOrRedirectWithoutLogging:
+    validateTokenAndGetTokenXOrRedirectMock,
 }));
-
-vi.stubGlobal("fetch", fetchMock);
 
 const FNR = "12345678901";
 const ORGNUMMER = "999888777";
@@ -52,18 +74,73 @@ const RESPONSE_BODY_CANARY = `body-${FNR}-${REQUEST_ID}-${BEHOV_ID}`;
 
 const successSchema = z.object({ ok: z.literal(true) });
 
+let activeContext: Context = ROOT_CONTEXT;
+
+const synchronousContextManager: ContextManager = {
+  active: () => activeContext,
+  bind: (_context, target) => target,
+  disable() {
+    activeContext = ROOT_CONTEXT;
+    return this;
+  },
+  enable() {
+    return this;
+  },
+  with(contextToActivate, fn, thisArg, ...args) {
+    const previousContext = activeContext;
+    activeContext = contextToActivate;
+    try {
+      return fn.call(thisArg, ...args);
+    } finally {
+      activeContext = previousContext;
+    }
+  },
+};
+
+async function withActiveTrace<T>(
+  traceId: string,
+  fn: () => T | Promise<T>,
+): Promise<T> {
+  const previousContext = activeContext;
+  const span = trace.wrapSpanContext({
+    traceId,
+    spanId: "1234567890abcdef",
+    traceFlags: TraceFlags.SAMPLED,
+    isRemote: false,
+  });
+  activeContext = trace.setSpan(ROOT_CONTEXT, span);
+
+  try {
+    return await fn();
+  } finally {
+    activeContext = previousContext;
+  }
+}
+
+beforeAll(() => {
+  context.disable();
+  context.setGlobalContextManager(synchronousContextManager.enable());
+});
+
 beforeEach(() => {
+  activeContext = ROOT_CONTEXT;
   vi.clearAllMocks();
   serializedLogLines.length = 0;
   validateTokenAndGetTokenXOrRedirectMock.mockResolvedValue(ACCESS_TOKEN);
+  vi.stubGlobal("fetch", fetchMock);
+});
+
+afterAll(() => {
+  context.disable();
+  vi.unstubAllGlobals();
 });
 
 describe("serialized TokenX GET runtime errors", () => {
-  it("logger én klassifisert 403 uten endpoint, behov-ID eller backend-body", async () => {
+  it("logger ikke kjent domeneavvisning som driftsfeil", async () => {
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
-          type: "MISSING_ORG_ACCESS",
+          type: BackendErrorType.MISSING_ORG_ACCESS,
           message: RESPONSE_BODY_CANARY,
           path: ENDPOINT,
         }),
@@ -71,18 +148,22 @@ describe("serialized TokenX GET runtime errors", () => {
       ),
     );
 
-    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV);
-
-    expectCanonicalLog({
-      event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
+    const rejection = await tokenXFetchGet({
+      targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
       operation: RuntimeErrorOperation.HENT_BEHOV,
-      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
-      message: "Kunne ikke hente behovet for nærmeste leder",
-      upstreamStatus: 403,
+      endpoint: ENDPOINT,
+      responseDataSchema: successSchema,
+      redirectAfterLoginUrl: `/arbeidsgiver/${BEHOV_ID}`,
+    }).catch((error: unknown) => error);
+
+    expect(rejection).toMatchObject({
+      name: "FrontendError",
+      errorDetail: errorTypeToDetail[BackendErrorType.MISSING_ORG_ACCESS],
     });
+    expect(serializedLogLines).toHaveLength(0);
   });
 
-  it("logger én klassifisert HTTP-feil selv når backend-body ikke er JSON", async () => {
+  it("logger én klassifisert ukjent 403 selv når backend-body ikke er JSON", async () => {
     fetchMock.mockResolvedValue(
       new Response(RESPONSE_BODY_CANARY, {
         status: 403,
@@ -98,6 +179,48 @@ describe("serialized TokenX GET runtime errors", () => {
       errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
       message: "Kunne ikke hente listen over behov for nærmeste leder",
       upstreamStatus: 403,
+    });
+  });
+
+  it("logger 5xx med trace_id fra aktiv OpenTelemetry-span", async () => {
+    const traceId = "1234567890abcdef1234567890abcdef";
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          type: BackendErrorType.MISSING_ORG_ACCESS,
+          message: RESPONSE_BODY_CANARY,
+        }),
+        { status: 503, statusText: `Unavailable ${BEHOV_ID}` },
+      ),
+    );
+
+    await withActiveTrace(traceId, () =>
+      expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV),
+    );
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_BEHOV,
+      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+      message: "Kunne ikke hente behovet for nærmeste leder",
+      upstreamStatus: 503,
+      traceId,
+    });
+  });
+
+  it("eier TokenX exchange-feilen uten å logge underliggende feil", async () => {
+    const tokenXError = new Error(ERROR_DETAIL);
+    tokenXError.name = "TokenXExchangeError";
+    validateTokenAndGetTokenXOrRedirectMock.mockRejectedValue(tokenXError);
+
+    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOVSLISTE);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.BEHOVSLISTE_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
+      errorCode: RuntimeErrorCode.TOKEN_EXCHANGE_FAILED,
+      message: "Kunne ikke hente listen over behov for nærmeste leder",
     });
   });
 
@@ -173,12 +296,14 @@ function expectCanonicalLog({
   errorCode,
   message,
   upstreamStatus,
+  traceId,
 }: {
   event: RuntimeErrorEvent;
   operation: RuntimeErrorOperation;
   errorCode: RuntimeErrorCode;
   message: string;
   upstreamStatus?: number;
+  traceId?: string;
 }): void {
   expect(serializedLogLines).toHaveLength(1);
 
@@ -197,6 +322,13 @@ function expectCanonicalLog({
     expect(parsedLog).not.toHaveProperty("upstream_status");
   } else {
     expect(parsedLog).toHaveProperty("upstream_status", upstreamStatus);
+  }
+
+  if (traceId === undefined) {
+    expect(parsedLog).not.toHaveProperty("trace_id");
+  } else {
+    expect(parsedLog).toHaveProperty("trace_id", traceId);
+    expect(traceId).toMatch(/^[0-9a-f]{32}$/);
   }
 
   for (const field of [

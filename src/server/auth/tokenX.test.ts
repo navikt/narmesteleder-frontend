@@ -3,8 +3,10 @@ import { requestOboToken } from "@navikt/oasis";
 import { redirect } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  TokenXExchangeError,
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
+  validateTokenAndGetTokenXOrRedirectWithoutLogging,
 } from "@/server/auth/tokenX";
 import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
 import { TokenXTargetApi } from "@/server/helpers";
@@ -89,11 +91,12 @@ describe("validateTokenAndGetTokenX", () => {
 
     await expect(
       validateTokenAndGetTokenX(TokenXTargetApi.NARMESTELEDER_BACKEND),
-    ).rejects.toThrow();
+    ).rejects.toBeInstanceOf(TokenXExchangeError);
 
     expect(logger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to exchange idporten token"),
+      "Failed to exchange idporten token",
     );
+    expect(logger.error).toHaveBeenCalledOnce();
   });
 });
 
@@ -142,10 +145,52 @@ describe("validateTokenAndGetTokenXOrRedirect", () => {
         "/dummy-redirect",
         TokenXTargetApi.NARMESTELEDER_BACKEND,
       ),
-    ).rejects.toThrow();
+    ).rejects.toBeInstanceOf(TokenXExchangeError);
 
     expect(logger.error).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to exchange idporten token"),
+      "Failed to exchange idporten token",
     );
+    expect(logger.error).toHaveBeenCalledOnce();
+  });
+});
+
+describe("validateTokenAndGetTokenXOrRedirectWithoutLogging", () => {
+  it("throws typed exchange failure without logging", async () => {
+    validateIdPortenTokenMock.mockResolvedValue(successIdPortenValidation);
+    requestOboTokenMock.mockRejectedValue(
+      new Error("request failure with private details"),
+    );
+
+    const rejection = await validateTokenAndGetTokenXOrRedirectWithoutLogging(
+      "/dummy-redirect",
+      TokenXTargetApi.NARMESTELEDER_BACKEND,
+    ).catch((error: unknown) => error);
+
+    expect(rejection).toBeInstanceOf(TokenXExchangeError);
+    expect((rejection as Error).message).toBe("Kunne ikke hente TokenX-token");
+    expect((rejection as Error).message).not.toContain("private details");
+
+    expect(logger.error).not.toHaveBeenCalled();
+  });
+
+  it("leaves redirect behavior untouched", async () => {
+    const redirectSentinel = new Error("NEXT_REDIRECT_SENTINEL");
+    validateIdPortenTokenMock.mockResolvedValue(failIdPortenValidation);
+    redirectMock.mockImplementation(() => {
+      throw redirectSentinel;
+    });
+
+    await expect(
+      validateTokenAndGetTokenXOrRedirectWithoutLogging(
+        "/dummy-redirect",
+        TokenXTargetApi.NARMESTELEDER_BACKEND,
+      ),
+    ).rejects.toBe(redirectSentinel);
+
+    expect(redirectMock).toHaveBeenCalledWith(
+      "/oauth2/login?redirect=%2Fdummy-redirect",
+    );
+    expect(requestOboTokenMock).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 });

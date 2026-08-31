@@ -2,14 +2,17 @@ import "server-only";
 import { logger } from "@navikt/next-logger";
 import z from "zod";
 import {
+  isTokenXExchangeError,
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
+  validateTokenAndGetTokenXOrRedirectWithoutLogging,
 } from "@/server/auth/tokenX";
 import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import { getBackendRequestHeaders, type TokenXTargetApi } from "./helpers";
 import {
   createFrontendError,
   type ErrorDetail,
+  isKnownDomainRejection,
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   toFrontendError,
   toFrontendErrorResponse,
@@ -109,10 +112,19 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   responseDataSchema: S;
   redirectAfterLoginUrl: string;
 }): Promise<z.infer<S>> {
-  const oboToken = await validateTokenAndGetTokenXOrRedirect(
-    redirectAfterLoginUrl,
-    targetApi,
-  );
+  let oboToken: string;
+  try {
+    oboToken = await validateTokenAndGetTokenXOrRedirectWithoutLogging(
+      redirectAfterLoginUrl,
+      targetApi,
+    );
+  } catch (error) {
+    if (!isTokenXExchangeError(error)) {
+      throw error;
+    }
+    logGetFailure(operation, RuntimeErrorCode.TOKEN_EXCHANGE_FAILED);
+    throw createSafeFrontendError();
+  }
 
   let response: Response;
   try {
@@ -125,13 +137,15 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   }
 
   if (!response.ok) {
-    const frontendError = await toFrontendError(response);
-    logGetFailure(
-      operation,
-      RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
-      response.status,
-    );
-    throw frontendError;
+    const frontendErrorResponse = await toFrontendErrorResponse(response);
+    if (!isKnownDomainRejection(response.status, frontendErrorResponse.type)) {
+      logGetFailure(
+        operation,
+        RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+        response.status,
+      );
+    }
+    throw createFrontendError(frontendErrorResponse.errorDetail);
   }
 
   return parseAndValidateGetResponse(response, responseDataSchema, operation);
