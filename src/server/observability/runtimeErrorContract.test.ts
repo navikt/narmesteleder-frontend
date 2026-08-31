@@ -24,6 +24,31 @@ const expectedOperations = [
     event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
     message: "Kunne ikke hente behovet for nærmeste leder",
   },
+  {
+    operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+    event: RuntimeErrorEvent.NARMESTE_LEDERE_SEARCH_FAILED,
+    message: "Kunne ikke søke etter nærmeste ledere",
+  },
+  {
+    operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+    event: RuntimeErrorEvent.NARMESTE_LEDER_CREATE_FAILED,
+    message: "Kunne ikke opprette nærmeste leder",
+  },
+  {
+    operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+    event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
+    message: "Kunne ikke oppdatere nærmeste leder",
+  },
+  {
+    operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+    event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
+    message: "Kunne ikke fjerne nærmeste leder",
+  },
+  {
+    operation: RuntimeErrorOperation.VIS_GENERELL_FEILSIDE,
+    event: RuntimeErrorEvent.FRONTEND_RENDER_FAILED,
+    message: "Viser generell feilside etter en uventet feil",
+  },
 ] as const;
 
 describe("runtime error contract", () => {

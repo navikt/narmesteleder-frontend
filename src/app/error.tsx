@@ -10,8 +10,8 @@ import {
   Page,
   VStack,
 } from "@navikt/ds-react";
-import { logger } from "@navikt/next-logger";
 import { type ReactElement, useEffect } from "react";
+import { logUnhandledFrontendError } from "@/app/logUnhandledFrontendError";
 import { ButtonMinSideArbeidsgiver } from "@/shared/components/ButtonMinSideArbeidsgiver";
 
 const CONTACT_NAV_URL = "https://www.nav.no/kontaktoss#skriv-til-oss";
@@ -20,10 +20,10 @@ type Props = {
   error: Error;
 };
 
-export default function ErrorPage({ error }: Props): ReactElement {
+export default function ErrorPage(_props: Props): ReactElement {
   useEffect(() => {
-    logger.error(`Displaying 500-page, errormessage: ${error.message}`);
-  }, [error.message]);
+    logUnhandledFrontendError();
+  }, []);
 
   return (
     <Page.Block as="main" width="xl" gutters>

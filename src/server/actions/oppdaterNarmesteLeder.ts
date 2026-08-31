@@ -1,7 +1,5 @@
 "use server";
 
-import { logger } from "@navikt/next-logger";
-import { z } from "zod";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
@@ -10,6 +8,11 @@ import {
 } from "@/schemas/nærmestelederFormSchema";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import {
+  RuntimeErrorCode,
+  RuntimeErrorOperation,
+} from "@/server/observability/runtimeErrorContract";
+import { logRuntimeError } from "@/server/observability/runtimeErrorLogger";
 import {
   type TokenXFetchUpdateResult,
   tokenXFetchUpdate,
@@ -27,9 +30,9 @@ export const oppdaterNarmesteLeder = async (
   const validatedForm = narmesteLederFormSchema.safeParse(narmesteLeder);
 
   if (!validatedRequirementId.success) {
-    logger.error(
-      { validationIssues: z.prettifyError(validatedRequirementId.error) },
-      "[ServerAction][Validation] invalid requirementId in oppdaterNarmesteLeder",
+    logRuntimeError(
+      RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      RuntimeErrorCode.INVALID_INPUT,
     );
     return {
       success: false,
@@ -38,9 +41,9 @@ export const oppdaterNarmesteLeder = async (
   }
 
   if (!validatedForm.success) {
-    logger.error(
-      { validationIssues: z.prettifyError(validatedForm.error) },
-      "[ServerAction][Validation] invalid narmesteLederForm in oppdaterNarmesteLeder",
+    logRuntimeError(
+      RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      RuntimeErrorCode.INVALID_INPUT,
     );
     return {
       success: false,
@@ -49,6 +52,7 @@ export const oppdaterNarmesteLeder = async (
   }
   return await tokenXFetchUpdate({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+    operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
     endpoint: getLineManagerPutPath(validatedRequirementId.data),
     requestBody: toManagerRequest(validatedForm.data),
     method: "PUT",

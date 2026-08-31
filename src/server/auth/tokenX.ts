@@ -2,18 +2,28 @@ import { requestOboToken } from "@navikt/oasis";
 import { cache } from "react";
 import { redirectToLogin } from "@/server/auth/redirectToLogin";
 import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
-import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import {
   getClientIdForTokenXTargetApi,
   type TokenXTargetApi,
 } from "../helpers";
 
-const validateAndGetIdPortenToken = async () => {
+export class IdPortenTokenValidationError extends Error {
+  constructor() {
+    super("Kunne ikke validere ID-porten-token");
+    this.name = "IdPortenTokenValidationError";
+  }
+}
+
+export const isIdPortenTokenValidationError = (
+  error: unknown,
+): error is IdPortenTokenValidationError =>
+  error instanceof IdPortenTokenValidationError;
+
+const validateAndGetIdPortenTokenWithoutLogging = async (): Promise<string> => {
   const validationResult = await validateIdPortenToken();
 
   if (!validationResult.success) {
-    const errorMessage = `IdPorten token validation failed: ${validationResult.reason}`;
-    logErrorMessageAndThrowError(errorMessage);
+    throw new IdPortenTokenValidationError();
   }
 
   return validationResult.token;
@@ -62,25 +72,11 @@ const exchangeIdPortenTokenForTokenXOboToken = cache(
   },
 );
 
-const logAndRethrowTokenXExchangeError = (error: unknown): never => {
-  if (!isTokenXExchangeError(error)) {
-    throw error;
-  }
-  logErrorMessageAndThrowError("Failed to exchange idporten token", error);
-};
-
-export const validateTokenAndGetTokenX = async (
+export const validateTokenAndGetTokenXWithoutLogging = async (
   targetApi: TokenXTargetApi,
 ): Promise<string> => {
-  const idPortenToken = await validateAndGetIdPortenToken();
-  try {
-    return await exchangeIdPortenTokenForTokenXOboToken(
-      idPortenToken,
-      targetApi,
-    );
-  } catch (error) {
-    return logAndRethrowTokenXExchangeError(error);
-  }
+  const idPortenToken = await validateAndGetIdPortenTokenWithoutLogging();
+  return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
 };
 
 export const validateTokenAndGetTokenXOrRedirectWithoutLogging = async (
@@ -92,18 +88,4 @@ export const validateTokenAndGetTokenXOrRedirectWithoutLogging = async (
   );
 
   return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
-};
-
-export const validateTokenAndGetTokenXOrRedirect = async (
-  redirectAfterLoginUrl: string,
-  targetApi: TokenXTargetApi,
-): Promise<string> => {
-  try {
-    return await validateTokenAndGetTokenXOrRedirectWithoutLogging(
-      redirectAfterLoginUrl,
-      targetApi,
-    );
-  } catch (error) {
-    return logAndRethrowTokenXExchangeError(error);
-  }
 };
