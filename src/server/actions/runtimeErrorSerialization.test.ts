@@ -42,7 +42,7 @@ beforeEach(() => {
   serializedLogLines.length = 0;
 });
 
-describe("serialized server-action validation errors", () => {
+describe("serialized server-action validation warnings", () => {
   it("logger ugyldig opprett-payload uten Zod- eller persondetaljer", async () => {
     await expect(
       opprettNarmesteLeder({
@@ -100,7 +100,7 @@ function expectCanonicalActionLog({
   const record = JSON.parse(line) as Record<string, unknown>;
 
   expect(record).toMatchObject({
-    level: "error",
+    level: "warn",
     event_type: event,
     operation,
     error_code: RuntimeErrorCode.INVALID_INPUT,

@@ -44,11 +44,6 @@ const expectedOperations = [
     event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
     message: "Kunne ikke fjerne nærmeste leder",
   },
-  {
-    operation: RuntimeErrorOperation.VIS_GENERELL_FEILSIDE,
-    event: RuntimeErrorEvent.FRONTEND_RENDER_FAILED,
-    message: "Viser generell feilside etter en uventet feil",
-  },
 ] as const;
 
 describe("runtime error contract", () => {
@@ -99,4 +94,17 @@ describe("runtime error contract", () => {
       upstream_status: 403,
     });
   });
+
+  it.each([99, 600, 200.5, Number.NaN, Number.POSITIVE_INFINITY])(
+    "utelater ugyldig upstream_status %s",
+    (upstreamStatus) => {
+      expect(
+        runtimeErrorContext(
+          RuntimeErrorOperation.HENT_BEHOV,
+          RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+          upstreamStatus,
+        ),
+      ).not.toHaveProperty("upstream_status");
+    },
+  );
 });

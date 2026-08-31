@@ -10,7 +10,6 @@ export const RuntimeErrorOperation = {
   OPPRETT_NARMESTE_LEDER: "opprett_narmeste_leder",
   OPPDATER_NARMESTE_LEDER: "oppdater_narmeste_leder",
   FJERN_NARMESTE_LEDER: "fjern_narmeste_leder",
-  VIS_GENERELL_FEILSIDE: "vis_generell_feilside",
 } as const;
 
 export type RuntimeErrorOperation =
@@ -24,7 +23,6 @@ export const RuntimeErrorEvent = {
   NARMESTE_LEDER_CREATE_FAILED: "narmeste_leder_create_failed",
   NARMESTE_LEDER_UPDATE_FAILED: "narmeste_leder_update_failed",
   NARMESTE_LEDER_REVOKE_FAILED: "narmeste_leder_revoke_failed",
-  FRONTEND_RENDER_FAILED: "frontend_render_failed",
 } as const;
 
 export type RuntimeErrorEvent =
@@ -38,7 +36,6 @@ export const RuntimeErrorCode = {
   TOKEN_EXCHANGE_FAILED: "TOKEN_EXCHANGE_FAILED",
   INVALID_INPUT: "INVALID_INPUT",
   TOKEN_VALIDATION_FAILED: "TOKEN_VALIDATION_FAILED",
-  UNHANDLED_ERROR: "UNHANDLED_ERROR",
 } as const;
 
 export type RuntimeErrorCode =
@@ -58,8 +55,6 @@ const runtimeErrorEventByOperation = {
     RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
   [RuntimeErrorOperation.FJERN_NARMESTE_LEDER]:
     RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
-  [RuntimeErrorOperation.VIS_GENERELL_FEILSIDE]:
-    RuntimeErrorEvent.FRONTEND_RENDER_FAILED,
 } satisfies Record<RuntimeErrorOperation, RuntimeErrorEvent>;
 
 const runtimeErrorMessageByOperation = {
@@ -77,8 +72,6 @@ const runtimeErrorMessageByOperation = {
     "Kunne ikke oppdatere nærmeste leder",
   [RuntimeErrorOperation.FJERN_NARMESTE_LEDER]:
     "Kunne ikke fjerne nærmeste leder",
-  [RuntimeErrorOperation.VIS_GENERELL_FEILSIDE]:
-    "Viser generell feilside etter en uventet feil",
 } satisfies Record<RuntimeErrorOperation, string>;
 
 export function getRuntimeErrorEvent(
@@ -104,7 +97,13 @@ export function runtimeErrorContext(
     error_code: errorCode,
   } as const;
 
-  return upstreamStatus === undefined
-    ? context
-    : { ...context, upstream_status: upstreamStatus };
+  const hasValidUpstreamStatus =
+    upstreamStatus !== undefined &&
+    Number.isInteger(upstreamStatus) &&
+    upstreamStatus >= 100 &&
+    upstreamStatus <= 599;
+
+  return hasValidUpstreamStatus
+    ? { ...context, upstream_status: upstreamStatus }
+    : context;
 }

@@ -1,28 +1,54 @@
-import { logger } from "@navikt/next-logger";
 import { getToken, validateIdportenToken } from "@navikt/oasis";
 import { headers } from "next/headers";
 import { cache } from "react";
 
 export type TokenValidationResult =
   | { success: true; token: string }
-  | { success: false; reason: string };
+  | { success: false; reason: TokenValidationFailureReason };
+
+export const TokenValidationFailureReason = {
+  MISSING_TOKEN: "MISSING_TOKEN",
+  INVALID_TOKEN: "INVALID_TOKEN",
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+} as const;
+
+export type TokenValidationFailureReason =
+  (typeof TokenValidationFailureReason)[keyof typeof TokenValidationFailureReason];
 
 export const validateIdPortenToken = cache(
   async (): Promise<TokenValidationResult> => {
-    const headersList = await headers();
-    const idportenToken = getToken(headersList);
-
-    if (!idportenToken) {
-      const error = "Missing idporten token";
-      logger.warn(error);
-      return { success: false, reason: error };
+    let idportenToken: string | null | undefined;
+    try {
+      const headersList = await headers();
+      idportenToken = getToken(headersList);
+    } catch {
+      return {
+        success: false,
+        reason: TokenValidationFailureReason.VALIDATION_ERROR,
+      };
     }
 
-    const validationResult = await validateIdportenToken(idportenToken);
+    if (!idportenToken) {
+      return {
+        success: false,
+        reason: TokenValidationFailureReason.MISSING_TOKEN,
+      };
+    }
+
+    let validationResult: Awaited<ReturnType<typeof validateIdportenToken>>;
+    try {
+      validationResult = await validateIdportenToken(idportenToken);
+    } catch {
+      return {
+        success: false,
+        reason: TokenValidationFailureReason.VALIDATION_ERROR,
+      };
+    }
     if (!validationResult.ok) {
-      const error = `Invalid JWT token found, cause: ${validationResult.errorType} ${validationResult.error}`;
-      logger.warn(error);
-      return { success: false, reason: error };
+      return {
+        success: false,
+        reason: TokenValidationFailureReason.INVALID_TOKEN,
+      };
     }
 
     return { success: true, token: idportenToken };

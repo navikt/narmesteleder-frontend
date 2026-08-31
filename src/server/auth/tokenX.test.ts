@@ -8,7 +8,10 @@ import {
   validateTokenAndGetTokenXOrRedirectWithoutLogging,
   validateTokenAndGetTokenXWithoutLogging,
 } from "@/server/auth/tokenX";
-import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
+import {
+  TokenValidationFailureReason,
+  validateIdPortenToken,
+} from "@/server/auth/validateIdPortenToken";
 import { TokenXTargetApi } from "@/server/helpers";
 
 vi.mock("@navikt/next-logger", () => ({
@@ -24,7 +27,10 @@ vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
 }));
 
-vi.mock("@/server/auth/validateIdPortenToken", () => ({
+vi.mock("@/server/auth/validateIdPortenToken", async (importOriginal) => ({
+  ...(await importOriginal<
+    typeof import("@/server/auth/validateIdPortenToken")
+  >()),
   validateIdPortenToken: vi.fn(),
 }));
 
@@ -43,7 +49,7 @@ const successIdPortenValidation = {
 
 const failIdPortenValidation = {
   success: false as const,
-  reason: PRIVATE_DETAIL,
+  reason: TokenValidationFailureReason.INVALID_TOKEN,
 };
 
 const validateIdPortenTokenMock = vi.mocked(validateIdPortenToken);

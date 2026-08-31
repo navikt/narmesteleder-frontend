@@ -20,3 +20,14 @@ export function logRuntimeError(
     getRuntimeErrorMessage(operation),
   );
 }
+
+/** Forventede, men diagnostisk nyttige avvisninger bruker samme lukkede felt. */
+export function logRuntimeWarning(
+  operation: RuntimeErrorOperation,
+  errorCode: RuntimeErrorCode,
+): void {
+  logger.warn(
+    runtimeErrorContext(operation, errorCode),
+    getRuntimeErrorMessage(operation),
+  );
+}
