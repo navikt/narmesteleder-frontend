@@ -416,6 +416,36 @@ describe("serialized TokenX update runtime errors", () => {
     expect(serializedLogLines).toHaveLength(0);
   });
 
+  it("logger samme type og status når kombinasjonen ikke er dokumentert for operasjonen", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          type: BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+          message: RESPONSE_BODY_CANARY,
+        }),
+        { status: 400 },
+      ),
+    );
+
+    await expect(
+      tokenXFetchUpdate({
+        targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+        endpoint: ENDPOINT,
+        requestBody: { fnr: FNR },
+        method: "DELETE",
+      }),
+    ).resolves.toMatchObject({ success: false });
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
+      operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+      message: "Kunne ikke fjerne nærmeste leder",
+      upstreamStatus: 400,
+    });
+  });
+
   it("eier tokenvalideringsfeilen og logger ingen rå auth-detaljer", async () => {
     const tokenValidationError = new Error(ERROR_DETAIL);
     tokenValidationError.name = "IdPortenTokenValidationError";

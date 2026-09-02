@@ -10,7 +10,10 @@ import {
   RuntimeErrorCode,
   RuntimeErrorOperation,
 } from "@/server/observability/runtimeErrorContract";
-import { logRuntimeWarning } from "@/server/observability/runtimeErrorLogger";
+import {
+  logRuntimeValidationWarning,
+  RuntimeValidationTarget,
+} from "@/server/observability/runtimeErrorLogger";
 import {
   type TokenXFetchUpdateResult,
   tokenXFetchUpdate,
@@ -25,9 +28,11 @@ export async function revokeLinemanager(
 ): Promise<TokenXFetchUpdateResult> {
   const validatedPayload = lineManagerRevokeRequestSchema.safeParse(payload);
   if (!validatedPayload.success) {
-    logRuntimeWarning(
+    logRuntimeValidationWarning(
       RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
       RuntimeErrorCode.INVALID_INPUT,
+      RuntimeValidationTarget.REVOKE_REQUEST,
+      validatedPayload.error,
     );
     return {
       success: false,

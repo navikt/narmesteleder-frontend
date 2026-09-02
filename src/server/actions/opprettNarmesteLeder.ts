@@ -12,7 +12,10 @@ import {
   RuntimeErrorCode,
   RuntimeErrorOperation,
 } from "@/server/observability/runtimeErrorContract";
-import { logRuntimeWarning } from "@/server/observability/runtimeErrorLogger";
+import {
+  logRuntimeValidationWarning,
+  RuntimeValidationTarget,
+} from "@/server/observability/runtimeErrorLogger";
 import {
   type TokenXFetchUpdateResult,
   tokenXFetchUpdate,
@@ -27,9 +30,11 @@ export const opprettNarmesteLeder = async (
 ): Promise<TokenXFetchUpdateResult> => {
   const validationResult = narmesteLederInfoSchema.safeParse(narmesteLeder);
   if (!validationResult.success) {
-    logRuntimeWarning(
+    logRuntimeValidationWarning(
       RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
       RuntimeErrorCode.INVALID_INPUT,
+      RuntimeValidationTarget.NARMESTE_LEDER_INFO,
+      validationResult.error,
     );
     return {
       success: false,

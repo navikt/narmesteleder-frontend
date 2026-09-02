@@ -12,7 +12,10 @@ import {
   RuntimeErrorCode,
   RuntimeErrorOperation,
 } from "@/server/observability/runtimeErrorContract";
-import { logRuntimeWarning } from "@/server/observability/runtimeErrorLogger";
+import {
+  logRuntimeValidationWarning,
+  RuntimeValidationTarget,
+} from "@/server/observability/runtimeErrorLogger";
 import {
   type TokenXFetchUpdateResult,
   tokenXFetchUpdate,
@@ -30,9 +33,11 @@ export const oppdaterNarmesteLeder = async (
   const validatedForm = narmesteLederFormSchema.safeParse(narmesteLeder);
 
   if (!validatedRequirementId.success) {
-    logRuntimeWarning(
+    logRuntimeValidationWarning(
       RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
       RuntimeErrorCode.INVALID_INPUT,
+      RuntimeValidationTarget.REQUIREMENT_ID,
+      validatedRequirementId.error,
     );
     return {
       success: false,
@@ -41,9 +46,11 @@ export const oppdaterNarmesteLeder = async (
   }
 
   if (!validatedForm.success) {
-    logRuntimeWarning(
+    logRuntimeValidationWarning(
       RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
       RuntimeErrorCode.INVALID_INPUT,
+      RuntimeValidationTarget.NARMESTE_LEDER_FORM,
+      validatedForm.error,
     );
     return {
       success: false,
