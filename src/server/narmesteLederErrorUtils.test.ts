@@ -7,6 +7,7 @@ import {
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   toFrontendErrorResponse,
 } from "./narmesteLederErrorUtils";
+import { RuntimeErrorOperation } from "./observability/runtimeErrorContract";
 
 vi.mock("@navikt/next-logger", () => ({
   logger: {
@@ -110,28 +111,49 @@ describe("toFrontendErrorResponse", () => {
 });
 
 describe("isKnownDomainRejection", () => {
-  it("krever dokumentert kombinasjon av domenetype og status", () => {
+  it("krever dokumentert kombinasjon av operasjon, domenetype og status", () => {
     expect(
-      isKnownDomainRejection(403, BackendErrorType.MISSING_ORG_ACCESS),
+      isKnownDomainRejection(
+        RuntimeErrorOperation.HENT_BEHOV,
+        403,
+        BackendErrorType.MISSING_ORG_ACCESS,
+      ),
     ).toBe(true);
     expect(
       isKnownDomainRejection(
-        400,
-        BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+        RuntimeErrorOperation.HENT_BEHOVSLISTE,
+        403,
+        BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
       ),
     ).toBe(true);
+  });
+
+  it("behandler samme type og status fra en annen operasjon som teknisk feil", () => {
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.HENT_ORGANISASJONER,
+        403,
+        BackendErrorType.MISSING_ORG_ACCESS,
+      ),
+    ).toBe(false);
   });
 
   it.each([400, 401, 404, 429, 500, 503])(
     "behandler udokumentert status %i som teknisk feil selv med kjent type",
     (status) => {
       expect(
-        isKnownDomainRejection(status, BackendErrorType.MISSING_ORG_ACCESS),
+        isKnownDomainRejection(
+          RuntimeErrorOperation.HENT_BEHOV,
+          status,
+          BackendErrorType.MISSING_ORG_ACCESS,
+        ),
       ).toBe(false);
     },
   );
 
   it("behandler ukjent 4xx-respons som uventet teknisk utfall", () => {
-    expect(isKnownDomainRejection(403, undefined)).toBe(false);
+    expect(
+      isKnownDomainRejection(RuntimeErrorOperation.HENT_BEHOV, 403, undefined),
+    ).toBe(false);
   });
 });

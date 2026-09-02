@@ -163,6 +163,28 @@ describe("serialized TokenX GET runtime errors", () => {
     expect(serializedLogLines).toHaveLength(0);
   });
 
+  it("logger samme type og status når kombinasjonen ikke er forventet for operasjonen", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          type: BackendErrorType.MISSING_ORG_ACCESS,
+          message: RESPONSE_BODY_CANARY,
+        }),
+        { status: 403 },
+      ),
+    );
+
+    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_ORGANISASJONER);
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+      message: "Kunne ikke hente organisasjoner",
+      upstreamStatus: 403,
+    });
+  });
+
   it("logger én klassifisert ukjent 403 selv når backend-body ikke er JSON", async () => {
     fetchMock.mockResolvedValue(
       new Response(RESPONSE_BODY_CANARY, {

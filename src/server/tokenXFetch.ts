@@ -138,7 +138,13 @@ export async function tokenXFetchGet<S extends z.ZodType>({
 
   if (!response.ok) {
     const frontendErrorResponse = await toFrontendErrorResponse(response);
-    if (!isKnownDomainRejection(response.status, frontendErrorResponse.type)) {
+    if (
+      !isKnownDomainRejection(
+        operation,
+        response.status,
+        frontendErrorResponse.type,
+      )
+    ) {
       logGetFailure(
         operation,
         RuntimeErrorCode.UPSTREAM_HTTP_ERROR,

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { RuntimeErrorOperation } from "./observability/runtimeErrorContract";
 
 const NO_ACCESS_TO_FORM_MESSAGE =
   "Du har ikke tilgang til å åpne dette skjemaet";
@@ -78,28 +79,47 @@ export type FrontendErrorResponse = {
   errorDetail: ErrorDetail;
 };
 
-const expectedStatusByBackendErrorType = {
-  [BackendErrorType.MISSING_ORG_ACCESS]: [403],
-  [BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS]: [403],
-  [BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH]: [
-    400,
-  ],
-  [BackendErrorType.EMPLOYEE_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH]: [
-    400,
-  ],
-  [BackendErrorType.NO_ACTIVE_SICK_LEAVE]: [400],
-  [BackendErrorType.EMPLOYEE_MISSING_EMPLOYMENT_IN_ORG]: [400],
-  [BackendErrorType.LINEMANAGER_MISSING_EMPLOYMENT_IN_ORG]: [400],
-} as const satisfies Record<BackendErrorType, readonly number[]>;
+type ExpectedDomainRejection = {
+  operation: RuntimeErrorOperation;
+  status: number;
+  type: BackendErrorType;
+};
 
-/** Kjente type- og statuskombinasjoner er brukerutfall, ikke driftsfeil. */
+const expectedDomainRejections = [
+  {
+    operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
+    status: 403,
+    type: BackendErrorType.MISSING_ORG_ACCESS,
+  },
+  {
+    operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
+    status: 403,
+    type: BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
+  },
+  {
+    operation: RuntimeErrorOperation.HENT_BEHOV,
+    status: 403,
+    type: BackendErrorType.MISSING_ORG_ACCESS,
+  },
+  {
+    operation: RuntimeErrorOperation.HENT_BEHOV,
+    status: 403,
+    type: BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
+  },
+] as const satisfies readonly ExpectedDomainRejection[];
+
+/** Bare dokumenterte operasjon-, type- og statuskombinasjoner er brukerutfall. */
 export const isKnownDomainRejection = (
+  operation: RuntimeErrorOperation,
   status: number,
   type: BackendErrorType | undefined,
 ): boolean =>
   type !== undefined &&
-  (expectedStatusByBackendErrorType[type] as readonly number[]).includes(
-    status,
+  expectedDomainRejections.some(
+    (expected) =>
+      expected.operation === operation &&
+      expected.status === status &&
+      expected.type === type,
   );
 
 export type FrontendError = Error & { errorDetail: ErrorDetail };
