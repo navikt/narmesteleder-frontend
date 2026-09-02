@@ -38,6 +38,20 @@ const logGetFailure = (
   );
 };
 
+const logGetResponseValidationFailure = (
+  operation: RuntimeErrorOperation,
+  validationError: z.ZodError,
+): void => {
+  logger.error(
+    {
+      ...runtimeErrorContext(operation, RuntimeErrorCode.INVALID_RESPONSE),
+      validation_target: "upstream_response",
+      validationIssues: z.prettifyError(validationError),
+    },
+    getRuntimeErrorMessage(operation),
+  );
+};
+
 const parseAndValidateGetResponse = async <S extends z.ZodTypeAny>(
   response: Response,
   responseDataSchema: S,
@@ -53,7 +67,7 @@ const parseAndValidateGetResponse = async <S extends z.ZodTypeAny>(
 
   const result = responseDataSchema.safeParse(responseData);
   if (!result.success) {
-    logGetFailure(operation, RuntimeErrorCode.INVALID_RESPONSE);
+    logGetResponseValidationFailure(operation, result.error);
     throw createSafeFrontendError();
   }
 

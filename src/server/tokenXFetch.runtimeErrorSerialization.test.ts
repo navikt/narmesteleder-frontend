@@ -259,7 +259,7 @@ describe("serialized TokenX GET runtime errors", () => {
     });
   });
 
-  it("logger ugyldig suksesspayload uten valideringsdetaljer", async () => {
+  it("logger trygg Zod-diagnostikk for ugyldig suksesspayload", async () => {
     fetchMock.mockResolvedValue(
       Response.json({
         ok: false,
@@ -276,6 +276,8 @@ describe("serialized TokenX GET runtime errors", () => {
       operation: RuntimeErrorOperation.HENT_BEHOV,
       errorCode: RuntimeErrorCode.INVALID_RESPONSE,
       message: "Kunne ikke hente behovet for nærmeste leder",
+      validationTarget: "upstream_response",
+      validationIssue: "at ok",
     });
   });
 
@@ -319,6 +321,8 @@ function expectCanonicalLog({
   message,
   upstreamStatus,
   traceId,
+  validationTarget,
+  validationIssue,
 }: {
   event: RuntimeErrorEvent;
   operation: RuntimeErrorOperation;
@@ -326,6 +330,8 @@ function expectCanonicalLog({
   message: string;
   upstreamStatus?: number;
   traceId?: string;
+  validationTarget?: string;
+  validationIssue?: string;
 }): void {
   expect(serializedLogLines).toHaveLength(1);
 
@@ -353,6 +359,20 @@ function expectCanonicalLog({
     expect(traceId).toMatch(/^[0-9a-f]{32}$/);
   }
 
+  if (validationTarget === undefined) {
+    expect(parsedLog).not.toHaveProperty("validation_target");
+    expect(parsedLog).not.toHaveProperty("validationIssues");
+  } else {
+    if (validationIssue === undefined) {
+      throw new Error("validationIssue is required with validationTarget");
+    }
+    expect(parsedLog).toHaveProperty("validation_target", validationTarget);
+    expect(parsedLog).toHaveProperty(
+      "validationIssues",
+      expect.stringContaining(validationIssue),
+    );
+  }
+
   for (const field of [
     "endpoint",
     "url",
@@ -362,7 +382,6 @@ function expectCanonicalLog({
     "error",
     "err",
     "stack",
-    "validationIssues",
   ]) {
     expect(parsedLog).not.toHaveProperty(field);
   }
