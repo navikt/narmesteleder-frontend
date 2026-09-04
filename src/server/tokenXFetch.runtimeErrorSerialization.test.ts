@@ -26,15 +26,22 @@ import {
   RuntimeErrorEvent,
   RuntimeErrorOperation,
 } from "@/server/observability/runtimeErrorContract";
-import { tokenXFetchGet } from "@/server/tokenXFetch";
+import {
+  tokenXFetchGet,
+  tokenXFetchPost,
+  tokenXFetchUpdate,
+} from "@/server/tokenXFetch";
 
 const serializedLogLines = vi.hoisted((): string[] => []);
-const { fetchMock, validateTokenAndGetTokenXOrRedirectMock } = vi.hoisted(
-  () => ({
-    fetchMock: vi.fn(),
-    validateTokenAndGetTokenXOrRedirectMock: vi.fn(),
-  }),
-);
+const {
+  fetchMock,
+  validateTokenAndGetTokenXMock,
+  validateTokenAndGetTokenXOrRedirectMock,
+} = vi.hoisted(() => ({
+  fetchMock: vi.fn(),
+  validateTokenAndGetTokenXMock: vi.fn(),
+  validateTokenAndGetTokenXOrRedirectMock: vi.fn(),
+}));
 
 vi.mock("server-only", () => ({}));
 
@@ -55,10 +62,11 @@ vi.mock("@navikt/next-logger", async (importOriginal) => {
 });
 
 vi.mock("@/server/auth/tokenX", () => ({
+  isIdPortenTokenValidationError: (error: unknown) =>
+    error instanceof Error && error.name === "IdPortenTokenValidationError",
   isTokenXExchangeError: (error: unknown) =>
     error instanceof Error && error.name === "TokenXExchangeError",
-  validateTokenAndGetTokenX: vi.fn(),
-  validateTokenAndGetTokenXOrRedirect: vi.fn(),
+  validateTokenAndGetTokenXWithoutLogging: validateTokenAndGetTokenXMock,
   validateTokenAndGetTokenXOrRedirectWithoutLogging:
     validateTokenAndGetTokenXOrRedirectMock,
 }));
@@ -125,7 +133,9 @@ beforeAll(() => {
 beforeEach(() => {
   activeContext = ROOT_CONTEXT;
   vi.clearAllMocks();
+  fetchMock.mockReset();
   serializedLogLines.length = 0;
+  validateTokenAndGetTokenXMock.mockResolvedValue(ACCESS_TOKEN);
   validateTokenAndGetTokenXOrRedirectMock.mockResolvedValue(ACCESS_TOKEN);
   vi.stubGlobal("fetch", fetchMock);
 });
@@ -246,6 +256,24 @@ describe("serialized TokenX GET runtime errors", () => {
     });
   });
 
+  it("eier teknisk tokenvalideringsfeil i stedet for å redirecte", async () => {
+    const tokenValidationError = new Error(ERROR_DETAIL);
+    tokenValidationError.name = "IdPortenTokenValidationError";
+    validateTokenAndGetTokenXOrRedirectMock.mockRejectedValue(
+      tokenValidationError,
+    );
+
+    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_BEHOV,
+      errorCode: RuntimeErrorCode.TOKEN_VALIDATION_FAILED,
+      message: "Kunne ikke hente behovet for nærmeste leder",
+    });
+  });
+
   it("logger nettverksfeil uten error.message eller oppdiktet HTTP-status", async () => {
     fetchMock.mockRejectedValue(new Error(ERROR_DETAIL));
 
@@ -300,6 +328,186 @@ describe("serialized TokenX GET runtime errors", () => {
   });
 });
 
+describe("serialized TokenX POST runtime errors", () => {
+  it("logger én nettverksfeil uten request-body eller fanget feil", async () => {
+    fetchMock.mockRejectedValue(new Error(ERROR_DETAIL));
+
+    await expectTokenXPostToReject();
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.NARMESTE_LEDERE_SEARCH_FAILED,
+      operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+      errorCode: RuntimeErrorCode.NETWORK_ERROR,
+      message: "Kunne ikke søke etter nærmeste ledere",
+    });
+  });
+
+  it("beholder kjent domeneavvisning som trygg, ikke-logget feil", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          type: BackendErrorType.MISSING_ORG_ACCESS,
+          message: RESPONSE_BODY_CANARY,
+        }),
+        { status: 403 },
+      ),
+    );
+
+    await expectTokenXPostToReject();
+
+    expect(serializedLogLines).toHaveLength(0);
+  });
+});
+
+describe("serialized TokenX update runtime errors", () => {
+  it("logger én teknisk HTTP-feil og returnerer trygg feiltilstand", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(RESPONSE_BODY_CANARY, {
+        status: 503,
+        statusText: `Unavailable ${BEHOV_ID}`,
+      }),
+    );
+
+    await expect(
+      tokenXFetchUpdate({
+        targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+        endpoint: ENDPOINT,
+        requestBody: { fnr: FNR, orgnummer: ORGNUMMER, behovId: BEHOV_ID },
+        method: "PUT",
+      }),
+    ).resolves.toMatchObject({ success: false });
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
+      operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+      message: "Kunne ikke oppdatere nærmeste leder",
+      upstreamStatus: 503,
+    });
+  });
+
+  it("returnerer kjent domeneavvisning uten ERROR", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          type: BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+          message: RESPONSE_BODY_CANARY,
+        }),
+        { status: 400 },
+      ),
+    );
+
+    const result = await tokenXFetchUpdate({
+      targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+      operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+      endpoint: ENDPOINT,
+      requestBody: { fnr: FNR },
+    });
+
+    expect(result).toEqual({
+      success: false,
+      errorDetail:
+        errorTypeToDetail[
+          BackendErrorType
+            .LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH
+        ],
+    });
+    expect(serializedLogLines).toHaveLength(0);
+  });
+
+  it("logger samme type og status når kombinasjonen ikke er dokumentert for operasjonen", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          type: BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+          message: RESPONSE_BODY_CANARY,
+        }),
+        { status: 400 },
+      ),
+    );
+
+    await expect(
+      tokenXFetchUpdate({
+        targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+        endpoint: ENDPOINT,
+        requestBody: { fnr: FNR },
+        method: "DELETE",
+      }),
+    ).resolves.toMatchObject({ success: false });
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
+      operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+      message: "Kunne ikke fjerne nærmeste leder",
+      upstreamStatus: 400,
+    });
+  });
+
+  it("eier tokenvalideringsfeilen og logger ingen rå auth-detaljer", async () => {
+    const tokenValidationError = new Error(ERROR_DETAIL);
+    tokenValidationError.name = "IdPortenTokenValidationError";
+    validateTokenAndGetTokenXMock.mockRejectedValue(tokenValidationError);
+
+    await expect(
+      tokenXFetchUpdate({
+        targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+        endpoint: ENDPOINT,
+        requestBody: { fnr: FNR },
+        method: "DELETE",
+      }),
+    ).resolves.toMatchObject({ success: false });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
+      operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      errorCode: RuntimeErrorCode.TOKEN_VALIDATION_FAILED,
+      message: "Kunne ikke fjerne nærmeste leder",
+    });
+  });
+
+  it("eier TokenX-utvekslingsfeilen uten duplikat fra auth-laget", async () => {
+    const tokenXError = new Error(ERROR_DETAIL);
+    tokenXError.name = "TokenXExchangeError";
+    validateTokenAndGetTokenXMock.mockRejectedValue(tokenXError);
+
+    await expect(
+      tokenXFetchUpdate({
+        targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+        endpoint: ENDPOINT,
+        requestBody: { fnr: FNR },
+      }),
+    ).resolves.toMatchObject({ success: false });
+
+    expect(fetchMock).not.toHaveBeenCalled();
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.NARMESTE_LEDER_CREATE_FAILED,
+      operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+      errorCode: RuntimeErrorCode.TOKEN_EXCHANGE_FAILED,
+      message: "Kunne ikke opprette nærmeste leder",
+    });
+  });
+
+  it("returnerer suksess uten å logge", async () => {
+    fetchMock.mockResolvedValue(new Response(null, { status: 202 }));
+
+    await expect(
+      tokenXFetchUpdate({
+        targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+        endpoint: ENDPOINT,
+        requestBody: { fnr: FNR },
+      }),
+    ).resolves.toEqual({ success: true });
+    expect(serializedLogLines).toHaveLength(0);
+  });
+});
+
 async function expectTokenXGetToReject(
   operation: RuntimeErrorOperation,
 ): Promise<void> {
@@ -310,6 +518,19 @@ async function expectTokenXGetToReject(
       endpoint: ENDPOINT,
       responseDataSchema: successSchema,
       redirectAfterLoginUrl: `/arbeidsgiver/${BEHOV_ID}`,
+    }),
+  ).rejects.toMatchObject({ name: "FrontendError" });
+}
+
+async function expectTokenXPostToReject(): Promise<void> {
+  await expect(
+    tokenXFetchPost({
+      targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+      operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+      endpoint: ENDPOINT,
+      requestBody: { fnr: FNR, orgnummer: ORGNUMMER, behovId: BEHOV_ID },
+      responseDataSchema: successSchema,
+      redirectAfterLoginUrl: "/arbeidsgiver/oversikt",
     }),
   ).rejects.toMatchObject({ name: "FrontendError" });
 }

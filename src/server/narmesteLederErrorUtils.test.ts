@@ -111,22 +111,38 @@ describe("toFrontendErrorResponse", () => {
 });
 
 describe("isKnownDomainRejection", () => {
-  it("krever dokumentert kombinasjon av operasjon, domenetype og status", () => {
-    expect(
-      isKnownDomainRejection(
-        RuntimeErrorOperation.HENT_BEHOV,
-        403,
-        BackendErrorType.MISSING_ORG_ACCESS,
-      ),
-    ).toBe(true);
-    expect(
-      isKnownDomainRejection(
-        RuntimeErrorOperation.HENT_BEHOVSLISTE,
-        403,
-        BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
-      ),
-    ).toBe(true);
-  });
+  it.each([
+    [
+      RuntimeErrorOperation.HENT_BEHOV,
+      403,
+      BackendErrorType.MISSING_ORG_ACCESS,
+    ],
+    [
+      RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+      403,
+      BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
+    ],
+    [
+      RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+      400,
+      BackendErrorType.NO_ACTIVE_SICK_LEAVE,
+    ],
+    [
+      RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      400,
+      BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+    ],
+    [
+      RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      400,
+      BackendErrorType.EMPLOYEE_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+    ],
+  ])(
+    "godtar dokumentert kombinasjon %s + %i + %s",
+    (operation, status, type) => {
+      expect(isKnownDomainRejection(operation, status, type)).toBe(true);
+    },
+  );
 
   it("behandler samme type og status fra en annen operasjon som teknisk feil", () => {
     expect(
@@ -134,6 +150,23 @@ describe("isKnownDomainRejection", () => {
         RuntimeErrorOperation.HENT_ORGANISASJONER,
         403,
         BackendErrorType.MISSING_ORG_ACCESS,
+      ),
+    ).toBe(false);
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+        400,
+        BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+      ),
+    ).toBe(false);
+  });
+
+  it("behandler en utdatert domenetype som teknisk feil", () => {
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+        400,
+        BackendErrorType.LINEMANAGER_MISSING_EMPLOYMENT_IN_ORG,
       ),
     ).toBe(false);
   });

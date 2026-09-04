@@ -24,6 +24,26 @@ const expectedOperations = [
     event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
     message: "Kunne ikke hente behovet for nærmeste leder",
   },
+  {
+    operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+    event: RuntimeErrorEvent.NARMESTE_LEDERE_SEARCH_FAILED,
+    message: "Kunne ikke søke etter nærmeste ledere",
+  },
+  {
+    operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+    event: RuntimeErrorEvent.NARMESTE_LEDER_CREATE_FAILED,
+    message: "Kunne ikke opprette nærmeste leder",
+  },
+  {
+    operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+    event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
+    message: "Kunne ikke oppdatere nærmeste leder",
+  },
+  {
+    operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+    event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
+    message: "Kunne ikke fjerne nærmeste leder",
+  },
 ] as const;
 
 describe("runtime error contract", () => {
@@ -74,4 +94,17 @@ describe("runtime error contract", () => {
       upstream_status: 403,
     });
   });
+
+  it.each([99, 600, 200.5, Number.NaN, Number.POSITIVE_INFINITY])(
+    "utelater ugyldig upstream_status %s",
+    (upstreamStatus) => {
+      expect(
+        runtimeErrorContext(
+          RuntimeErrorOperation.HENT_BEHOV,
+          RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+          upstreamStatus,
+        ),
+      ).not.toHaveProperty("upstream_status");
+    },
+  );
 });
