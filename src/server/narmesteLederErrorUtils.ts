@@ -1,5 +1,5 @@
-import { logger } from "@navikt/next-logger";
 import { z } from "zod";
+import { RuntimeErrorOperation } from "./observability/runtimeErrorContract";
 
 const NO_ACCESS_TO_FORM_MESSAGE =
   "Du har ikke tilgang til å åpne dette skjemaet";
@@ -79,6 +79,49 @@ export type FrontendErrorResponse = {
   errorDetail: ErrorDetail;
 };
 
+type ExpectedDomainRejection = {
+  operation: RuntimeErrorOperation;
+  status: number;
+  type: BackendErrorType;
+};
+
+const expectedDomainRejections = [
+  {
+    operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
+    status: 403,
+    type: BackendErrorType.MISSING_ORG_ACCESS,
+  },
+  {
+    operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
+    status: 403,
+    type: BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
+  },
+  {
+    operation: RuntimeErrorOperation.HENT_BEHOV,
+    status: 403,
+    type: BackendErrorType.MISSING_ORG_ACCESS,
+  },
+  {
+    operation: RuntimeErrorOperation.HENT_BEHOV,
+    status: 403,
+    type: BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
+  },
+] as const satisfies readonly ExpectedDomainRejection[];
+
+/** Bare dokumenterte operasjon-, type- og statuskombinasjoner er brukerutfall. */
+export const isKnownDomainRejection = (
+  operation: RuntimeErrorOperation,
+  status: number,
+  type: BackendErrorType | undefined,
+): boolean =>
+  type !== undefined &&
+  expectedDomainRejections.some(
+    (expected) =>
+      expected.operation === operation &&
+      expected.status === status &&
+      expected.type === type,
+  );
+
 export type FrontendError = Error & { errorDetail: ErrorDetail };
 
 export const createFrontendError = (
@@ -105,40 +148,27 @@ const toTranslatedError = (payload?: BackendErrorPayload): ErrorDetail => {
 const parseBackendErrorPayload = async (
   response: Response,
 ): Promise<BackendErrorPayload | undefined> => {
-  let rawBody = "";
   try {
     const clonedResponse = response.clone();
-    rawBody = await clonedResponse.text();
+    const rawBody = await clonedResponse.text();
     const jsonPayload = JSON.parse(rawBody);
     const parsed = backendErrorSchema.safeParse(jsonPayload);
 
-    if (!parsed.success) {
-      logger.error(
-        { validationIssues: z.prettifyError(parsed.error) },
-        "[Backend] Failed to parse backend error response",
-      );
-      return undefined;
-    }
+    if (!parsed.success) return undefined;
 
     return parsed.data;
-  } catch (error) {
-    logger.error(
-      `Failed to parse backend error response as JSON: ${
-        error instanceof Error ? error.message : String(error)
-      } - body=${rawBody.slice(0, 200)}`,
-    );
+  } catch {
+    return undefined;
   }
-
-  return undefined;
 };
 
 export const toFrontendError = async (
   response: Response,
-): Promise<FrontendError | Error> => {
+): Promise<FrontendError> => {
   const backendErrorPayload = await parseBackendErrorPayload(response);
 
   if (!backendErrorPayload?.type) {
-    return new Error("Det oppstod en feil.");
+    return createFrontendError(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
   }
   return createFrontendError(toTranslatedError(backendErrorPayload));
 };

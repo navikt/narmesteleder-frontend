@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockOrganisasjoner } from "@/mocks/data/mockOrganisasjoner";
 import type { AccessibleOrganizationResponse } from "@/schemas/organisasjonSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 
 const tokenXFetchGetMock = vi.fn();
 const loggerWarnMock = vi.fn();
@@ -83,6 +84,7 @@ describe("fetchOrganisasjoner", () => {
     expect(tokenXFetchGetMock).toHaveBeenCalledWith(
       expect.objectContaining({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
         endpoint: expect.stringContaining("/api/v1/access/organizations"),
         responseDataSchema: accessibleOrganizationsResponseSchema,
       }),
@@ -114,6 +116,6 @@ describe("fetchOrganisasjoner", () => {
       status: "error",
       organisasjoner: [],
     });
-    expect(loggerWarnMock).toHaveBeenCalled();
+    expect(loggerWarnMock).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,4 @@
 import "server-only";
-import { logger } from "@navikt/next-logger";
 import type { Organisasjon } from "@navikt/virksomhetsvelger";
 import { unstable_rethrow } from "next/navigation";
 import { isLocalOrDemo } from "@/env-variables/envHelpers";
@@ -11,6 +10,7 @@ import {
   accessibleOrganizationsResponseSchema,
 } from "@/schemas/organisasjonSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 
 const getOrganisasjonerPath = () =>
@@ -43,6 +43,7 @@ const realFetchOrganisasjoner =
     try {
       const response = await tokenXFetchGet({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
         endpoint: getOrganisasjonerPath(),
         responseDataSchema: accessibleOrganizationsResponseSchema,
         redirectAfterLoginUrl: publicEnv.NEXT_PUBLIC_BASE_PATH,
@@ -51,13 +52,6 @@ const realFetchOrganisasjoner =
       return toOrganisasjonerResult(response.organizations.map(toOrganisasjon));
     } catch (error) {
       unstable_rethrow(error);
-      logger.warn(
-        {
-          endpoint: getOrganisasjonerPath(),
-          errorMessage: error instanceof Error ? error.message : String(error),
-        },
-        "[Backend] failed to fetch organisasjoner for registrering flow",
-      );
       return {
         status: "error",
         organisasjoner: [],

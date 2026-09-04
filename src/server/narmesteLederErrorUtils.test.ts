@@ -3,9 +3,11 @@ import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import {
   BackendErrorType,
   errorTypeToDetail,
+  isKnownDomainRejection,
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   toFrontendErrorResponse,
 } from "./narmesteLederErrorUtils";
+import { RuntimeErrorOperation } from "./observability/runtimeErrorContract";
 
 vi.mock("@navikt/next-logger", () => ({
   logger: {
@@ -89,9 +91,7 @@ describe("toFrontendErrorResponse", () => {
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
-    expect(loggerErrorMock).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to parse backend error response as JSON"),
-    );
+    expect(loggerErrorMock).not.toHaveBeenCalled();
   });
 
   it("falls back when response body cannot be read", async () => {
@@ -106,8 +106,54 @@ describe("toFrontendErrorResponse", () => {
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
-    expect(loggerErrorMock).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to parse backend error response as JSON"),
-    );
+    expect(loggerErrorMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("isKnownDomainRejection", () => {
+  it("krever dokumentert kombinasjon av operasjon, domenetype og status", () => {
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.HENT_BEHOV,
+        403,
+        BackendErrorType.MISSING_ORG_ACCESS,
+      ),
+    ).toBe(true);
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.HENT_BEHOVSLISTE,
+        403,
+        BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
+      ),
+    ).toBe(true);
+  });
+
+  it("behandler samme type og status fra en annen operasjon som teknisk feil", () => {
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.HENT_ORGANISASJONER,
+        403,
+        BackendErrorType.MISSING_ORG_ACCESS,
+      ),
+    ).toBe(false);
+  });
+
+  it.each([400, 401, 404, 429, 500, 503])(
+    "behandler udokumentert status %i som teknisk feil selv med kjent type",
+    (status) => {
+      expect(
+        isKnownDomainRejection(
+          RuntimeErrorOperation.HENT_BEHOV,
+          status,
+          BackendErrorType.MISSING_ORG_ACCESS,
+        ),
+      ).toBe(false);
+    },
+  );
+
+  it("behandler ukjent 4xx-respons som uventet teknisk utfall", () => {
+    expect(
+      isKnownDomainRejection(RuntimeErrorOperation.HENT_BEHOV, 403, undefined),
+    ).toBe(false);
   });
 });

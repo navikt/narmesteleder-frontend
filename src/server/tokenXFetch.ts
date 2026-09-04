@@ -2,16 +2,77 @@ import "server-only";
 import { logger } from "@navikt/next-logger";
 import z from "zod";
 import {
+  isTokenXExchangeError,
   validateTokenAndGetTokenX,
   validateTokenAndGetTokenXOrRedirect,
+  validateTokenAndGetTokenXOrRedirectWithoutLogging,
 } from "@/server/auth/tokenX";
 import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
 import { getBackendRequestHeaders, type TokenXTargetApi } from "./helpers";
 import {
+  createFrontendError,
   type ErrorDetail,
+  isKnownDomainRejection,
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   toFrontendError,
   toFrontendErrorResponse,
 } from "./narmesteLederErrorUtils";
+import {
+  getRuntimeErrorMessage,
+  RuntimeErrorCode,
+  type RuntimeErrorOperation,
+  runtimeErrorContext,
+} from "./observability/runtimeErrorContract";
+
+const createSafeFrontendError = () =>
+  createFrontendError(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
+
+const logGetFailure = (
+  operation: RuntimeErrorOperation,
+  errorCode: RuntimeErrorCode,
+  upstreamStatus?: number,
+): void => {
+  logger.error(
+    runtimeErrorContext(operation, errorCode, upstreamStatus),
+    getRuntimeErrorMessage(operation),
+  );
+};
+
+const logGetResponseValidationFailure = (
+  operation: RuntimeErrorOperation,
+  validationError: z.ZodError,
+): void => {
+  logger.error(
+    {
+      ...runtimeErrorContext(operation, RuntimeErrorCode.INVALID_RESPONSE),
+      validation_target: "upstream_response",
+      validationIssues: z.prettifyError(validationError),
+    },
+    getRuntimeErrorMessage(operation),
+  );
+};
+
+const parseAndValidateGetResponse = async <S extends z.ZodTypeAny>(
+  response: Response,
+  responseDataSchema: S,
+  operation: RuntimeErrorOperation,
+): Promise<z.infer<S>> => {
+  let responseData: unknown;
+  try {
+    responseData = await response.json();
+  } catch {
+    logGetFailure(operation, RuntimeErrorCode.INVALID_JSON);
+    throw createSafeFrontendError();
+  }
+
+  const result = responseDataSchema.safeParse(responseData);
+  if (!result.success) {
+    logGetResponseValidationFailure(operation, result.error);
+    throw createSafeFrontendError();
+  }
+
+  return result.data;
+};
 
 const readJsonBody = async (
   response: Response,
@@ -54,33 +115,60 @@ const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
 
 export async function tokenXFetchGet<S extends z.ZodType>({
   targetApi,
+  operation,
   endpoint,
   responseDataSchema,
   redirectAfterLoginUrl,
 }: {
   targetApi: TokenXTargetApi;
+  operation: RuntimeErrorOperation;
   endpoint: string;
   responseDataSchema: S;
   redirectAfterLoginUrl: string;
 }): Promise<z.infer<S>> {
-  const oboToken = await validateTokenAndGetTokenXOrRedirect(
-    redirectAfterLoginUrl,
-    targetApi,
-  );
-
-  const response = await fetch(endpoint, {
-    headers: getBackendRequestHeaders(oboToken),
-  });
-
-  if (!response.ok) {
-    const frontendError = await toFrontendError(response);
-    logErrorMessageAndThrowError(
-      `Fetch failed: method=GET endpoint=${endpoint} status=${response.status} ${response.statusText}`,
-      frontendError,
+  let oboToken: string;
+  try {
+    oboToken = await validateTokenAndGetTokenXOrRedirectWithoutLogging(
+      redirectAfterLoginUrl,
+      targetApi,
     );
+  } catch (error) {
+    if (!isTokenXExchangeError(error)) {
+      throw error;
+    }
+    logGetFailure(operation, RuntimeErrorCode.TOKEN_EXCHANGE_FAILED);
+    throw createSafeFrontendError();
   }
 
-  return parseAndValidateResponse(response, endpoint, responseDataSchema);
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      headers: getBackendRequestHeaders(oboToken),
+    });
+  } catch {
+    logGetFailure(operation, RuntimeErrorCode.NETWORK_ERROR);
+    throw createSafeFrontendError();
+  }
+
+  if (!response.ok) {
+    const frontendErrorResponse = await toFrontendErrorResponse(response);
+    if (
+      !isKnownDomainRejection(
+        operation,
+        response.status,
+        frontendErrorResponse.type,
+      )
+    ) {
+      logGetFailure(
+        operation,
+        RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+        response.status,
+      );
+    }
+    throw createFrontendError(frontendErrorResponse.errorDetail);
+  }
+
+  return parseAndValidateGetResponse(response, responseDataSchema, operation);
 }
 
 export async function tokenXFetchPost<S extends z.ZodType>({
