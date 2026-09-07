@@ -58,7 +58,7 @@ const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
   try {
     responseData = await response.json();
   } catch {
-    logRuntimeError(operation, RuntimeErrorCode.INVALID_JSON);
+    logRuntimeError(operation, RuntimeErrorCode.INVALID_JSON, response.status);
     throw createSafeFrontendError();
   }
 
@@ -69,6 +69,7 @@ const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
       RuntimeErrorCode.INVALID_RESPONSE,
       RuntimeValidationTarget.UPSTREAM_RESPONSE,
       result.error,
+      response.status,
     );
     throw createSafeFrontendError();
   }

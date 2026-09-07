@@ -38,8 +38,9 @@ const runtimeValidationContext = (
   errorCode: RuntimeErrorCode,
   validationTarget: RuntimeValidationTarget,
   validationError: ZodError,
+  upstreamStatus?: number,
 ) => ({
-  ...runtimeErrorContext(operation, errorCode),
+  ...runtimeErrorContext(operation, errorCode, upstreamStatus),
   validation_target: validationTarget,
   validationIssues: z.prettifyError(validationError),
 });
@@ -49,6 +50,7 @@ export function logRuntimeValidationError(
   errorCode: RuntimeErrorCode,
   validationTarget: RuntimeValidationTarget,
   validationError: ZodError,
+  upstreamStatus?: number,
 ): void {
   logger.error(
     runtimeValidationContext(
@@ -56,6 +58,7 @@ export function logRuntimeValidationError(
       errorCode,
       validationTarget,
       validationError,
+      upstreamStatus,
     ),
     getRuntimeErrorMessage(operation),
   );
