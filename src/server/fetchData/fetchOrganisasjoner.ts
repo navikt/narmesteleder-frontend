@@ -10,6 +10,7 @@ import {
   accessibleOrganizationsResponseSchema,
 } from "@/schemas/organisasjonSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import { isFrontendError } from "@/server/narmesteLederErrorUtils";
 import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 
@@ -52,6 +53,7 @@ const realFetchOrganisasjoner =
       return toOrganisasjonerResult(response.organizations.map(toOrganisasjon));
     } catch (error) {
       unstable_rethrow(error);
+      if (!isFrontendError(error)) throw error;
       return {
         status: "error",
         organisasjoner: [],

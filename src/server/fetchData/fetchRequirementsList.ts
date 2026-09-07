@@ -10,6 +10,7 @@ import {
   type RequirementsListItem,
 } from "@/schemas/lineManagerRequirementsListSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import { isFrontendError } from "@/server/narmesteLederErrorUtils";
 import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 
@@ -58,6 +59,7 @@ const realFetchRequirementsList = async (
     return toResult(response.linemanagerRequirements);
   } catch (error) {
     unstable_rethrow(error);
+    if (!isFrontendError(error)) throw error;
     return { status: "error", requirements: [] };
   }
 };
