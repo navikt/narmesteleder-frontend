@@ -1,8 +1,6 @@
 "use server";
 
 import "server-only";
-import { logger } from "@navikt/next-logger";
-import { z } from "zod";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import { toLineManagerRequest } from "@/schemas/lineManagerRequestSchema";
 import {
@@ -10,6 +8,14 @@ import {
   narmesteLederInfoSchema,
 } from "@/schemas/nærmestelederFormSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import {
+  RuntimeErrorCode,
+  RuntimeErrorOperation,
+} from "@/server/observability/runtimeErrorContract";
+import {
+  logRuntimeValidationWarning,
+  RuntimeValidationTarget,
+} from "@/server/observability/runtimeErrorLogger";
 import {
   type TokenXFetchUpdateResult,
   tokenXFetchUpdate,
@@ -24,9 +30,11 @@ export const opprettNarmesteLeder = async (
 ): Promise<TokenXFetchUpdateResult> => {
   const validationResult = narmesteLederInfoSchema.safeParse(narmesteLeder);
   if (!validationResult.success) {
-    logger.error(
-      { validationIssues: z.prettifyError(validationResult.error) },
-      "[RequestValidation] invalid narmesteLederInfo payload for opprettNarmesteLeder",
+    logRuntimeValidationWarning(
+      RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+      RuntimeErrorCode.INVALID_INPUT,
+      RuntimeValidationTarget.NARMESTE_LEDER_INFO,
+      validationResult.error,
     );
     return {
       success: false,
@@ -36,6 +44,7 @@ export const opprettNarmesteLeder = async (
 
   return tokenXFetchUpdate({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+    operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
     endpoint: getLineManagerPostPath(),
     requestBody: toLineManagerRequest(validationResult.data),
     method: "POST",

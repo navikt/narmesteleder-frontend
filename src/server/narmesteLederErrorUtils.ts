@@ -79,34 +79,63 @@ export type FrontendErrorResponse = {
   errorDetail: ErrorDetail;
 };
 
-type ExpectedDomainRejection = {
-  operation: RuntimeErrorOperation;
+type ExpectedDomainRejectionRule = {
   status: number;
-  type: BackendErrorType;
+  types: readonly BackendErrorType[];
 };
 
-const expectedDomainRejections = [
-  {
-    operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
-    status: 403,
-    type: BackendErrorType.MISSING_ORG_ACCESS,
-  },
-  {
-    operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
-    status: 403,
-    type: BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
-  },
-  {
-    operation: RuntimeErrorOperation.HENT_BEHOV,
-    status: 403,
-    type: BackendErrorType.MISSING_ORG_ACCESS,
-  },
-  {
-    operation: RuntimeErrorOperation.HENT_BEHOV,
-    status: 403,
-    type: BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
-  },
-] as const satisfies readonly ExpectedDomainRejection[];
+const accessRejectionTypes = [
+  BackendErrorType.MISSING_ORG_ACCESS,
+  BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
+] as const;
+
+const expectedDomainRejections: Record<
+  RuntimeErrorOperation,
+  readonly ExpectedDomainRejectionRule[]
+> = {
+  [RuntimeErrorOperation.HENT_ORGANISASJONER]: [],
+  [RuntimeErrorOperation.HENT_BEHOVSLISTE]: [
+    { status: 403, types: accessRejectionTypes },
+  ],
+  [RuntimeErrorOperation.HENT_BEHOV]: [
+    { status: 403, types: accessRejectionTypes },
+  ],
+  [RuntimeErrorOperation.SOK_NARMESTE_LEDERE]: [
+    { status: 403, types: accessRejectionTypes },
+  ],
+  [RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER]: [
+    {
+      status: 400,
+      types: [
+        BackendErrorType.NO_ACTIVE_SICK_LEAVE,
+        BackendErrorType.EMPLOYEE_MISSING_EMPLOYMENT_IN_ORG,
+        BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+        BackendErrorType.EMPLOYEE_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+      ],
+    },
+    { status: 403, types: accessRejectionTypes },
+  ],
+  [RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER]: [
+    {
+      status: 400,
+      types: [
+        BackendErrorType.NO_ACTIVE_SICK_LEAVE,
+        BackendErrorType.EMPLOYEE_MISSING_EMPLOYMENT_IN_ORG,
+        BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+      ],
+    },
+    { status: 403, types: accessRejectionTypes },
+  ],
+  [RuntimeErrorOperation.FJERN_NARMESTE_LEDER]: [
+    {
+      status: 400,
+      types: [
+        BackendErrorType.EMPLOYEE_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+      ],
+    },
+    { status: 403, types: accessRejectionTypes },
+  ],
+};
 
 /** Bare dokumenterte operasjon-, type- og statuskombinasjoner er brukerutfall. */
 export const isKnownDomainRejection = (
@@ -115,11 +144,8 @@ export const isKnownDomainRejection = (
   type: BackendErrorType | undefined,
 ): boolean =>
   type !== undefined &&
-  expectedDomainRejections.some(
-    (expected) =>
-      expected.operation === operation &&
-      expected.status === status &&
-      expected.type === type,
+  expectedDomainRejections[operation].some(
+    (expected) => expected.status === status && expected.types.includes(type),
   );
 
 export type FrontendError = Error & { errorDetail: ErrorDetail };
