@@ -1,5 +1,4 @@
 import "server-only";
-import { logger } from "@navikt/next-logger";
 import { unstable_rethrow } from "next/navigation";
 import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { publicEnv } from "@/env-variables/publicEnv";
@@ -11,6 +10,8 @@ import {
   type RequirementsListItem,
 } from "@/schemas/lineManagerRequirementsListSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import { isFrontendError } from "@/server/narmesteLederErrorUtils";
+import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 
 export interface FetchRequirementsListResult {
@@ -49,6 +50,7 @@ const realFetchRequirementsList = async (
   try {
     const response = await tokenXFetchGet({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+      operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
       endpoint: getRequirementsListPath(orgNumber),
       responseDataSchema: lineManagerRequirementsCollectionSchema,
       redirectAfterLoginUrl: publicEnv.NEXT_PUBLIC_BASE_PATH,
@@ -57,13 +59,7 @@ const realFetchRequirementsList = async (
     return toResult(response.linemanagerRequirements);
   } catch (error) {
     unstable_rethrow(error);
-    logger.warn(
-      {
-        endpoint: getRequirementsListPath(orgNumber),
-        errorMessage: error instanceof Error ? error.message : String(error),
-      },
-      "[Backend] failed to fetch requirements list for oversikt",
-    );
+    if (!isFrontendError(error)) throw error;
     return { status: "error", requirements: [] };
   }
 };

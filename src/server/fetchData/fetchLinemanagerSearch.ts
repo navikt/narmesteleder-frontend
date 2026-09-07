@@ -1,5 +1,4 @@
 import "server-only";
-import { logger } from "@navikt/next-logger";
 import { unstable_rethrow } from "next/navigation";
 import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { publicEnv } from "@/env-variables/publicEnv";
@@ -15,6 +14,8 @@ import {
   linemanagerSearchResponseSchema,
 } from "@/schemas/lineManagerSearchSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import { isFrontendError } from "@/server/narmesteLederErrorUtils";
+import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 import { tokenXFetchPost } from "@/server/tokenXFetch";
 
 export interface FetchLinemanagerSearchParams {
@@ -54,6 +55,7 @@ const realFetchLinemanagerSearch = async (
   try {
     const response = await tokenXFetchPost({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+      operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
       endpoint,
       requestBody: {
         orgNumber: params.orgNumber,
@@ -68,13 +70,7 @@ const realFetchLinemanagerSearch = async (
     return toResult(response.linemanagers, response.meta);
   } catch (error) {
     unstable_rethrow(error);
-    logger.warn(
-      {
-        endpoint,
-        errorMessage: error instanceof Error ? error.message : String(error),
-      },
-      "[Backend] failed to fetch linemanager search",
-    );
+    if (!isFrontendError(error)) throw error;
     return { status: "error", linemanagers: [], meta: null };
   }
 };

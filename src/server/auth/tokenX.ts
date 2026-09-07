@@ -1,19 +1,32 @@
 import { requestOboToken } from "@navikt/oasis";
 import { cache } from "react";
 import { redirectToLogin } from "@/server/auth/redirectToLogin";
-import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
-import { logErrorMessageAndThrowError } from "@/utils/errorHandling";
+import {
+  TokenValidationFailureReason,
+  validateIdPortenToken,
+} from "@/server/auth/validateIdPortenToken";
 import {
   getClientIdForTokenXTargetApi,
   type TokenXTargetApi,
 } from "../helpers";
 
-const validateAndGetIdPortenToken = async () => {
+export class IdPortenTokenValidationError extends Error {
+  constructor() {
+    super("Kunne ikke validere ID-porten-token");
+    this.name = "IdPortenTokenValidationError";
+  }
+}
+
+export const isIdPortenTokenValidationError = (
+  error: unknown,
+): error is IdPortenTokenValidationError =>
+  error instanceof IdPortenTokenValidationError;
+
+const validateAndGetIdPortenTokenWithoutLogging = async (): Promise<string> => {
   const validationResult = await validateIdPortenToken();
 
   if (!validationResult.success) {
-    const errorMessage = `IdPorten token validation failed: ${validationResult.reason}`;
-    logErrorMessageAndThrowError(errorMessage);
+    throw new IdPortenTokenValidationError();
   }
 
   return validationResult.token;
@@ -21,43 +34,70 @@ const validateAndGetIdPortenToken = async () => {
 
 const validateAndGetIdPortenTokenOrRedirectToLogin = async (
   redirectAfterLoginUrl: string,
-) => {
+): Promise<string> => {
   const validationResult = await validateIdPortenToken();
 
-  if (!validationResult.success) {
-    return redirectToLogin(redirectAfterLoginUrl);
+  if (validationResult.success) {
+    return validationResult.token;
   }
 
-  return validationResult.token;
+  switch (validationResult.reason) {
+    case TokenValidationFailureReason.MISSING_TOKEN:
+    case TokenValidationFailureReason.INVALID_TOKEN:
+      return redirectToLogin(redirectAfterLoginUrl);
+    case TokenValidationFailureReason.VALIDATION_ERROR:
+      throw new IdPortenTokenValidationError();
+    default:
+      return assertNeverTokenValidationReason(validationResult.reason);
+  }
 };
+
+function assertNeverTokenValidationReason(_reason: never): never {
+  throw new IdPortenTokenValidationError();
+}
+
+export class TokenXExchangeError extends Error {
+  constructor() {
+    super("Kunne ikke hente TokenX-token");
+    this.name = "TokenXExchangeError";
+  }
+}
+
+export const isTokenXExchangeError = (
+  error: unknown,
+): error is TokenXExchangeError => error instanceof TokenXExchangeError;
 
 const exchangeIdPortenTokenForTokenXOboToken = cache(
   async (idPortenToken: string, targetApi: TokenXTargetApi) => {
-    const tokenXGrant = await requestOboToken(
-      idPortenToken,
-      getClientIdForTokenXTargetApi(targetApi),
-    );
+    let tokenXGrant: Awaited<ReturnType<typeof requestOboToken>>;
+    try {
+      tokenXGrant = await requestOboToken(
+        idPortenToken,
+        getClientIdForTokenXTargetApi(targetApi),
+      );
+    } catch {
+      throw new TokenXExchangeError();
+    }
 
     if (!tokenXGrant.ok) {
-      const errorMessage = `Failed to exchange idporten token: ${tokenXGrant.error}`;
-      logErrorMessageAndThrowError(errorMessage);
+      throw new TokenXExchangeError();
     }
 
     return tokenXGrant.token;
   },
 );
 
-export const validateTokenAndGetTokenX = async (
+export const validateTokenAndGetTokenXWithoutLogging = async (
   targetApi: TokenXTargetApi,
 ): Promise<string> => {
-  const idPortenToken = await validateAndGetIdPortenToken();
+  const idPortenToken = await validateAndGetIdPortenTokenWithoutLogging();
   return await exchangeIdPortenTokenForTokenXOboToken(idPortenToken, targetApi);
 };
 
-export const validateTokenAndGetTokenXOrRedirect = async (
+export const validateTokenAndGetTokenXOrRedirectWithoutLogging = async (
   redirectAfterLoginUrl: string,
   targetApi: TokenXTargetApi,
-) => {
+): Promise<string> => {
   const idPortenToken = await validateAndGetIdPortenTokenOrRedirectToLogin(
     redirectAfterLoginUrl,
   );

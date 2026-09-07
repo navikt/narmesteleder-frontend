@@ -1,13 +1,19 @@
 "use server";
 
-import { logger } from "@navikt/next-logger";
-import { z } from "zod";
 import { getServerEnv } from "@/env-variables/serverEnv";
 import {
   type LineManagerRevokeRequest,
   lineManagerRevokeRequestSchema,
 } from "@/schemas/lineManagerRevokeSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import {
+  RuntimeErrorCode,
+  RuntimeErrorOperation,
+} from "@/server/observability/runtimeErrorContract";
+import {
+  logRuntimeValidationWarning,
+  RuntimeValidationTarget,
+} from "@/server/observability/runtimeErrorLogger";
 import {
   type TokenXFetchUpdateResult,
   tokenXFetchUpdate,
@@ -22,9 +28,11 @@ export async function revokeLinemanager(
 ): Promise<TokenXFetchUpdateResult> {
   const validatedPayload = lineManagerRevokeRequestSchema.safeParse(payload);
   if (!validatedPayload.success) {
-    logger.error(
-      { validationIssues: z.prettifyError(validatedPayload.error) },
-      "[ServerAction][Validation] invalid payload in revokeLinemanager",
+    logRuntimeValidationWarning(
+      RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      RuntimeErrorCode.INVALID_INPUT,
+      RuntimeValidationTarget.REVOKE_REQUEST,
+      validatedPayload.error,
     );
     return {
       success: false,
@@ -34,6 +42,7 @@ export async function revokeLinemanager(
 
   return tokenXFetchUpdate({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+    operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
     endpoint: getRevokeEndpoint(),
     requestBody: validatedPayload.data,
     method: "POST",

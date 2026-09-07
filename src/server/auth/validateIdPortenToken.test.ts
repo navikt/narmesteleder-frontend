@@ -1,88 +1,121 @@
+import { logger } from "@navikt/next-logger";
+import { getToken, validateIdportenToken } from "@navikt/oasis";
+import { headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { validateIdPortenToken } from "@/server/auth/validateIdPortenToken";
+import {
+  TokenValidationFailureReason,
+  validateIdPortenToken,
+} from "@/server/auth/validateIdPortenToken";
 
 vi.mock("next/headers", () => ({
-  headers: () => ({ get: () => undefined }),
+  headers: vi.fn(),
 }));
+
 vi.mock("@navikt/oasis", () => ({
-  getToken: vi.fn(() => undefined),
+  getToken: vi.fn(),
   validateIdportenToken: vi.fn(),
 }));
 
 vi.mock("@navikt/next-logger", () => ({
-  logger: { warn: vi.fn() },
+  logger: { warn: vi.fn(), error: vi.fn() },
 }));
 
-const getOasisMock = async () => await import("@navikt/oasis");
+const PRIVATE_DETAIL = "private-jwt-detail-fnr-12345678901";
+const VALID_TOKEN = "valid-token";
+const headersMock = vi.mocked(headers);
+const getTokenMock = vi.mocked(getToken);
+const validateIdportenTokenMock = vi.mocked(validateIdportenToken);
 
-const validTokenName = "valid-token";
-
-const setupOasisMockToken = async (tokenName: string = validTokenName) => {
-  const oasis = await getOasisMock();
-  (oasis.getToken as ReturnType<typeof vi.fn>).mockImplementation(
-    () => tokenName,
-  );
-  return oasis;
-};
-
-const setupOasisMockValid = async (tokenName?: string) => {
-  const oasis = await setupOasisMockToken(tokenName);
-  (oasis.validateIdportenToken as ReturnType<typeof vi.fn>).mockImplementation(
-    () => ({ ok: true }),
-  );
-};
-
-const setupOasisMockInvalid = async () => {
-  const oasis = await setupOasisMockToken("fake-token");
-  (oasis.validateIdportenToken as ReturnType<typeof vi.fn>).mockImplementation(
-    () => ({
-      ok: false,
-      errorType: "JWT",
-      error: "expired",
-    }),
-  );
-};
-
-const setupOasisMockNullToken = async () => {
-  const oasis = await getOasisMock();
-  (oasis.getToken as ReturnType<typeof vi.fn>).mockImplementation(() => null);
-};
-
-const expectedMissingTokenResult = {
-  success: false,
-  reason: "Missing idporten token",
-};
+beforeEach(() => {
+  vi.resetAllMocks();
+  headersMock.mockResolvedValue(new Headers() as never);
+});
 
 describe("validateIdPortenToken", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.resetAllMocks();
+  it.each([undefined, null])(
+    "returns a closed missing-token reason for %s",
+    async (token) => {
+      getTokenMock.mockReturnValue(token as string | null);
+
+      await expect(validateIdPortenToken()).resolves.toEqual({
+        success: false,
+        reason: TokenValidationFailureReason.MISSING_TOKEN,
+      });
+      expectNoLogging();
+    },
+  );
+
+  it("returns a closed invalid-token reason without Oasis details", async () => {
+    getTokenMock.mockReturnValue(VALID_TOKEN);
+    validateIdportenTokenMock.mockResolvedValue({
+      ok: false,
+      errorType: "unknown",
+      error: new Error(PRIVATE_DETAIL),
+    });
+
+    const result = await validateIdPortenToken();
+
+    expect(result).toEqual({
+      success: false,
+      reason: TokenValidationFailureReason.INVALID_TOKEN,
+    });
+    expect(JSON.stringify(result)).not.toContain(PRIVATE_DETAIL);
+    expectNoLogging();
   });
 
-  it("returns failure when token is missing", async () => {
+  it("sanitizes a thrown Oasis validation failure", async () => {
+    getTokenMock.mockReturnValue(VALID_TOKEN);
+    validateIdportenTokenMock.mockRejectedValue(new Error(PRIVATE_DETAIL));
+
     const result = await validateIdPortenToken();
-    expect(result).toEqual(expectedMissingTokenResult);
+
+    expect(result).toEqual({
+      success: false,
+      reason: TokenValidationFailureReason.VALIDATION_ERROR,
+    });
+    expect(JSON.stringify(result)).not.toContain(PRIVATE_DETAIL);
+    expectNoLogging();
   });
 
-  it("returns failure when token is null", async () => {
-    await setupOasisMockNullToken();
-    const result = await validateIdPortenToken();
-    expect(result).toEqual(expectedMissingTokenResult);
+  it("sanitizes a thrown token extraction failure", async () => {
+    getTokenMock.mockImplementation(() => {
+      throw new Error(PRIVATE_DETAIL);
+    });
+
+    await expect(validateIdPortenToken()).resolves.toEqual({
+      success: false,
+      reason: TokenValidationFailureReason.VALIDATION_ERROR,
+    });
+    expectNoLogging();
   });
 
-  it("returns failure when token is invalid", async () => {
-    await setupOasisMockInvalid();
-    const result = await validateIdPortenToken();
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.reason).toContain("Invalid JWT token found");
-      expect(result.reason).toContain("expired");
-    }
+  it("sanitizes a thrown headers failure", async () => {
+    headersMock.mockRejectedValue(new Error(PRIVATE_DETAIL));
+
+    await expect(validateIdPortenToken()).resolves.toEqual({
+      success: false,
+      reason: TokenValidationFailureReason.VALIDATION_ERROR,
+    });
+    expect(getTokenMock).not.toHaveBeenCalled();
+    expectNoLogging();
   });
 
-  it("returns success when token is valid", async () => {
-    await setupOasisMockValid();
-    const result = await validateIdPortenToken();
-    expect(result).toEqual({ success: true, token: validTokenName });
+  it("returns the token when validation succeeds", async () => {
+    getTokenMock.mockReturnValue(VALID_TOKEN);
+    validateIdportenTokenMock.mockResolvedValue({
+      ok: true,
+      payload: {} as never,
+    });
+
+    await expect(validateIdPortenToken()).resolves.toEqual({
+      success: true,
+      token: VALID_TOKEN,
+    });
+    expectNoLogging();
   });
 });
+
+function expectNoLogging(): void {
+  expect(logger.warn).not.toHaveBeenCalled();
+  expect(logger.error).not.toHaveBeenCalled();
+}
