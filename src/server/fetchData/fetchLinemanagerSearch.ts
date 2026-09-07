@@ -14,6 +14,7 @@ import {
   linemanagerSearchResponseSchema,
 } from "@/schemas/lineManagerSearchSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import { isFrontendError } from "@/server/narmesteLederErrorUtils";
 import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 import { tokenXFetchPost } from "@/server/tokenXFetch";
 
@@ -69,6 +70,7 @@ const realFetchLinemanagerSearch = async (
     return toResult(response.linemanagers, response.meta);
   } catch (error) {
     unstable_rethrow(error);
+    if (!isFrontendError(error)) throw error;
     return { status: "error", linemanagers: [], meta: null };
   }
 };
