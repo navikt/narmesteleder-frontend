@@ -4,8 +4,6 @@ import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 import { ExitButton } from "@/shared/components/ExitButton";
 import { HeadingLeder } from "@/shared/components/HeadingLeder";
 import { InfoDescription } from "@/shared/components/InfoDescription";
-import { Lumi } from "@/shared/components/lumi/Lumi";
-import { lumiSurveyConfig } from "@/shared/components/lumi/lumiSurveyConfig";
 import ThankYouAlert from "@/shared/components/ThankYouAlert";
 import { Summary } from "./Summary";
 
@@ -14,22 +12,19 @@ export function SubmitView() {
   const returnToUrl = getSafeReturnTo(returnTo);
 
   return (
-    <>
-      <VStack gap="space-32">
-        <HeadingLeder readOnlyVirksomhet />
-        <ThankYouAlert />
-        <InfoDescription />
-        <Summary />
-        <HStack gap="space-12">
-          {returnToUrl && (
-            <Button as="a" href={returnToUrl} variant="secondary" size="small">
-              Tilbake til oversikt
-            </Button>
-          )}
-          <ExitButton />
-        </HStack>
-      </VStack>
-      <Lumi feedbackId="leder-feedback" survey={lumiSurveyConfig} />
-    </>
+    <VStack gap="space-32">
+      <HeadingLeder readOnlyVirksomhet />
+      <ThankYouAlert />
+      <InfoDescription />
+      <Summary />
+      <HStack gap="space-12">
+        {returnToUrl && (
+          <Button as="a" href={returnToUrl} variant="secondary" size="small">
+            Tilbake til oversikt
+          </Button>
+        )}
+        <ExitButton />
+      </HStack>
+    </VStack>
   );
 }
