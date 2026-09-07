@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockRequirementsList } from "@/mocks/data/mockRequirementsList";
 import { TokenXTargetApi } from "@/server/helpers";
+import {
+  createFrontendError,
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+} from "@/server/narmesteLederErrorUtils";
 import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 
 const tokenXFetchGetMock = vi.fn();
@@ -110,13 +114,23 @@ describe("fetchRequirementsList", () => {
   });
 
   it("returnerer feilstatus hvis backend-kall feiler", async () => {
-    tokenXFetchGetMock.mockRejectedValue(new Error("backend unavailable"));
+    tokenXFetchGetMock.mockRejectedValue(
+      createFrontendError(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL),
+    );
 
     const { fetchRequirementsList } = await importFetchRequirementsList(false);
     const result = await fetchRequirementsList("963890095");
 
     expect(result).toEqual({ status: "error", requirements: [] });
     expect(loggerWarnMock).not.toHaveBeenCalled();
+  });
+
+  it("lar uventede feil propagere i stedet for å skjule dem som feilstatus", async () => {
+    const error = new TypeError("unexpected response failure");
+    tokenXFetchGetMock.mockRejectedValue(error);
+    const { fetchRequirementsList } = await importFetchRequirementsList(false);
+
+    await expect(fetchRequirementsList("963890095")).rejects.toBe(error);
   });
 
   it("returnerer tom status for tomt orgnummer i dev/prod", async () => {
