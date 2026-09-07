@@ -276,6 +276,7 @@ describe("serialized TokenX GET runtime errors", () => {
       operation: RuntimeErrorOperation.HENT_BEHOV,
       errorCode: RuntimeErrorCode.INVALID_RESPONSE,
       message: "Kunne ikke hente behovet for nærmeste leder",
+      upstreamStatus: 200,
       validationTarget: "upstream_response",
       validationIssue: "at ok",
     });
@@ -296,6 +297,7 @@ describe("serialized TokenX GET runtime errors", () => {
       operation: RuntimeErrorOperation.HENT_BEHOV,
       errorCode: RuntimeErrorCode.INVALID_JSON,
       message: "Kunne ikke hente behovet for nærmeste leder",
+      upstreamStatus: 200,
     });
   });
 });

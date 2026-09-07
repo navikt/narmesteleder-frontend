@@ -41,10 +41,15 @@ const logGetFailure = (
 const logGetResponseValidationFailure = (
   operation: RuntimeErrorOperation,
   validationError: z.ZodError,
+  upstreamStatus: number,
 ): void => {
   logger.error(
     {
-      ...runtimeErrorContext(operation, RuntimeErrorCode.INVALID_RESPONSE),
+      ...runtimeErrorContext(
+        operation,
+        RuntimeErrorCode.INVALID_RESPONSE,
+        upstreamStatus,
+      ),
       validation_target: "upstream_response",
       validationIssues: z.prettifyError(validationError),
     },
@@ -61,13 +66,13 @@ const parseAndValidateGetResponse = async <S extends z.ZodTypeAny>(
   try {
     responseData = await response.json();
   } catch {
-    logGetFailure(operation, RuntimeErrorCode.INVALID_JSON);
+    logGetFailure(operation, RuntimeErrorCode.INVALID_JSON, response.status);
     throw createSafeFrontendError();
   }
 
   const result = responseDataSchema.safeParse(responseData);
   if (!result.success) {
-    logGetResponseValidationFailure(operation, result.error);
+    logGetResponseValidationFailure(operation, result.error, response.status);
     throw createSafeFrontendError();
   }
 
