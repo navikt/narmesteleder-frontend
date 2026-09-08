@@ -2,6 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockOrganisasjoner } from "@/mocks/data/mockOrganisasjoner";
 import type { AccessibleOrganizationResponse } from "@/schemas/organisasjonSchema";
 import { TokenXTargetApi } from "@/server/helpers";
+import {
+  createFrontendError,
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+} from "@/server/narmesteLederErrorUtils";
+import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 
 const tokenXFetchGetMock = vi.fn();
 const loggerWarnMock = vi.fn();
@@ -83,6 +88,7 @@ describe("fetchOrganisasjoner", () => {
     expect(tokenXFetchGetMock).toHaveBeenCalledWith(
       expect.objectContaining({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+        operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
         endpoint: expect.stringContaining("/api/v1/access/organizations"),
         responseDataSchema: accessibleOrganizationsResponseSchema,
       }),
@@ -105,7 +111,9 @@ describe("fetchOrganisasjoner", () => {
   });
 
   it("returnerer feilstatus hvis backend-kall feiler", async () => {
-    tokenXFetchGetMock.mockRejectedValue(new Error("backend unavailable"));
+    tokenXFetchGetMock.mockRejectedValue(
+      createFrontendError(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL),
+    );
 
     const { fetchOrganisasjoner } = await importFetchOrganisasjoner(false);
     const result = await fetchOrganisasjoner();
@@ -114,6 +122,14 @@ describe("fetchOrganisasjoner", () => {
       status: "error",
       organisasjoner: [],
     });
-    expect(loggerWarnMock).toHaveBeenCalled();
+    expect(loggerWarnMock).not.toHaveBeenCalled();
+  });
+
+  it("lar uventede feil propagere i stedet for å skjule dem som feilstatus", async () => {
+    const error = new TypeError("unexpected mapping failure");
+    tokenXFetchGetMock.mockRejectedValue(error);
+    const { fetchOrganisasjoner } = await importFetchOrganisasjoner(false);
+
+    await expect(fetchOrganisasjoner()).rejects.toBe(error);
   });
 });

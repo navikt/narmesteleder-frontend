@@ -3,9 +3,11 @@ import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import {
   BackendErrorType,
   errorTypeToDetail,
+  isKnownDomainRejection,
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   toFrontendErrorResponse,
 } from "./narmesteLederErrorUtils";
+import { RuntimeErrorOperation } from "./observability/runtimeErrorContract";
 
 vi.mock("@navikt/next-logger", () => ({
   logger: {
@@ -89,9 +91,7 @@ describe("toFrontendErrorResponse", () => {
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
-    expect(loggerErrorMock).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to parse backend error response as JSON"),
-    );
+    expect(loggerErrorMock).not.toHaveBeenCalled();
   });
 
   it("falls back when response body cannot be read", async () => {
@@ -106,8 +106,87 @@ describe("toFrontendErrorResponse", () => {
 
     expect(result.type).toBeUndefined();
     expect(result.errorDetail).toEqual(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
-    expect(loggerErrorMock).toHaveBeenCalledWith(
-      expect.stringContaining("Failed to parse backend error response as JSON"),
-    );
+    expect(loggerErrorMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("isKnownDomainRejection", () => {
+  it.each([
+    [
+      RuntimeErrorOperation.HENT_BEHOV,
+      403,
+      BackendErrorType.MISSING_ORG_ACCESS,
+    ],
+    [
+      RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+      403,
+      BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
+    ],
+    [
+      RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+      400,
+      BackendErrorType.NO_ACTIVE_SICK_LEAVE,
+    ],
+    [
+      RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      400,
+      BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+    ],
+    [
+      RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      400,
+      BackendErrorType.EMPLOYEE_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+    ],
+  ])(
+    "godtar dokumentert kombinasjon %s + %i + %s",
+    (operation, status, type) => {
+      expect(isKnownDomainRejection(operation, status, type)).toBe(true);
+    },
+  );
+
+  it("behandler samme type og status fra en annen operasjon som teknisk feil", () => {
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.HENT_ORGANISASJONER,
+        403,
+        BackendErrorType.MISSING_ORG_ACCESS,
+      ),
+    ).toBe(false);
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+        400,
+        BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
+      ),
+    ).toBe(false);
+  });
+
+  it("behandler en utdatert domenetype som teknisk feil", () => {
+    expect(
+      isKnownDomainRejection(
+        RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+        400,
+        BackendErrorType.LINEMANAGER_MISSING_EMPLOYMENT_IN_ORG,
+      ),
+    ).toBe(false);
+  });
+
+  it.each([400, 401, 404, 429, 500, 503])(
+    "behandler udokumentert status %i som teknisk feil selv med kjent type",
+    (status) => {
+      expect(
+        isKnownDomainRejection(
+          RuntimeErrorOperation.HENT_BEHOV,
+          status,
+          BackendErrorType.MISSING_ORG_ACCESS,
+        ),
+      ).toBe(false);
+    },
+  );
+
+  it("behandler ukjent 4xx-respons som uventet teknisk utfall", () => {
+    expect(
+      isKnownDomainRejection(RuntimeErrorOperation.HENT_BEHOV, 403, undefined),
+    ).toBe(false);
   });
 });
