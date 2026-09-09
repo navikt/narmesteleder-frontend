@@ -35,8 +35,7 @@ describe("fetchLinemanagerReplacement", () => {
     tokenXFetchGetMock.mockResolvedValue({
       employeeIdentificationNumber: "employee-id",
       orgNumber: "organization-id",
-      orgName: "Organization",
-      name: { lastName: "Last name" },
+      lastName: "Last name",
     });
     const { fetchLinemanagerReplacement } = await importFetcher();
 
