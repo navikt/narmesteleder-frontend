@@ -27,7 +27,7 @@ export const mapToReplacementDefaults = (
 ): NarmesteLederInfo => ({
   sykmeldt: {
     fodselsnummer: response.employeeIdentificationNumber,
-    etternavn: response.name.lastName,
+    etternavn: response.lastName,
     orgnummer: response.orgNumber,
   },
   leder: {

@@ -20,16 +20,11 @@ export type LineManagerReadResponse = z.infer<typeof lineManagerReadSchema>;
 
 export type EmployeeResponse = z.infer<typeof employeeSchema>;
 
-export const lineManagerReplacementReadSchema = lineManagerReadSchema
-  .pick({
-    employeeIdentificationNumber: true,
-    orgNumber: true,
-    orgName: true,
-    name: true,
-  })
-  .extend({
-    name: employeeSchema.pick({ lastName: true }),
-  });
+export const lineManagerReplacementReadSchema = object({
+  employeeIdentificationNumber: string(),
+  lastName: string(),
+  orgNumber: string(),
+});
 
 export type LineManagerReplacementReadResponse = z.infer<
   typeof lineManagerReplacementReadSchema
