@@ -19,6 +19,7 @@ const linemanagerManagerSchema = object({
 });
 
 export const linemanagerSearchItemSchema = object({
+  linemanagerId: string(),
   orgNumber: string(),
   activeFrom: string(),
   employee: linemanagerPersonSchema,

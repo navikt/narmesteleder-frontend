@@ -5,7 +5,6 @@ import {
   Button,
   Heading,
   LocalAlert,
-  TextField,
   VStack,
 } from "@navikt/ds-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -15,6 +14,7 @@ import { useDebounce } from "@/shared/hooks/useDebounce";
 import { UiSelector } from "@/utils/uiSelectors";
 import { revokeLinemanagerAction } from "../../actions/revokeLinemanager";
 import { searchLinemanagersAction } from "../../actions/searchLinemanagers";
+import { ExpandableSearch } from "./ExpandableSearch";
 import { LinemanagerTabell } from "./LinemanagerTabell";
 
 interface LinemanagerContentProps {
@@ -29,7 +29,7 @@ const emptyResult: FetchLinemanagerSearchResult = {
 };
 
 function getRowKey(item: LinemanagerSearchItem): string {
-  return `${item.orgNumber}-${item.employee.nationalIdentificationNumber}-${item.manager.nationalIdentificationNumber}`;
+  return item.linemanagerId;
 }
 
 export function LinemanagerContent({
@@ -67,10 +67,13 @@ export function LinemanagerContent({
         text: debouncedSearch || null,
         pageToken,
       });
-      setResult((prev) => ({
-        ...next,
-        linemanagers: [...prev.linemanagers, ...next.linemanagers],
-      }));
+      setResult((prev) => {
+        const updated: FetchLinemanagerSearchResult = {
+          ...next,
+          linemanagers: [...prev.linemanagers, ...next.linemanagers],
+        };
+        return updated;
+      });
     });
   }, [
     result.meta?.nextPageToken,
@@ -114,17 +117,13 @@ export function LinemanagerContent({
             (candidate) => getRowKey(candidate) !== rowKey,
           );
 
-          return {
+          const updated: FetchLinemanagerSearchResult = {
             ...prev,
             status: nextLinemanagers.length > 0 ? "available" : "empty",
             linemanagers: nextLinemanagers,
-            meta: prev.meta
-              ? {
-                  ...prev.meta,
-                  size: Math.max(0, prev.meta.size - 1),
-                }
-              : null,
+            meta: prev.meta,
           };
+          return updated;
         });
       } catch {
         setRevokeError("Vi klarte ikke å bryte koblingen. Prøv igjen senere.");
@@ -150,18 +149,22 @@ export function LinemanagerContent({
         </LocalAlert>
       ) : (
         <>
+          <ExpandableSearch
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            data-testid={UiSelector.LinemanagerSok}
+          />
+
           <Heading level="2" size="small">
             {hasActiveSickLeave
               ? "Ansatte med aktiv sykmelding"
               : "Ansatte uten aktiv sykmelding"}
           </Heading>
           <BodyLong>
-            Her ser du ansatte som har registrert nærmeste leder. Du kan bryte
-            koblingen mellom ansatt og leder fra «Handlinger».
-            {hasActiveSickLeave &&
-              " Du kan deretter registrere ny leder fra fanen «Mangler leder»."}
+            {hasActiveSickLeave
+              ? "Her kan du se og oppdatere hvem som er registrert som nærmeste leder."
+              : "Her ser du ansatte som har registrert nærmeste leder. Du kan bryte koblingen mellom ansatt og leder fra «Handlinger»."}
           </BodyLong>
-
           {revokeError && (
             <LocalAlert
               status="error"
@@ -174,17 +177,10 @@ export function LinemanagerContent({
             </LocalAlert>
           )}
 
-          <TextField
-            label="Søk på navn eller fødselsnummer"
-            size="medium"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            data-testid={UiSelector.LinemanagerSok}
-            autoComplete="off"
-          />
-
           <LinemanagerTabell
             linemanagers={result.linemanagers}
+            orgNumber={orgNumber}
+            hasActiveSickLeave={hasActiveSickLeave}
             loading={isPending}
             revokingKey={revokingKey}
             onRevoke={handleRevoke}

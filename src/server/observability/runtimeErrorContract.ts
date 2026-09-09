@@ -70,6 +70,11 @@ export const runtimeErrorDefinitions = {
     "behov_fetch_failed",
     "Kunne ikke hente behovet for nærmeste leder",
   ),
+  hent_narmeste_leder_for_erstatning: defineRuntimeFailure(
+    "hent_narmeste_leder_for_erstatning",
+    "linemanager_replacement_fetch_failed",
+    "Kunne ikke hente nærmeste leder for erstatning",
+  ),
   sok_narmeste_ledere: defineRuntimeFailure(
     "sok_narmeste_ledere",
     "narmeste_ledere_search_failed",

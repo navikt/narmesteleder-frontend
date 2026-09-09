@@ -21,6 +21,7 @@ export enum UiSelector {
   OppgiLederPanel = "oppgiLederPanel",
   SykmeldtBox = "sykmeldtBox",
   BehovForm = "behovForm",
+  ReplacementForm = "replacementForm",
   RegistreringInfoPanel = "registreringInfoPanel",
   // Oversikt
   OversiktTabell = "oversiktTabell",
@@ -29,6 +30,7 @@ export enum UiSelector {
   OversiktLasterSpinner = "oversiktLasterSpinner",
   OversiktFeilAlert = "oversiktFeilAlert",
   OversiktTomState = "oversiktTomState",
+  ExpandableSearchTrigger = "expandableSearchTrigger",
   // Lederkobling-oversikt (fane 2 og 3)
   LinemanagerTabell = "linemanagerTabell",
   LinemanagerSok = "linemanagerSok",
