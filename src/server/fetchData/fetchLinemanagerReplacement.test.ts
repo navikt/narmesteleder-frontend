@@ -70,6 +70,24 @@ describe("fetchLinemanagerReplacement", () => {
     ).resolves.toBeNull();
   });
 
+  it("preserves a safe overview return path through login", async () => {
+    tokenXFetchGetMock.mockResolvedValue(null);
+    const { fetchLinemanagerReplacement } = await importFetcher();
+
+    await fetchLinemanagerReplacement(
+      "relation-id",
+      undefined,
+      "/oversikt?orgnr=912345678&tab=aktiv-sykmelding",
+    );
+
+    expect(tokenXFetchGetMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        redirectAfterLoginUrl:
+          "/arbeidsgiver/ansatte/narmesteleder/endre/relation-id?returnTo=%2Farbeidsgiver%2Fansatte%2Fnarmesteleder%2Foversikt%3Forgnr%3D912345678%26tab%3Daktiv-sykmelding",
+      }),
+    );
+  });
+
   it.each(mockLinemanagerSearchActive.linemanagers)(
     "maps active mock relation $linemanagerId to that employee and organization",
     async (selectedRelation) => {
