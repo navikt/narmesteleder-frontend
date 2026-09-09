@@ -1,9 +1,9 @@
 "use client";
 
 import { Button, HStack, VStack } from "@navikt/ds-react";
-import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 import type { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
 import { HeadingLeder } from "@/shared/components/HeadingLeder";
+import { getSafeReturnTo } from "@/utils/returnTo";
 import { ReplacementForm } from "./ReplacementForm";
 
 export function EditView({

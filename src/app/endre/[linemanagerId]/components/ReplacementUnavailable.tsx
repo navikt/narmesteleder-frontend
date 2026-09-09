@@ -1,5 +1,5 @@
 import { Button, LocalAlert, VStack } from "@navikt/ds-react";
-import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
+import { getSafeReturnTo } from "@/utils/returnTo";
 
 export function ReplacementUnavailable() {
   const overviewUrl = getSafeReturnTo("/oversikt");
