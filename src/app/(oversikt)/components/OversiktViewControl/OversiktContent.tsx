@@ -125,12 +125,14 @@ export function OversiktContent({
                 data-testid={UiSelector.OversiktSok}
               />
 
-              <Heading level="2" size="small">
-                Ansatte som mangler nærmeste leder
-              </Heading>
-              <BodyLong>
-                Disse ansatte må få registrert en nærmeste leder.
-              </BodyLong>
+              <VStack gap="space-8">
+                <Heading level="2" size="small">
+                  Ansatte som mangler nærmeste leder
+                </Heading>
+                <BodyLong>
+                  Disse ansatte må få registrert en nærmeste leder.
+                </BodyLong>
+              </VStack>
 
               <OversiktTabell
                 requirements={filtered}

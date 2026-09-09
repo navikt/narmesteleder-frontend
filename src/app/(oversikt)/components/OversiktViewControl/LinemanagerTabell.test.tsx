@@ -43,7 +43,7 @@ describe("LinemanagerTabell", () => {
     expect(markup).toContain('aria-label="Handlinger for Test Employee"');
     expect(markup).toContain('title="Handlinger for Test Employee"');
     expect(href).toBe(
-      "/endre/11111111-1111-4111-8111-111111111111?returnTo=%2Foversikt%3Forgnr%3D963890095%26tab%3Daktiv-sykmelding",
+      "/arbeidsgiver/ansatte/narmesteleder/endre/11111111-1111-4111-8111-111111111111?returnTo=%2Foversikt%3Forgnr%3D963890095%26tab%3Daktiv-sykmelding",
     );
     expect(href).not.toContain(
       linemanager.employee.nationalIdentificationNumber,

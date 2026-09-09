@@ -15,6 +15,7 @@ import {
   Table,
   VStack,
 } from "@navikt/ds-react";
+import { publicEnv } from "@/env-variables/publicEnv";
 import type { LinemanagerSearchItem } from "@/schemas/lineManagerSearchSchema";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
 import { UiSelector } from "@/utils/uiSelectors";
@@ -51,7 +52,7 @@ export function getEditLinemanagerHref(
   const params = new URLSearchParams({
     returnTo: `/oversikt?orgnr=${orgNumber}&tab=aktiv-sykmelding`,
   });
-  return `/endre/${linemanagerId}?${params}`;
+  return `${publicEnv.NEXT_PUBLIC_BASE_PATH}/endre/${linemanagerId}?${params}`;
 }
 
 export function canChangeLinemanager(hasActiveSickLeave: boolean): boolean {
