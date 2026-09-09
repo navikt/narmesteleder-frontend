@@ -40,14 +40,18 @@ export const mapToReplacementDefaults = (
 
 const realFetchLinemanagerReplacement = async (
   linemanagerId: string,
+  _mockScenario?: ReplacementMockScenario,
+  returnTo?: string,
 ): Promise<NarmesteLederInfo | null> => {
   const response = await tokenXFetchGet({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
     operation: RuntimeErrorOperation.HENT_NARMESTE_LEDER_FOR_ERSTATNING,
     endpoint: getLinemanagerPath(linemanagerId),
     responseDataSchema: lineManagerReplacementReadSchema,
-    redirectAfterLoginUrl:
-      getRedirectAfterLoginUrlForLinemanagerReplacement(linemanagerId),
+    redirectAfterLoginUrl: getRedirectAfterLoginUrlForLinemanagerReplacement(
+      linemanagerId,
+      returnTo,
+    ),
     returnNullOnNotFound: true,
   });
 
@@ -57,6 +61,7 @@ const realFetchLinemanagerReplacement = async (
 const fakeFetchLinemanagerReplacement = async (
   linemanagerId: string,
   mockScenario?: ReplacementMockScenario,
+  _returnTo?: string,
 ): Promise<NarmesteLederInfo | null> => {
   await simulateBackendDelay();
 
