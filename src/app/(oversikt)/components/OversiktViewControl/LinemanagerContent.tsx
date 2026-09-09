@@ -155,16 +155,18 @@ export function LinemanagerContent({
             data-testid={UiSelector.LinemanagerSok}
           />
 
-          <Heading level="2" size="small">
-            {hasActiveSickLeave
-              ? "Ansatte med aktiv sykmelding"
-              : "Ansatte uten aktiv sykmelding"}
-          </Heading>
-          <BodyLong>
-            {hasActiveSickLeave
-              ? "Her kan du se og oppdatere hvem som er registrert som nærmeste leder."
-              : "Her ser du ansatte som har registrert nærmeste leder. Du kan bryte koblingen mellom ansatt og leder fra «Handlinger»."}
-          </BodyLong>
+          <VStack gap="space-8">
+            <Heading level="2" size="small">
+              {hasActiveSickLeave
+                ? "Ansatte med aktiv sykmelding"
+                : "Ansatte uten aktiv sykmelding"}
+            </Heading>
+            <BodyLong>
+              {hasActiveSickLeave
+                ? "Her kan du se og oppdatere hvem som er registrert som nærmeste leder."
+                : "Her ser du ansatte som har registrert nærmeste leder. Du kan bryte koblingen mellom ansatt og leder fra «Handlinger»."}
+            </BodyLong>
+          </VStack>
           {revokeError && (
             <LocalAlert
               status="error"

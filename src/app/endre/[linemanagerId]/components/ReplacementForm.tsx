@@ -75,10 +75,6 @@ export function ReplacementForm({
               <LederGroup form={form} fields="leder" />
             </VStack>
           </Box>
-          <BodyShort>
-            Når du sender inn, erstatter den nye nærmeste lederen den nåværende
-            koblingen. Opplysningene kontrolleres på nytt av Nav.
-          </BodyShort>
           {error ? <ErrorAlert detail={error} /> : null}
           <HStack>
             <form.BoundSubmitButton
