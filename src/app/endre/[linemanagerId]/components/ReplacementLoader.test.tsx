@@ -28,21 +28,20 @@ describe("ReplacementLoader", () => {
     fetchLinemanagerReplacementMock.mockReset();
   });
 
-  it("shows a neutral unavailable state for invalid or missing IDs", async () => {
+  it("shows the standard not-found page for invalid or missing IDs", async () => {
     const element = await ReplacementLoader({ unavailable: true });
     const markup = ReactDOMServer.renderToStaticMarkup(element);
 
-    expect(markup).toContain("Kan ikke endre nærmeste leder");
-    expect(markup).toContain("Tilbake til oversikt");
+    expect(markup).toContain("Beklager, vi fant ikke siden");
     expect(fetchLinemanagerReplacementMock).not.toHaveBeenCalled();
   });
 
-  it("shows a neutral unavailable state when the relation is absent", async () => {
+  it("shows the standard not-found page when the relation is absent", async () => {
     fetchLinemanagerReplacementMock.mockResolvedValue(null);
     const element = await ReplacementLoader({ linemanagerId: "relation-id" });
     const markup = ReactDOMServer.renderToStaticMarkup(element);
 
-    expect(markup).toContain("Koblingen er ikke tilgjengelig lenger.");
+    expect(markup).toContain("Beklager, vi fant ikke siden");
   });
 
   it("uses the established mapped error presentation", async () => {
