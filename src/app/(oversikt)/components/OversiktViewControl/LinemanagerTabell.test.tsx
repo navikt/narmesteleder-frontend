@@ -1,5 +1,6 @@
 import ReactDOMServer from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import { mockLinemanagerIds } from "@/mocks/data/mockLinemanagerSearch";
 import type { LinemanagerSearchItem } from "@/schemas/lineManagerSearchSchema";
 import {
   canChangeLinemanager,
@@ -8,7 +9,7 @@ import {
 } from "./LinemanagerTabell";
 
 const linemanager: LinemanagerSearchItem = {
-  linemanagerId: "relation-123",
+  linemanagerId: mockLinemanagerIds.activeKari,
   orgNumber: "963890095",
   activeFrom: "2023-01-15T00:00:00Z",
   employee: {
@@ -42,7 +43,7 @@ describe("LinemanagerTabell", () => {
     expect(markup).toContain('aria-label="Handlinger for Test Employee"');
     expect(markup).toContain('title="Handlinger for Test Employee"');
     expect(href).toBe(
-      "/endre/relation-123?returnTo=%2Foversikt%3Forgnr%3D963890095%26tab%3Daktiv-sykmelding",
+      "/endre/11111111-1111-4111-8111-111111111111?returnTo=%2Foversikt%3Forgnr%3D963890095%26tab%3Daktiv-sykmelding",
     );
     expect(href).not.toContain(
       linemanager.employee.nationalIdentificationNumber,

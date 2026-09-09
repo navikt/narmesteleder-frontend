@@ -1,7 +1,7 @@
 import "server-only";
 import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { getServerEnv } from "@/env-variables/serverEnv";
-import { mockLineManagerRequirement } from "@/mocks/data/mockLineManagerRequirement";
+import { getMockLinemanagerReplacement } from "@/mocks/data/mockLinemanagerReplacement";
 import { simulateBackendDelay } from "@/mocks/simulateBackendDelay";
 import {
   type LineManagerReplacementReadResponse,
@@ -55,16 +55,18 @@ const realFetchLinemanagerReplacement = async (
 };
 
 const fakeFetchLinemanagerReplacement = async (
-  _linemanagerId: string,
+  linemanagerId: string,
   mockScenario?: ReplacementMockScenario,
-): Promise<NarmesteLederInfo> => {
+): Promise<NarmesteLederInfo | null> => {
   await simulateBackendDelay();
 
   if (mockScenario === "fetch-error") {
     throw createFrontendError(NARMESTE_LEDER_FALLBACK_ERROR_DETAIL);
   }
 
-  return mapToReplacementDefaults(mockLineManagerRequirement);
+  const response = getMockLinemanagerReplacement(linemanagerId);
+
+  return response ? mapToReplacementDefaults(response) : null;
 };
 
 export const fetchLinemanagerReplacement = isLocalOrDemo
