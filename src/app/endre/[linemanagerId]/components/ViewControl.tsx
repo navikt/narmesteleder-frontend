@@ -8,9 +8,11 @@ import { SubmitView } from "./SubmitView";
 
 export function ViewControl({
   initialData,
+  initialOrgnavn,
   returnTo,
 }: {
   initialData: NarmesteLederInfo;
+  initialOrgnavn: string;
   returnTo?: string;
 }) {
   const [submittedData, setSubmittedData] = useState(initialData);
@@ -20,7 +22,7 @@ export function ViewControl({
     <VirksomhetProvider
       initialVirksomhet={{
         orgnummer: initialData.sykmeldt.orgnummer,
-        orgnavn: "",
+        orgnavn: initialOrgnavn,
       }}
     >
       {submitted ? (
