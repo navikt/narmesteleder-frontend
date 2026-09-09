@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BodyShort,
-  Box,
-  Heading,
-  HStack,
-  Label,
-  VStack,
-} from "@navikt/ds-react";
+import { Box, Heading, HStack, VStack } from "@navikt/ds-react";
 import { revalidateLogic } from "@tanstack/react-form";
 import { useRegistreringAction } from "@/app/(registrering)/hooks/useRegistreringAction";
 import type { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
@@ -15,6 +8,7 @@ import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
 import ErrorAlert from "@/shared/components/ErrorAlert";
 import { useAppForm } from "@/shared/components/form/hooks/form";
 import { LederGroup } from "@/shared/components/form/LederGroup";
+import { SykmeldtInfoBox } from "@/shared/components/SykmeldtInfoBox";
 import { UiSelector } from "@/utils/uiSelectors";
 
 export function ReplacementForm({
@@ -48,25 +42,19 @@ export function ReplacementForm({
     >
       <form.AppForm>
         <VStack gap="space-32">
-          <Box padding="space-16" background="accent-soft" borderRadius="8">
-            <VStack gap="space-16">
-              <Heading level="2" size="medium">
-                Sykmeldt
-              </Heading>
-              <VStack gap="space-4">
-                <Label>Etternavn</Label>
-                <BodyShort>{initialData.sykmeldt.etternavn}</BodyShort>
-              </VStack>
-              <VStack gap="space-4">
-                <Label>Fødselsnummer</Label>
-                <BodyShort>{initialData.sykmeldt.fodselsnummer}</BodyShort>
-              </VStack>
-              <VStack gap="space-4">
-                <Label>Organisasjonsnummer</Label>
-                <BodyShort>{initialData.sykmeldt.orgnummer}</BodyShort>
-              </VStack>
-            </VStack>
-          </Box>
+          <SykmeldtInfoBox
+            fields={[
+              { label: "Etternavn", value: initialData.sykmeldt.etternavn },
+              {
+                label: "Fødselsnummer",
+                value: initialData.sykmeldt.fodselsnummer,
+              },
+              {
+                label: "Organisasjonsnummer",
+                value: initialData.sykmeldt.orgnummer,
+              },
+            ]}
+          />
           <Box padding="space-16" background="accent-soft" borderRadius="8">
             <VStack gap="space-24" className="w-full max-w-md">
               <Heading level="2" size="medium">
