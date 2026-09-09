@@ -1,7 +1,7 @@
+import notFound from "@/app/not-found";
 import { fetchLinemanagerReplacement } from "@/server/fetchData/fetchLinemanagerReplacement";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
 import { LederInfoError } from "@/shared/components/LederInfoError";
-import { ReplacementUnavailable } from "./ReplacementUnavailable";
 import { ViewControl } from "./ViewControl";
 
 export async function ReplacementLoader({
@@ -14,7 +14,7 @@ export async function ReplacementLoader({
   unavailable?: boolean;
 }) {
   if (unavailable || !linemanagerId) {
-    return <ReplacementUnavailable />;
+    return notFound();
   }
 
   try {
@@ -24,7 +24,7 @@ export async function ReplacementLoader({
       returnTo,
     );
     if (!initialData) {
-      return <ReplacementUnavailable />;
+      return notFound();
     }
 
     return <ViewControl initialData={initialData} returnTo={returnTo} />;
