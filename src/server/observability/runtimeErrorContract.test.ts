@@ -14,6 +14,13 @@ describe("runtime error contract", () => {
       expect(event.operation).toBe(operation);
       expect(event.level).toBe("error");
     }
+    expect(
+      runtimeErrorDefinitions.hent_narmeste_leder_for_erstatning,
+    ).toMatchObject({
+      operation: "hent_narmeste_leder_for_erstatning",
+      name: "linemanager_replacement_fetch_failed",
+      message: "Kunne ikke hente nærmeste leder for erstatning",
+    });
   });
 
   it("har input-advarsler bare for opprett, oppdater og fjern", () => {
