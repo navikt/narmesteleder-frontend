@@ -24,6 +24,7 @@ export default defineConfig({
     env: {
       // We choose demo here to have a stable environment for e2e tests
       NEXT_PUBLIC_RUNTIME_ENVIRONMENT: "demo",
+      PLAYWRIGHT_TEST: "true",
     },
   },
 });
