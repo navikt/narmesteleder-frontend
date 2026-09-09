@@ -1,9 +1,9 @@
 "use client";
 
 import { Button, HStack, VStack } from "@navikt/ds-react";
-import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 import { HeadingLeder } from "@/shared/components/HeadingLeder";
 import ThankYouAlert from "@/shared/components/ThankYouAlert";
+import { getSafeReturnTo } from "@/utils/returnTo";
 
 export function SubmitView({ returnTo }: { returnTo?: string }) {
   const returnToUrl = getSafeReturnTo(returnTo);

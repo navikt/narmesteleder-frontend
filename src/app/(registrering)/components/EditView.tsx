@@ -1,7 +1,7 @@
 import { Button, HStack, VStack } from "@navikt/ds-react";
 import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
-import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 import { HeadingLeder } from "@/shared/components/HeadingLeder";
+import { getSafeReturnTo } from "@/utils/returnTo";
 import InfoPanel from "./InfoPanel";
 import RegistreringForm from "./RegistreringForm";
 
