@@ -161,11 +161,12 @@ export function LinemanagerContent({
                 ? "Ansatte med aktiv sykmelding"
                 : "Ansatte uten aktiv sykmelding"}
             </Heading>
-            <BodyLong>
-              {hasActiveSickLeave
-                ? "Her kan du se og oppdatere hvem som er registrert som nærmeste leder."
-                : "Her ser du ansatte som har registrert nærmeste leder. Du kan bryte koblingen mellom ansatt og leder fra «Handlinger»."}
-            </BodyLong>
+            {hasActiveSickLeave && (
+              <BodyLong>
+                Her kan du se og oppdatere hvem som er registrert som nærmeste
+                leder.
+              </BodyLong>
+            )}
           </VStack>
           {revokeError && (
             <LocalAlert
