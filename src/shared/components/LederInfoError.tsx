@@ -9,7 +9,7 @@ interface InfoErrorProps {
   detail: ErrorDetail;
 }
 
-export default function InfoError({ detail }: InfoErrorProps) {
+export function LederInfoError({ detail }: InfoErrorProps) {
   return (
     <VStack gap="space-32">
       <HeadingLeder />
