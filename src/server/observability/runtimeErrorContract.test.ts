@@ -25,6 +25,11 @@ const expectedOperations = [
     message: "Kunne ikke hente behovet for nærmeste leder",
   },
   {
+    operation: RuntimeErrorOperation.HENT_NARMESTE_LEDER_FOR_ERSTATNING,
+    event: RuntimeErrorEvent.LINEMANAGER_REPLACEMENT_FETCH_FAILED,
+    message: "Kunne ikke hente nærmeste leder for erstatning",
+  },
+  {
     operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
     event: RuntimeErrorEvent.NARMESTE_LEDERE_SEARCH_FAILED,
     message: "Kunne ikke søke etter nærmeste ledere",
