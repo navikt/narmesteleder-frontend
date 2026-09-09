@@ -161,7 +161,7 @@ test.describe("Oversikt-flow", () => {
     ).toBeVisible();
     await expect(
       getByUiSelector(page, UiSelector.HeadingVirksomhet),
-    ).toContainText("963 890 095");
+    ).toContainText("Shark AS (963 890 095)");
     await getByUiSelector(page, UiSelector.LederFodselsnummer).fill(
       "01010112345",
     );

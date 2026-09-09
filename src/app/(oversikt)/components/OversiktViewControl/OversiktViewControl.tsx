@@ -1,21 +1,12 @@
 "use client";
 
 import { LocalAlert } from "@navikt/ds-react";
-import type { Organisasjon } from "@navikt/virksomhetsvelger";
 import type { FetchOrganisasjonerResult } from "@/server/fetchData/fetchOrganisasjoner";
 import type { FetchRequirementsListResult } from "@/server/fetchData/fetchRequirementsList";
 import { VirksomhetProvider } from "@/shared/state/virksomhetContext";
+import { findOrganisasjonNavn } from "@/utils/findOrganisasjonNavn";
 import { UiSelector } from "@/utils/uiSelectors";
 import { OversiktContent } from "./OversiktContent";
-
-function findOrgNavn(orgnr: string, organisasjoner: Organisasjon[]): string {
-  for (const org of organisasjoner) {
-    if (org.orgnr === orgnr) return org.navn;
-    const match = findOrgNavn(orgnr, org.underenheter);
-    if (match) return match;
-  }
-  return "";
-}
 
 export function OversiktViewControl({
   organisasjonerResult,
@@ -44,7 +35,7 @@ export function OversiktViewControl({
     );
   }
 
-  const orgnavn = findOrgNavn(
+  const orgnavn = findOrganisasjonNavn(
     selectedOrgnr,
     organisasjonerResult.organisasjoner,
   );
