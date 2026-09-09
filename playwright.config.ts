@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:3000/arbeidsgiver/ansatte/narmesteleder/",
+    baseURL: "http://localhost:3001/arbeidsgiver/ansatte/narmesteleder/",
     trace: "on-first-retry",
   },
   projects: [
@@ -18,9 +18,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000/arbeidsgiver/ansatte/narmesteleder",
-    reuseExistingServer: !process.env.CI,
+    command: "pnpm exec next dev --port 3001",
+    url: "http://localhost:3001/arbeidsgiver/ansatte/narmesteleder",
+    reuseExistingServer: false,
     env: {
       // We choose demo here to have a stable environment for e2e tests
       NEXT_PUBLIC_RUNTIME_ENVIRONMENT: "demo",
