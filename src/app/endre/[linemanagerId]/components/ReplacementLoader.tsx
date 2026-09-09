@@ -1,6 +1,6 @@
-import InfoError from "@/app/(behov)/[behovId]/components/InfoError";
 import { fetchLinemanagerReplacement } from "@/server/fetchData/fetchLinemanagerReplacement";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
+import { LederInfoError } from "@/shared/components/LederInfoError";
 import { ReplacementUnavailable } from "./ReplacementUnavailable";
 import { ViewControl } from "./ViewControl";
 
@@ -30,7 +30,7 @@ export async function ReplacementLoader({
     return <ViewControl initialData={initialData} returnTo={returnTo} />;
   } catch (error) {
     if (isFrontendError(error)) {
-      return <InfoError detail={error.errorDetail} />;
+      return <LederInfoError detail={error.errorDetail} />;
     }
     throw error;
   }

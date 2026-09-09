@@ -4,7 +4,7 @@ import {
   type MockScenario,
 } from "@/server/fetchData/fetchLederInfo";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
-import InfoError from "./InfoError";
+import { LederInfoError } from "@/shared/components/LederInfoError";
 import { ViewControl } from "./ViewControl";
 
 interface InfoLoaderProps {
@@ -33,7 +33,7 @@ export const InfoLoader = async ({
     })
     .catch((error) => {
       if (isFrontendError(error)) {
-        return <InfoError detail={error.errorDetail} />;
+        return <LederInfoError detail={error.errorDetail} />;
       }
       throw error;
     });

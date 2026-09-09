@@ -13,8 +13,8 @@ vi.mock("@/server/fetchData/fetchLinemanagerReplacement", () => ({
   fetchLinemanagerReplacement: fetchLinemanagerReplacementMock,
 }));
 
-vi.mock("@/app/(behov)/[behovId]/components/InfoError", () => ({
-  default: () => <div>Mapped error</div>,
+vi.mock("@/shared/components/LederInfoError", () => ({
+  LederInfoError: () => <div>Mapped error</div>,
 }));
 
 vi.mock("./ViewControl", () => ({
