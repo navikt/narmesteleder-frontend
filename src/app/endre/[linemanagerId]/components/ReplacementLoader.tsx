@@ -18,7 +18,11 @@ export async function ReplacementLoader({
   }
 
   try {
-    const initialData = await fetchLinemanagerReplacement(linemanagerId);
+    const initialData = await fetchLinemanagerReplacement(
+      linemanagerId,
+      undefined,
+      returnTo,
+    );
     if (!initialData) {
       return <ReplacementUnavailable />;
     }
