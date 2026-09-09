@@ -100,6 +100,9 @@ const expectedDomainRejections: Record<
   [RuntimeErrorOperation.HENT_BEHOV]: [
     { status: 403, types: accessRejectionTypes },
   ],
+  [RuntimeErrorOperation.HENT_NARMESTE_LEDER_FOR_ERSTATNING]: [
+    { status: 403, types: accessRejectionTypes },
+  ],
   [RuntimeErrorOperation.SOK_NARMESTE_LEDERE]: [
     { status: 403, types: accessRejectionTypes },
   ],

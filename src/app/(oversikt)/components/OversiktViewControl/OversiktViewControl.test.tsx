@@ -94,4 +94,107 @@ describe("Oversikt ViewControl", () => {
     expect(markup).toContain(`data-testid="${UiSelector.HeadingVirksomhet}"`);
     expect(markup).toContain(`data-testid="${UiSelector.OversiktFeilAlert}"`);
   });
+
+  it("viser Figma-tekst uten antall og valgt filter som Chips.Toggle", () => {
+    const markup = ReactDOMServer.renderToStaticMarkup(
+      <OversiktViewControl
+        organisasjonerResult={{
+          status: "available",
+          organisasjoner,
+        }}
+        requirementsResult={{
+          status: "available",
+          requirements: [],
+        }}
+        selectedOrgnr="963890095"
+      />,
+    );
+
+    expect(markup).toContain("Vis ansatte");
+    expect(markup).toContain("Mangler nærmeste leder");
+    expect(markup).toContain("Aktiv sykmelding");
+    expect(markup).toContain("Ingen aktiv sykmelding");
+    expect(markup).not.toMatch(/Mangler nærmeste leder \(\d+\)/);
+    expect(markup).not.toMatch(/Aktiv sykmelding \(\d+\)/);
+    expect(markup).not.toMatch(/Ingen aktiv sykmelding \(\d+\)/);
+    expect(markup).toContain('aria-pressed="true"');
+    expect(markup).toContain('aria-pressed="false"');
+    expect(markup).toContain(
+      `data-testid="${UiSelector.ExpandableSearchTrigger}"`,
+    );
+    expect(markup).toContain("Søk");
+    expect(markup).not.toContain("Søk etter ansatt");
+    expect(markup).not.toContain("Søk med navn eller fødselsnummer");
+    expect(markup).not.toContain(`data-testid="${UiSelector.OversiktSok}"`);
+    expect(markup).toContain("Ansatte som mangler nærmeste leder");
+    expect(markup).toContain(
+      "Disse ansatte må få registrert en nærmeste leder.",
+    );
+    expect(
+      markup.indexOf(`data-testid="${UiSelector.ExpandableSearchTrigger}"`),
+    ).toBeLessThan(markup.indexOf("Ansatte som mangler nærmeste leder"));
+  });
+
+  it("viser riktig beskrivelse for ansatte med aktiv sykmelding", () => {
+    const markup = ReactDOMServer.renderToStaticMarkup(
+      <OversiktViewControl
+        organisasjonerResult={{
+          status: "available",
+          organisasjoner,
+        }}
+        requirementsResult={{
+          status: "available",
+          requirements: [],
+        }}
+        selectedOrgnr="963890095"
+        selectedTab="aktiv-sykmelding"
+      />,
+    );
+
+    expect(markup).toContain("Ansatte med aktiv sykmelding");
+    expect(markup).toContain(
+      "Her kan du se og oppdatere hvem som er registrert som nærmeste leder.",
+    );
+    expect(markup).toContain(
+      `data-testid="${UiSelector.ExpandableSearchTrigger}"`,
+    );
+    expect(markup).toContain("Søk");
+    expect(markup).not.toContain("Søk etter ansatt");
+    expect(markup).not.toContain("Søk med navn eller fødselsnummer");
+    expect(markup).not.toContain(`data-testid="${UiSelector.LinemanagerSok}"`);
+    expect(
+      markup.indexOf(`data-testid="${UiSelector.ExpandableSearchTrigger}"`),
+    ).toBeLessThan(markup.indexOf("Ansatte med aktiv sykmelding"));
+    expect(markup).not.toContain(
+      "Du kan bryte koblingen mellom ansatt og leder fra",
+    );
+  });
+
+  it("viser kollapset søk for ansatte uten aktiv sykmelding", () => {
+    const markup = ReactDOMServer.renderToStaticMarkup(
+      <OversiktViewControl
+        organisasjonerResult={{
+          status: "available",
+          organisasjoner,
+        }}
+        requirementsResult={{
+          status: "available",
+          requirements: [],
+        }}
+        selectedOrgnr="963890095"
+        selectedTab="ikke-aktiv-sykmelding"
+      />,
+    );
+
+    expect(markup).toContain(
+      `data-testid="${UiSelector.ExpandableSearchTrigger}"`,
+    );
+    expect(markup).toContain("Søk");
+    expect(markup).not.toContain("Søk etter ansatt");
+    expect(markup).not.toContain("Søk med navn eller fødselsnummer");
+    expect(markup).not.toContain(`data-testid="${UiSelector.LinemanagerSok}"`);
+    expect(
+      markup.indexOf(`data-testid="${UiSelector.ExpandableSearchTrigger}"`),
+    ).toBeLessThan(markup.indexOf("Ansatte uten aktiv sykmelding"));
+  });
 });

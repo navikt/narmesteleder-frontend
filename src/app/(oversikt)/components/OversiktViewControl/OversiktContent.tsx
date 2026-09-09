@@ -1,9 +1,9 @@
 import {
   BodyLong,
+  BodyShort,
+  Chips,
   Heading,
   LocalAlert,
-  Tabs,
-  TextField,
   VStack,
 } from "@navikt/ds-react";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,7 @@ import type { FetchRequirementsListResult } from "@/server/fetchData/fetchRequir
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { useVirksomhetContext } from "@/shared/state/virksomhetContext";
 import { UiSelector } from "@/utils/uiSelectors";
+import { ExpandableSearch } from "./ExpandableSearch";
 import { filterBySearch } from "./filterBySearch";
 import { LinemanagerContent } from "./LinemanagerContent";
 import { OversiktHeadingLeder } from "./OversiktHeadingLeder";
@@ -66,6 +67,14 @@ export function OversiktContent({
   );
   const selectedOrCurrentOrgnr = virksomhet.orgnummer || selectedOrgnr;
 
+  const handleTabChange = (value: string) => {
+    const nextTab = getValidTabValue(value);
+    setActiveTab(nextTab);
+    startTransition(() => {
+      router.push(`?orgnr=${selectedOrCurrentOrgnr}&tab=${nextTab}`);
+    });
+  };
+
   return (
     <VStack gap="space-32">
       <OversiktHeadingLeder />
@@ -80,45 +89,48 @@ export function OversiktContent({
           </LocalAlert.Content>
         </LocalAlert>
       ) : (
-        <Tabs
-          value={activeTab}
-          onChange={(value) => {
-            const nextTab = getValidTabValue(value);
-            setActiveTab(nextTab);
-            startTransition(() => {
-              router.push(`?orgnr=${selectedOrCurrentOrgnr}&tab=${nextTab}`);
-            });
-          }}
-          data-testid={UiSelector.OversiktFaner}
-        >
-          <Tabs.List>
-            <Tabs.Tab value="mangler-leder" label="Mangler leder" />
-            <Tabs.Tab value="aktiv-sykmelding" label="Aktiv sykmelding" />
-            <Tabs.Tab
-              value="ikke-aktiv-sykmelding"
-              label="Ikke aktiv sykmelding"
-            />
-          </Tabs.List>
+        <>
+          <VStack gap="space-8">
+            <BodyShort weight="semibold">Vis ansatte</BodyShort>
+            <Chips data-testid={UiSelector.OversiktFaner}>
+              <Chips.Toggle
+                selected={activeTab === "mangler-leder"}
+                onClick={() => handleTabChange("mangler-leder")}
+                data-color="neutral"
+              >
+                Mangler nærmeste leder
+              </Chips.Toggle>
+              <Chips.Toggle
+                selected={activeTab === "aktiv-sykmelding"}
+                onClick={() => handleTabChange("aktiv-sykmelding")}
+                data-color="neutral"
+              >
+                Aktiv sykmelding
+              </Chips.Toggle>
+              <Chips.Toggle
+                selected={activeTab === "ikke-aktiv-sykmelding"}
+                onClick={() => handleTabChange("ikke-aktiv-sykmelding")}
+                data-color="neutral"
+              >
+                Ingen aktiv sykmelding
+              </Chips.Toggle>
+            </Chips>
+          </VStack>
 
-          <Tabs.Panel value="mangler-leder">
+          {activeTab === "mangler-leder" && (
             <VStack gap="space-32" paddingBlock="space-24 space-0">
-              <Heading level="2" size="small">
-                Sykmeldte ansatte uten leder
-              </Heading>
-              <BodyLong>
-                Her ser du en oversikt over sykmeldte ansatte i virksomheten med
-                behov for å bli tildelt nærmeste leder. Klikk på "Oppgi leder"
-                for å legge til nærmeste leder for en ansatt.
-              </BodyLong>
-
-              <TextField
-                label="Søk på navn eller fødselsnummer"
-                size="medium"
+              <ExpandableSearch
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 data-testid={UiSelector.OversiktSok}
-                autoComplete="off"
               />
+
+              <Heading level="2" size="small">
+                Ansatte som mangler nærmeste leder
+              </Heading>
+              <BodyLong>
+                Disse ansatte må få registrert en nærmeste leder.
+              </BodyLong>
 
               <OversiktTabell
                 requirements={filtered}
@@ -126,26 +138,28 @@ export function OversiktContent({
                 loading={isPending}
               />
             </VStack>
-          </Tabs.Panel>
+          )}
 
-          <Tabs.Panel value="aktiv-sykmelding">
+          {activeTab === "aktiv-sykmelding" && (
             <VStack paddingBlock="space-24 space-0">
               <LinemanagerContent
+                key="aktiv-sykmelding"
                 orgNumber={selectedOrgnr}
                 hasActiveSickLeave={true}
               />
             </VStack>
-          </Tabs.Panel>
+          )}
 
-          <Tabs.Panel value="ikke-aktiv-sykmelding">
+          {activeTab === "ikke-aktiv-sykmelding" && (
             <VStack paddingBlock="space-24 space-0">
               <LinemanagerContent
+                key="ikke-aktiv-sykmelding"
                 orgNumber={selectedOrgnr}
                 hasActiveSickLeave={false}
               />
             </VStack>
-          </Tabs.Panel>
-        </Tabs>
+          )}
+        </>
       )}
     </VStack>
   );

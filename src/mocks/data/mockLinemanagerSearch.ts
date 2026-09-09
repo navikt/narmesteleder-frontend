@@ -3,6 +3,7 @@ import type { LinemanagerSearchResponse } from "@/schemas/lineManagerSearchSchem
 export const mockLinemanagerSearchActive: LinemanagerSearchResponse = {
   linemanagers: [
     {
+      linemanagerId: "relation-1",
       orgNumber: "963890095",
       activeFrom: "2023-01-15T00:00:00Z",
       employee: {
@@ -17,6 +18,7 @@ export const mockLinemanagerSearchActive: LinemanagerSearchResponse = {
       },
     },
     {
+      linemanagerId: "relation-2",
       orgNumber: "963890095",
       activeFrom: "2022-06-01T00:00:00Z",
       employee: {
@@ -42,6 +44,7 @@ export const mockLinemanagerSearchActive: LinemanagerSearchResponse = {
 export const mockLinemanagerSearchInactive: LinemanagerSearchResponse = {
   linemanagers: [
     {
+      linemanagerId: "relation-3",
       orgNumber: "963890095",
       activeFrom: "2021-03-10T00:00:00Z",
       employee: {
