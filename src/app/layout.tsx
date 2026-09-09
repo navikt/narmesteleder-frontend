@@ -8,8 +8,8 @@ import "@/app/globals.css";
 import { publicEnv } from "@/env-variables/publicEnv";
 
 export const metadata: Metadata = {
-  title: "Oppgi nærmeste leder",
-  description: "En tjeneste for å oppgi hvem som er din nærmeste leder",
+  title: "Administrer nærmeste leder",
+  description: "En tjeneste for å administrere nærmeste ledere",
 };
 
 const getDecoratorEnv = (): "dev" | "prod" => {
@@ -29,8 +29,8 @@ const breadcrumbs = [
     url: publicEnv.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL,
   },
   {
-    title: "Oppgi nærmeste leder",
-    analyticsTitle: "Oppgi nærmeste leder",
+    title: "Administrer nærmeste leder",
+    analyticsTitle: "Administrer nærmeste leder",
     url: "https://www.nav.no/arbeidsgiver/ansatte/narmesteleder",
   },
 ];
@@ -55,7 +55,7 @@ export default async function RootLayout({
     <html lang="no">
       <head>
         <Decorator.HeadAssets />
-        <title>Oppgi nærmeste leder</title>
+        <title>Administrer nærmeste leder</title>
       </head>
       <body>
         <Providers>
