@@ -5,7 +5,9 @@ import {
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
 } from "@/server/narmesteLederErrorUtils";
 
-const fetchLinemanagerReplacementMock = vi.fn();
+const { fetchLinemanagerReplacementMock } = vi.hoisted(() => ({
+  fetchLinemanagerReplacementMock: vi.fn(),
+}));
 
 vi.mock("@/server/fetchData/fetchLinemanagerReplacement", () => ({
   fetchLinemanagerReplacement: fetchLinemanagerReplacementMock,
