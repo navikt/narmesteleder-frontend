@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const environment =
   process.env.NEXT_PUBLIC_RUNTIME_ENVIRONMENT === "prod" ? "prod" : "dev";
+const isPlaywrightTest = process.env.PLAYWRIGHT_TEST === "true";
 
 const SELF = "'self'";
 
@@ -18,6 +19,7 @@ const appDirectives = {
 };
 
 const nextConfig: NextConfig = {
+  distDir: isPlaywrightTest ? ".next-e2e" : ".next",
   async headers() {
     const { buildCspHeader } = await import(
       "@navikt/nav-dekoratoren-moduler/ssr"
