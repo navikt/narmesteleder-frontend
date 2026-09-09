@@ -22,14 +22,15 @@ Single-test commands:
 ## High-level architecture
 
 - This is a Next.js App Router app under base path `/arbeidsgiver/ansatte/narmesteleder` (`next.config.ts`, `NEXT_PUBLIC_BASE_PATH`).
-- Two top-level user flows:
+- Main user flows:
   - `src/app/(registrering)/page.tsx`: create relation via full registration flow (`ViewControl`).
+  - `src/app/(oversikt)/oversikt/page.tsx`: overview of relations.
   - `src/app/(behov)/[behovId]/page.tsx`: update relation for a specific requirement; validates `behovId` with zod and loads backend data via `InfoLoader`.
 - Server communication is centralized in `src/server/*`:
   - `fetchData/fetchLederInfo.ts` for read calls.
   - `actions/opprettNarmesteLeder.ts` and `actions/oppdaterNarmesteLeder.ts` for writes.
   - `tokenXFetch.ts` wraps GET/POST/PUT fetches, token exchange, zod response validation, and frontend error mapping.
-- Auth path: IdPorten token validation (`src/auth/validateIdPortenToken.ts`) -> TokenX exchange (`src/auth/tokenX.ts`) -> backend call.
+- Auth path: IdPorten token validation (`src/server/auth/validateIdPortenToken.ts`) -> TokenX exchange (`src/server/auth/tokenX.ts`) -> backend call.
 - Environment behavior split:
   - `local`/`demo` uses mocks (`src/mocks/*`) and supports `mockScenario` in `[behovId]` route.
   - other envs call real backend endpoints from `getServerEnv()`.
@@ -42,7 +43,7 @@ Single-test commands:
 - Route-group ownership is intentional:
   - keep registrering flow-local code in `src/app/(registrering)/**`
   - keep behov flow-local code in `src/app/(behov)/[behovId]/**`
-  - keep cross-flow modules in neutral folders (`src/components`, `src/shared`, `src/auth`, `src/utils`).
+  - keep cross-flow modules in neutral folders (`src/shared`, `src/server`, `src/utils`).
 - Reuse Aksel spacing/component conventions from `.github/instructions/nextjs-aksel.instructions.md`:
   - prefer Aksel components (`Box`, `VStack`, `HStack`, etc.)
   - use `space-*` tokens for spacing props
@@ -50,7 +51,8 @@ Single-test commands:
 - Copilot guidance:
   - follow repository instruction/prompt files under `.github/instructions/` before adding new patterns.
 - Form stack convention:
-  - TanStack React Form through `useAppForm` helpers in `src/components/form/hooks`.
+  - Follow the existing form components under the route groups in `src/app/`;
+    inspect the installed form library and local helpers before changing validation.
   - Validation comes from zod schemas in `src/schemas/*` (`validators: { onDynamic: ... }`).
 - Edit/submit UI state is standardized with `createContextState` (`src/shared/state/createContextState.tsx`) and per-flow context wrappers.
 - Keep schema-first boundaries:
@@ -59,3 +61,11 @@ Single-test commands:
 - Keep API targets and headers centralized:
   - use `TokenXTargetApi` and `tokenXFetchGet`/`tokenXFetchUpdate`, not ad-hoc fetches.
 - Keep test selectors centralized in `src/utils/uiSelectors.ts`; e2e tests import the enum directly.
+
+## Repository guidance
+
+This repository owns its instructions, local specialists and issue/PR templates.
+Update these files with verified repository facts when an authorized change
+makes them stale. Shared agent roles and skills come from the selected
+Grillmester plugin through nav-pilot; do not copy them into `.github/` or add a
+file-sync workflow. Use the active client's catalog for exact callable IDs.
