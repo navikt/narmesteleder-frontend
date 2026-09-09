@@ -49,10 +49,6 @@ export function ReplacementForm({
                 label: "Fødselsnummer",
                 value: initialData.sykmeldt.fodselsnummer,
               },
-              {
-                label: "Organisasjonsnummer",
-                value: initialData.sykmeldt.orgnummer,
-              },
             ]}
           />
           <Box padding="space-16" background="accent-soft" borderRadius="8">
