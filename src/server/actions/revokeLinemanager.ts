@@ -1,6 +1,8 @@
 "use server";
 
+import { isLocalOrDemo } from "@/env-variables/envHelpers";
 import { getServerEnv } from "@/env-variables/serverEnv";
+import { simulateBackendDelay } from "@/mocks/simulateBackendDelay";
 import {
   type LineManagerRevokeRequest,
   lineManagerRevokeRequestSchema,
@@ -38,6 +40,11 @@ export async function revokeLinemanager(
       success: false,
       errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
     };
+  }
+
+  if (isLocalOrDemo) {
+    await simulateBackendDelay();
+    return { success: true };
   }
 
   return tokenXFetchUpdate({
