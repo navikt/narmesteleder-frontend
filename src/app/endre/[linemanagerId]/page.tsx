@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
+import { InfoSpinner } from "@/shared/components/InfoSpinner";
 import { ReplacementLoader } from "./components/ReplacementLoader";
-import { ReplacementSpinner } from "./components/ReplacementSpinner";
 
 const linemanagerIdSchema = requirementIdSchema;
 
@@ -22,7 +22,7 @@ export default async function ReplacementPage({
   }
 
   return (
-    <Suspense fallback={<ReplacementSpinner />}>
+    <Suspense fallback={<InfoSpinner />}>
       <ReplacementLoader linemanagerId={linemanagerId} returnTo={returnTo} />
     </Suspense>
   );
