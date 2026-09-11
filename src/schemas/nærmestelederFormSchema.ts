@@ -25,7 +25,7 @@ export const narmesteLederFormSchema = object({
   mobilnummer: string()
     .trim()
     .nonempty(ValidationMessages.RequireField)
-    .regex(/^\d{8}$/, ValidationMessages.InvalidMobilnummer),
+    .regex(/^\+?\d{6,16}$/, ValidationMessages.InvalidMobilnummer),
   epost: email(ValidationMessages.InvalidEmail).nonempty(
     ValidationMessages.RequireField,
   ),
