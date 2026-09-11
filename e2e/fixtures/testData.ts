@@ -14,7 +14,7 @@ export const invalidTestData = {
   fnr: "1234567890",
   orgnummer: "12345678",
   email: "test@example",
-  mobilnummer: "1234567",
+  mobilnummer: "12345",
   etternavn: "",
   virksomhetSoketekst: "Shark",
   requirementId: "invalid-guid",

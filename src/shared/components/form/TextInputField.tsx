@@ -3,6 +3,7 @@ import { useFieldContext } from "@/shared/components/form/hooks/form-context";
 
 export type TextInputFieldProps = {
   label: string;
+  description?: TextFieldProps["description"];
   type?: TextFieldProps["type"];
   className?: string;
   uiSelector?: string;
@@ -12,6 +13,7 @@ export type TextInputFieldProps = {
 
 export function TextInputField({
   label,
+  description,
   type,
   className,
   uiSelector,
@@ -23,6 +25,7 @@ export function TextInputField({
   return (
     <TextField
       label={label}
+      description={description}
       value={field.state.value}
       onChange={(e) => field.handleChange(e.target.value)}
       onBlur={() => {

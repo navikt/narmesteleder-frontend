@@ -40,7 +40,8 @@ export const LederGroup = withFieldGroup({
         <group.AppField name="mobilnummer">
           {(field) => (
             <field.TextInputField
-              label="Mobilnummer (8 siffer)"
+              label="Mobilnummer"
+              description="For utenlandske nummer, bruk + og landskode, for eksempel +46."
               type="tel"
               uiSelector={UiSelector.Mobilnummer}
               className="w-48"
