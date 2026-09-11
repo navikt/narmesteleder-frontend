@@ -9,11 +9,11 @@ test.describe("Oversikt-flow", () => {
     await page.goto(OVERSIKT_URL);
   });
 
-  test("viser heading, søk og faner", async ({ page }) => {
+  test("viser heading, søkeknapp og filtre", async ({ page }) => {
     await expectAllVisible(page, [
       UiSelector.HeadingLeder,
-      UiSelector.OversiktSok,
       UiSelector.OversiktFaner,
+      UiSelector.ExpandableSearchTrigger,
     ]);
   });
 
@@ -26,8 +26,9 @@ test.describe("Oversikt-flow", () => {
     const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
     const firstRow = tabell.getByRole("row").nth(1);
     const firstName = await firstRow.getByRole("rowheader").innerText();
-    const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
 
+    await getByUiSelector(page, UiSelector.ExpandableSearchTrigger).click();
+    const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
     await sokFelt.fill(firstName);
 
     await expect(
@@ -39,14 +40,16 @@ test.describe("Oversikt-flow", () => {
     const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
     const firstRow = tabell.getByRole("row").nth(1);
     const fnr = await firstRow.getByText(/\d{6}\s\d{5}/).innerText();
-    const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
 
+    await getByUiSelector(page, UiSelector.ExpandableSearchTrigger).click();
+    const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
     await sokFelt.fill(fnr.replace(/\s/g, ""));
 
     await expect(tabell.getByText(fnr)).toBeVisible();
   });
 
   test("viser tom tilstand ved ingen treff", async ({ page }) => {
+    await getByUiSelector(page, UiSelector.ExpandableSearchTrigger).click();
     const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
     await sokFelt.fill("xyzingentreff999");
 
@@ -55,24 +58,30 @@ test.describe("Oversikt-flow", () => {
     ).toBeVisible();
   });
 
-  test("Oppgi leder-knapp navigerer til behov-side", async ({ page }) => {
+  test("legg til nærmeste leder-navigasjon bruker behov-ID", async ({
+    page,
+  }) => {
     const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
-    const oppgiLederKnapp = tabell
-      .getByRole("button", { name: /Oppgi leder/ })
+    const handlinger = tabell
+      .getByRole("button", { name: /Handlinger for/ })
       .first();
-    await expect(oppgiLederKnapp).toBeVisible();
+    await handlinger.click();
+    const leggTilLeder = page
+      .getByRole("menuitem", { name: "Legg til nærmeste leder" })
+      .first();
+    await expect(leggTilLeder).toBeVisible();
 
-    const href = await oppgiLederKnapp.getAttribute("href");
+    const href = await leggTilLeder.getAttribute("href");
     expect(href).toMatch(
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
     );
   });
 
-  test("aktiv sykmelding-fane viser linemanager-tabell med bryt kobling", async ({
+  test("aktiv sykmelding viser tabell og begge handlingene", async ({
     page,
   }) => {
     await page
-      .getByRole("tab", { name: "Aktiv sykmelding", exact: true })
+      .getByRole("button", { name: "Aktiv sykmelding", exact: true })
       .click();
 
     const linemanagerTabell = getByUiSelector(
@@ -81,37 +90,90 @@ test.describe("Oversikt-flow", () => {
     );
     await expect(linemanagerTabell).toBeVisible();
 
+    await linemanagerTabell
+      .getByRole("button", { name: /Handlinger for Kari Nordmann/ })
+      .click();
     await expect(
-      page.getByRole("button", { name: /Bryt kobling til leder for/i }).first(),
+      page.getByRole("menuitem", { name: "Endre nærmeste leder" }),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /Endre eller bytt leder for/i }),
-    ).toHaveCount(0);
-    await expect(
-      page.getByText(
-        /Du kan deretter registrere ny leder fra fanen «Mangler leder»\./,
-      ),
+      page.getByRole("menuitem", { name: "Fjern nærmeste leder" }),
     ).toBeVisible();
   });
 
-  test("ikke aktiv sykmelding-fane viser bryt kobling, men ikke endre leder", async ({
+  test("ingen aktiv sykmelding viser bare fjerning", async ({ page }) => {
+    await page
+      .getByRole("button", { name: "Ingen aktiv sykmelding", exact: true })
+      .click();
+
+    const linemanagerTabell = getByUiSelector(
+      page,
+      UiSelector.LinemanagerTabell,
+    );
+    await expect(linemanagerTabell).toBeVisible();
+    await linemanagerTabell
+      .getByRole("button", { name: /Handlinger for Lars Johansen/ })
+      .click();
+    await expect(
+      page.getByRole("menuitem", { name: "Fjern nærmeste leder" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("menuitem", { name: "Endre nærmeste leder" }),
+    ).toHaveCount(0);
+  });
+
+  test("bytter nærmeste leder med en PII-fri URL og returnerer til oversikten", async ({
     page,
   }) => {
-    await page.getByRole("tab", { name: "Ikke aktiv sykmelding" }).click();
+    await page
+      .getByRole("button", { name: "Aktiv sykmelding", exact: true })
+      .click();
 
+    const linemanagerTabell = getByUiSelector(
+      page,
+      UiSelector.LinemanagerTabell,
+    );
+    await expect(linemanagerTabell).toBeVisible();
+    await linemanagerTabell
+      .getByRole("button", { name: /Handlinger for Kari Nordmann/ })
+      .click();
+
+    const editLink = page.getByRole("menuitem", {
+      name: "Endre nærmeste leder",
+    });
+    const href = await editLink.getAttribute("href");
+    expect(href).toMatch(
+      /\/endre\/11111111-1111-4111-8111-111111111111\?returnTo=/,
+    );
+    for (const pii of [
+      "Kari",
+      "Nordmann",
+      "26895514420",
+      "ole.hansen@shark.no",
+      "91234567",
+    ]) {
+      expect(href).not.toContain(pii);
+    }
+
+    await editLink.click();
     await expect(
-      getByUiSelector(page, UiSelector.LinemanagerTabell),
+      getByUiSelector(page, UiSelector.ReplacementForm),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /Bryt kobling til leder for/i }).first(),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Endre eller bytt leder for/i }),
-    ).toHaveCount(0);
-    await expect(
-      page.getByText(
-        /Du kan deretter registrere ny leder fra fanen «Mangler leder»\./,
-      ),
-    ).toHaveCount(0);
+      getByUiSelector(page, UiSelector.HeadingVirksomhet),
+    ).toContainText("Shark AS (963 890 095)");
+    await getByUiSelector(page, UiSelector.LederFodselsnummer).fill(
+      "01010112345",
+    );
+    await getByUiSelector(page, UiSelector.LederEtternavn).fill("Olsen");
+    await getByUiSelector(page, UiSelector.Epost).fill("ny.leder@eksempel.no");
+    await getByUiSelector(page, UiSelector.Mobilnummer).fill("90000000");
+    await getByUiSelector(page, UiSelector.SendInn).click();
+
+    await expect(getByUiSelector(page, UiSelector.ThankYouAlert)).toBeVisible();
+    await page.getByRole("button", { name: "Tilbake til oversikt" }).click();
+    await expect(page).toHaveURL(
+      /\/oversikt\?orgnr=963890095&tab=aktiv-sykmelding$/,
+    );
   });
 });

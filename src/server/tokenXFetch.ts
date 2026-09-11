@@ -77,19 +77,37 @@ const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
   return result.data;
 };
 
+export function tokenXFetchGet<S extends z.ZodType>(
+  args: {
+    targetApi: TokenXTargetApi;
+    operation: RuntimeErrorOperation;
+    endpoint: string;
+    responseDataSchema: S;
+    redirectAfterLoginUrl: string;
+  } & { returnNullOnNotFound: true },
+): Promise<z.infer<S> | null>;
+export function tokenXFetchGet<S extends z.ZodType>(args: {
+  targetApi: TokenXTargetApi;
+  operation: RuntimeErrorOperation;
+  endpoint: string;
+  responseDataSchema: S;
+  redirectAfterLoginUrl: string;
+}): Promise<z.infer<S>>;
 export async function tokenXFetchGet<S extends z.ZodType>({
   targetApi,
   operation,
   endpoint,
   responseDataSchema,
   redirectAfterLoginUrl,
+  returnNullOnNotFound = false,
 }: {
   targetApi: TokenXTargetApi;
   operation: RuntimeErrorOperation;
   endpoint: string;
   responseDataSchema: S;
   redirectAfterLoginUrl: string;
-}): Promise<z.infer<S>> {
+  returnNullOnNotFound?: boolean;
+}): Promise<z.infer<S> | null> {
   const oboToken = await getTokenXOrRedirect(
     redirectAfterLoginUrl,
     targetApi,
@@ -104,6 +122,10 @@ export async function tokenXFetchGet<S extends z.ZodType>({
   } catch {
     logRuntimeError(operation, RuntimeErrorCode.NETWORK_ERROR);
     throw createSafeFrontendError();
+  }
+
+  if (returnNullOnNotFound && response.status === 404) {
+    return null;
   }
 
   if (!response.ok) {

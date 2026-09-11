@@ -1,26 +1,24 @@
-import { Button, HStack, VStack } from "@navikt/ds-react";
-import { useRegistreringContextState } from "@/app/(registrering)/state/contextState";
-import { HeadingLeder } from "@/shared/components/HeadingLeder";
-import { getSafeReturnTo } from "@/utils/returnTo";
-import InfoPanel from "./InfoPanel";
-import RegistreringForm from "./RegistreringForm";
+"use client";
 
-export function EditView() {
-  const { returnTo } = useRegistreringContextState();
+import { Button, HStack, VStack } from "@navikt/ds-react";
+import { HeadingLeder } from "@/shared/components/HeadingLeder";
+import ThankYouAlert from "@/shared/components/ThankYouAlert";
+import { getSafeReturnTo } from "@/utils/returnTo";
+
+export function SubmitView({ returnTo }: { returnTo?: string }) {
   const returnToUrl = getSafeReturnTo(returnTo);
 
   return (
-    <VStack gap="space-32">
-      <HeadingLeder />
-      <InfoPanel />
-      {returnToUrl && (
+    <VStack gap="space-24">
+      <HeadingLeder readOnlyVirksomhet tittel="Bytt nærmeste leder" />
+      <ThankYouAlert />
+      {returnToUrl ? (
         <HStack>
           <Button as="a" href={returnToUrl} variant="secondary" size="small">
             Tilbake til oversikt
           </Button>
         </HStack>
-      )}
-      <RegistreringForm />
+      ) : null}
     </VStack>
   );
 }

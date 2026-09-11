@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
+import { getSafeReturnTo } from "@/utils/returnTo";
 
 const BASE = "/arbeidsgiver/ansatte/narmesteleder";
 

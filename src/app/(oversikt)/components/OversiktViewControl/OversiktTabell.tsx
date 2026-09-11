@@ -1,5 +1,5 @@
-import { PersonPlusIcon } from "@navikt/aksel-icons";
-import { BodyShort, Button, Table, VStack } from "@navikt/ds-react";
+import { MenuElipsisVerticalIcon, PersonPlusIcon } from "@navikt/aksel-icons";
+import { ActionMenu, BodyShort, Button, Table, VStack } from "@navikt/ds-react";
 import { publicEnv } from "@/env-variables/publicEnv";
 import type { RequirementsListItem } from "@/schemas/lineManagerRequirementsListSchema";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
@@ -12,6 +12,17 @@ interface OversiktTabellProps {
   loading?: boolean;
 }
 
+export const ADD_LINEMANAGER_LABEL = "Legg til nærmeste leder";
+
+export function getAddLinemanagerHref(
+  requirementId: string,
+  orgnr: string,
+): string {
+  const returnTo = `/oversikt?orgnr=${orgnr}&tab=mangler-leder`;
+  const params = new URLSearchParams({ returnTo });
+  return `${publicEnv.NEXT_PUBLIC_BASE_PATH}/${requirementId}?${params}`;
+}
+
 function HandlingCell({
   requirement,
   orgnr,
@@ -19,22 +30,35 @@ function HandlingCell({
   requirement: RequirementsListItem;
   orgnr: string;
 }) {
-  const returnTo = `/oversikt?orgnr=${orgnr}&tab=mangler-leder`;
-  const params = new URLSearchParams({ returnTo });
-  const behovUrl = `${publicEnv.NEXT_PUBLIC_BASE_PATH}/${requirement.id}?${params}`;
-  const label = "Oppgi leder";
+  const fullName = joinNonEmpty([
+    requirement.name.firstName,
+    requirement.name.middleName,
+    requirement.name.lastName,
+  ]);
+  const actionLabel = `Handlinger for ${fullName}`;
 
   return (
-    <Button
-      as="a"
-      href={behovUrl}
-      variant="primary"
-      size="small"
-      icon={<PersonPlusIcon aria-hidden />}
-      aria-label={`${label} for ${joinNonEmpty([requirement.name.firstName, requirement.name.middleName, requirement.name.lastName])}`}
-    >
-      {label}
-    </Button>
+    <ActionMenu>
+      <ActionMenu.Trigger>
+        <Button
+          aria-label={actionLabel}
+          title={actionLabel}
+          data-color="neutral"
+          variant="tertiary"
+          size="small"
+          icon={<MenuElipsisVerticalIcon aria-hidden />}
+        />
+      </ActionMenu.Trigger>
+      <ActionMenu.Content align="end">
+        <ActionMenu.Item
+          as="a"
+          href={getAddLinemanagerHref(requirement.id, orgnr)}
+          icon={<PersonPlusIcon aria-hidden />}
+        >
+          {ADD_LINEMANAGER_LABEL}
+        </ActionMenu.Item>
+      </ActionMenu.Content>
+    </ActionMenu>
   );
 }
 
@@ -64,9 +88,9 @@ export function OversiktTabell({
     <Table zebraStripes data-testid={UiSelector.OversiktTabell}>
       <Table.Header>
         <Table.Row>
-          <Table.HeaderCell scope="col">Navn</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Fødselsnummer</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Handlinger</Table.HeaderCell>
+          <Table.HeaderCell scope="col">Ansatt</Table.HeaderCell>
+          <Table.HeaderCell scope="col">Nærmeste leder</Table.HeaderCell>
+          <Table.HeaderCell scope="col">Handling</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -79,12 +103,15 @@ export function OversiktTabell({
 
           return (
             <Table.Row key={req.id}>
-              <Table.HeaderCell scope="row" style={{ whiteSpace: "nowrap" }}>
-                {fullnavn}
+              <Table.HeaderCell scope="row">
+                <VStack gap="space-4">
+                  <BodyShort>{fullnavn}</BodyShort>
+                  <BodyShort size="small">
+                    {formatFnr(req.employeeIdentificationNumber)}
+                  </BodyShort>
+                </VStack>
               </Table.HeaderCell>
-              <Table.DataCell style={{ whiteSpace: "nowrap" }}>
-                {formatFnr(req.employeeIdentificationNumber)}
-              </Table.DataCell>
+              <Table.DataCell>Ikke registrert</Table.DataCell>
               <Table.DataCell>
                 <HandlingCell requirement={req} orgnr={orgnr} />
               </Table.DataCell>

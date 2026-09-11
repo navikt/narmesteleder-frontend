@@ -19,3 +19,13 @@ export const lineManagerReadSchema = object({
 export type LineManagerReadResponse = z.infer<typeof lineManagerReadSchema>;
 
 export type EmployeeResponse = z.infer<typeof employeeSchema>;
+
+export const lineManagerReplacementReadSchema = object({
+  employeeIdentificationNumber: string(),
+  lastName: string(),
+  orgNumber: string(),
+});
+
+export type LineManagerReplacementReadResponse = z.infer<
+  typeof lineManagerReplacementReadSchema
+>;

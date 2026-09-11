@@ -2,10 +2,10 @@ import { logger } from "@navikt/next-logger";
 import { Suspense } from "react";
 import { z } from "zod";
 import { InfoLoader } from "@/app/(behov)/[behovId]/components/InfoLoader";
-import { InfoSpinner } from "@/app/(behov)/[behovId]/components/InfoSpinner";
 import notFound from "@/app/not-found";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import type { MockScenario } from "@/server/fetchData/fetchLederInfo";
+import { InfoSpinner } from "@/shared/components/InfoSpinner";
 
 const isValidBehovId = (behovId: string) => {
   const parseResult = requirementIdSchema.safeParse(behovId);
