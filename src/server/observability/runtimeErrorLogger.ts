@@ -1,8 +1,9 @@
 import { logger } from "@navikt/next-logger";
 import { type ZodError, z } from "zod";
+import { networkErrorCause } from "./networkErrorCause";
 import {
   getRuntimeErrorMessage,
-  type RuntimeErrorCode,
+  RuntimeErrorCode,
   type RuntimeErrorOperation,
   runtimeErrorContext,
 } from "./runtimeErrorContract";
@@ -29,6 +30,19 @@ export function logRuntimeError(
 ): void {
   logger.error(
     runtimeErrorContext(operation, errorCode, upstreamStatus),
+    getRuntimeErrorMessage(operation),
+  );
+}
+
+export function logRuntimeNetworkError(
+  operation: RuntimeErrorOperation,
+  error: unknown,
+): void {
+  logger.error(
+    {
+      ...runtimeErrorContext(operation, RuntimeErrorCode.NETWORK_ERROR),
+      network_cause: networkErrorCause(error),
+    },
     getRuntimeErrorMessage(operation),
   );
 }

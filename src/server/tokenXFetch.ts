@@ -20,6 +20,7 @@ import {
 } from "./observability/runtimeErrorContract";
 import {
   logRuntimeError,
+  logRuntimeNetworkError,
   logRuntimeValidationError,
   RuntimeValidationTarget,
 } from "./observability/runtimeErrorLogger";
@@ -101,8 +102,8 @@ export async function tokenXFetchGet<S extends z.ZodType>({
     response = await fetch(endpoint, {
       headers: getBackendRequestHeaders(oboToken),
     });
-  } catch {
-    logRuntimeError(operation, RuntimeErrorCode.NETWORK_ERROR);
+  } catch (error) {
+    logRuntimeNetworkError(operation, error);
     throw createSafeFrontendError();
   }
 
@@ -155,8 +156,8 @@ export async function tokenXFetchPost<S extends z.ZodType>({
       body: JSON.stringify(requestBody),
       headers: getBackendRequestHeaders(oboToken),
     });
-  } catch {
-    logRuntimeError(operation, RuntimeErrorCode.NETWORK_ERROR);
+  } catch (error) {
+    logRuntimeNetworkError(operation, error);
     throw createSafeFrontendError();
   }
 
@@ -228,8 +229,8 @@ export async function tokenXFetchUpdate({
     if (response.ok) {
       return { success: true };
     }
-  } catch {
-    logRuntimeError(operation, RuntimeErrorCode.NETWORK_ERROR);
+  } catch (error) {
+    logRuntimeNetworkError(operation, error);
     return {
       success: false,
       errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,

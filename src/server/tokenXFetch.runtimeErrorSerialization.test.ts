@@ -1,3 +1,4 @@
+import { createServer } from "node:http";
 import {
   type Context,
   type ContextManager,
@@ -20,6 +21,7 @@ import { TokenXTargetApi } from "@/server/helpers";
 import {
   BackendErrorType,
   errorTypeToDetail,
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
 } from "@/server/narmesteLederErrorUtils";
 import {
   RuntimeErrorCode,
@@ -33,6 +35,7 @@ import {
 } from "@/server/tokenXFetch";
 
 const serializedLogLines = vi.hoisted((): string[] => []);
+const nativeFetch = globalThis.fetch;
 const {
   fetchMock,
   validateTokenAndGetTokenXMock,
@@ -284,7 +287,150 @@ describe("serialized TokenX GET runtime errors", () => {
       operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
       errorCode: RuntimeErrorCode.NETWORK_ERROR,
       message: "Kunne ikke hente organisasjoner",
+      networkCause: "UNKNOWN",
     });
+  });
+
+  it("beholder timeout-årsaken fra fetch uten å logge underliggende melding", async () => {
+    fetchMock.mockRejectedValue(
+      new TypeError(ERROR_DETAIL, {
+        cause: Object.assign(new Error(ENDPOINT), {
+          code: "UND_ERR_CONNECT_TIMEOUT",
+        }),
+      }),
+    );
+
+    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_ORGANISASJONER);
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+      errorCode: RuntimeErrorCode.NETWORK_ERROR,
+      message: "Kunne ikke hente organisasjoner",
+      networkCause: "TIMEOUT",
+    });
+  });
+
+  it.each([
+    ["ETIMEDOUT", "TIMEOUT"],
+    ["UND_ERR_HEADERS_TIMEOUT", "TIMEOUT"],
+    ["UND_ERR_BODY_TIMEOUT", "TIMEOUT"],
+    ["ENOTFOUND", "DNS_LOOKUP_FAILED"],
+    ["EAI_AGAIN", "DNS_LOOKUP_FAILED"],
+    ["ECONNREFUSED", "CONNECTION_REFUSED"],
+    ["ECONNRESET", "CONNECTION_CLOSED"],
+    ["EPIPE", "CONNECTION_CLOSED"],
+    ["UND_ERR_SOCKET", "CONNECTION_CLOSED"],
+    ["ABORT_ERR", "REQUEST_ABORTED"],
+    ["UND_ERR_ABORTED", "REQUEST_ABORTED"],
+    [ERROR_DETAIL, "UNKNOWN"],
+  ])("beholder kjent transportårsak %s som %s", async (code, networkCause) => {
+    fetchMock.mockRejectedValue(
+      new TypeError(ERROR_DETAIL, {
+        cause: Object.assign(new Error(ENDPOINT), { code, hostname: ENDPOINT }),
+      }),
+    );
+
+    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_ORGANISASJONER);
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+      errorCode: RuntimeErrorCode.NETWORK_ERROR,
+      message: "Kunne ikke hente organisasjoner",
+      networkCause,
+    });
+  });
+
+  it.each([
+    ["TimeoutError", "TIMEOUT"],
+    ["AbortError", "REQUEST_ABORTED"],
+  ])("beholder avbruddstypen %s fra fetch", async (name, networkCause) => {
+    fetchMock.mockRejectedValue(new DOMException(ERROR_DETAIL, name));
+
+    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_ORGANISASJONER);
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+      errorCode: RuntimeErrorCode.NETWORK_ERROR,
+      message: "Kunne ikke hente organisasjoner",
+      networkCause,
+    });
+  });
+
+  it.each([null, undefined, ERROR_DETAIL])(
+    "logger ukjent årsak for ikke-standard feil uten å eksponere verdien",
+    async (error) => {
+      fetchMock.mockRejectedValue(error);
+
+      await expectTokenXGetToReject(RuntimeErrorOperation.HENT_ORGANISASJONER);
+
+      expectCanonicalLog({
+        event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+        operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+        errorCode: RuntimeErrorCode.NETWORK_ERROR,
+        message: "Kunne ikke hente organisasjoner",
+        networkCause: "UNKNOWN",
+      });
+    },
+  );
+
+  it("håndterer en sirkulær cause som ukjent uten å endre feilresponsen", async () => {
+    const error = new Error(ERROR_DETAIL);
+    error.cause = error;
+    fetchMock.mockRejectedValue(error);
+
+    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_ORGANISASJONER);
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+      operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+      errorCode: RuntimeErrorCode.NETWORK_ERROR,
+      message: "Kunne ikke hente organisasjoner",
+      networkCause: "UNKNOWN",
+    });
+  });
+
+  it("klassifiserer en faktisk brutt forbindelse fra Node fetch", async () => {
+    const server = createServer((request) => request.destroy());
+    await new Promise<void>((resolve) =>
+      server.listen(0, "127.0.0.1", resolve),
+    );
+
+    try {
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Testserveren mangler en TCP-port");
+      }
+      vi.stubGlobal("fetch", nativeFetch);
+
+      await expect(
+        tokenXFetchGet({
+          targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+          operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+          endpoint: `http://127.0.0.1:${address.port}/?token=${ACCESS_TOKEN}`,
+          responseDataSchema: successSchema,
+          redirectAfterLoginUrl: "/arbeidsgiver/oversikt",
+        }),
+      ).rejects.toMatchObject({
+        name: "FrontendError",
+        errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+      });
+
+      expectCanonicalLog({
+        event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+        operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+        errorCode: RuntimeErrorCode.NETWORK_ERROR,
+        message: "Kunne ikke hente organisasjoner",
+        networkCause: "CONNECTION_CLOSED",
+      });
+      expect(serializedLogLines[0]).not.toContain("127.0.0.1");
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()));
+      });
+    }
   });
 
   it("logger trygg Zod-diagnostikk for ugyldig suksesspayload", async () => {
@@ -341,6 +487,25 @@ describe("serialized TokenX POST runtime errors", () => {
       operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
       errorCode: RuntimeErrorCode.NETWORK_ERROR,
       message: "Kunne ikke søke etter nærmeste ledere",
+      networkCause: "UNKNOWN",
+    });
+  });
+
+  it("beholder DNS-årsak for POST uten søkeparametere eller request-body", async () => {
+    fetchMock.mockRejectedValue(
+      new TypeError(ERROR_DETAIL, {
+        cause: Object.assign(new Error(ENDPOINT), { code: "ENOTFOUND" }),
+      }),
+    );
+
+    await expectTokenXPostToReject();
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.NARMESTE_LEDERE_SEARCH_FAILED,
+      operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+      errorCode: RuntimeErrorCode.NETWORK_ERROR,
+      message: "Kunne ikke søke etter nærmeste ledere",
+      networkCause: "DNS_LOOKUP_FAILED",
     });
   });
 
@@ -362,6 +527,39 @@ describe("serialized TokenX POST runtime errors", () => {
 });
 
 describe("serialized TokenX update runtime errors", () => {
+  it("beholder brutt forbindelse og aktiv trace ved oppdatering", async () => {
+    const traceId = "1234567890abcdef1234567890abcdef";
+    fetchMock.mockRejectedValue(
+      new TypeError(ERROR_DETAIL, {
+        cause: Object.assign(new Error(ENDPOINT), { code: "UND_ERR_SOCKET" }),
+      }),
+    );
+
+    await withActiveTrace(traceId, async () => {
+      await expect(
+        tokenXFetchUpdate({
+          targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+          operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+          endpoint: ENDPOINT,
+          requestBody: { fnr: FNR, orgnummer: ORGNUMMER, behovId: BEHOV_ID },
+          method: "PUT",
+        }),
+      ).resolves.toEqual({
+        success: false,
+        errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+      });
+    });
+
+    expectCanonicalLog({
+      event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
+      operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      errorCode: RuntimeErrorCode.NETWORK_ERROR,
+      message: "Kunne ikke oppdatere nærmeste leder",
+      networkCause: "CONNECTION_CLOSED",
+      traceId,
+    });
+  });
+
   it("logger én teknisk HTTP-feil og returnerer trygg feiltilstand", async () => {
     fetchMock.mockResolvedValue(
       new Response(RESPONSE_BODY_CANARY, {
@@ -546,6 +744,7 @@ function expectCanonicalLog({
   traceId,
   validationTarget,
   validationIssue,
+  networkCause,
 }: {
   event: RuntimeErrorEvent;
   operation: RuntimeErrorOperation;
@@ -555,6 +754,7 @@ function expectCanonicalLog({
   traceId?: string;
   validationTarget?: string;
   validationIssue?: string;
+  networkCause?: string;
 }): void {
   expect(serializedLogLines).toHaveLength(1);
 
@@ -568,6 +768,12 @@ function expectCanonicalLog({
     error_code: errorCode,
     message,
   });
+
+  if (networkCause === undefined) {
+    expect(parsedLog).not.toHaveProperty("network_cause");
+  } else {
+    expect(parsedLog).toHaveProperty("network_cause", networkCause);
+  }
 
   if (upstreamStatus === undefined) {
     expect(parsedLog).not.toHaveProperty("upstream_status");
