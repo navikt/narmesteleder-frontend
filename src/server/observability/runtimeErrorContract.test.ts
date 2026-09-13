@@ -1,11 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
-  getRuntimeErrorEvent,
-  getRuntimeErrorMessage,
   RuntimeErrorCode,
   RuntimeErrorEvent,
   RuntimeErrorOperation,
   runtimeErrorContext,
+  runtimeErrorDefinitions,
 } from "./runtimeErrorContract";
 
 const expectedOperations = [
@@ -58,8 +57,18 @@ describe("runtime error contract", () => {
     expect(expectedOperations).toHaveLength(operations.length);
 
     for (const { operation, event, message } of expectedOperations) {
-      expect(getRuntimeErrorEvent(operation)).toBe(event);
-      expect(getRuntimeErrorMessage(operation)).toBe(message);
+      expect(runtimeErrorDefinitions[operation].error).toEqual({
+        name: event,
+        operation,
+        message,
+        level: "error",
+      });
+      expect(runtimeErrorDefinitions[operation].validationWarning).toEqual({
+        name: event,
+        operation,
+        message,
+        level: "warn",
+      });
       expect(operation).toMatch(/^[a-z][a-z0-9_.-]{0,79}$/);
       expect(event).toMatch(/^[a-z][a-z0-9_.-]{0,79}$/);
     }
@@ -70,26 +79,13 @@ describe("runtime error contract", () => {
   });
 
   it("tar bare med upstream_status når en reell HTTP-status finnes", () => {
-    expect(
-      runtimeErrorContext(
-        RuntimeErrorOperation.HENT_BEHOV,
-        RuntimeErrorCode.NETWORK_ERROR,
-      ),
-    ).toEqual({
-      event_type: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_BEHOV,
+    expect(runtimeErrorContext(RuntimeErrorCode.NETWORK_ERROR)).toEqual({
       error_code: RuntimeErrorCode.NETWORK_ERROR,
     });
 
     expect(
-      runtimeErrorContext(
-        RuntimeErrorOperation.HENT_BEHOV,
-        RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
-        403,
-      ),
+      runtimeErrorContext(RuntimeErrorCode.UPSTREAM_HTTP_ERROR, 403),
     ).toEqual({
-      event_type: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_BEHOV,
       error_code: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
       upstream_status: 403,
     });
@@ -100,7 +96,6 @@ describe("runtime error contract", () => {
     (upstreamStatus) => {
       expect(
         runtimeErrorContext(
-          RuntimeErrorOperation.HENT_BEHOV,
           RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
           upstreamStatus,
         ),

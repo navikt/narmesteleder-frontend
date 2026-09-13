@@ -1,3 +1,4 @@
+import { assertLogEvent, parseLogs } from "@navikt/esyfo-logger-testkit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
@@ -122,25 +123,23 @@ function expectCanonicalActionLog({
   validationTarget: string;
   validationIssue: string;
 }): void {
-  expect(serializedLogLines).toHaveLength(1);
-  const line = serializedLogLines[0];
-  const record = JSON.parse(line) as Record<string, unknown>;
-
-  expect(record).toMatchObject({
-    level: "warn",
-    event_type: event,
-    operation,
-    error_code: RuntimeErrorCode.INVALID_INPUT,
-    message,
-    validation_target: validationTarget,
-    validationIssues: expect.stringContaining(validationIssue),
+  const output = serializedLogLines.join("");
+  assertLogEvent(output, {
+    event: { name: event, level: "warn", operation, message },
+    context: {
+      error_code: RuntimeErrorCode.INVALID_INPUT,
+      validation_target: validationTarget,
+    },
+    contains: [validationIssue],
+    excludes: [FNR, ORGNUMMER, BEHOV_ID, PRIVATE_DETAIL],
   });
+  const [record] = parseLogs(output);
+  expect(record.validationIssues).toEqual(
+    expect.stringContaining(validationIssue),
+  );
   expect(record).not.toHaveProperty("upstream_status");
 
   for (const forbiddenField of ["body", "error", "err", "stack", "issues"]) {
     expect(record).not.toHaveProperty(forbiddenField);
-  }
-  for (const canary of [FNR, ORGNUMMER, BEHOV_ID, PRIVATE_DETAIL]) {
-    expect(line).not.toContain(canary);
   }
 }

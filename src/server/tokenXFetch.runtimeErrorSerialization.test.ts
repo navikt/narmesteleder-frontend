@@ -1,13 +1,9 @@
 import { createServer } from "node:http";
+import { assertLogEvent, parseLogs } from "@navikt/esyfo-logger-testkit";
 import { logger } from "@navikt/next-logger";
-import {
-  type Context,
-  type ContextManager,
-  context,
-  ROOT_CONTEXT,
-  TraceFlags,
-  trace,
-} from "@opentelemetry/api";
+import { context, trace } from "@opentelemetry/api";
+import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
 import {
   afterAll,
   beforeAll,
@@ -34,7 +30,6 @@ import {
   tokenXFetchPost,
   tokenXFetchUpdate,
 } from "@/server/tokenXFetch";
-import { assertRuntimeErrorSchema } from "../../test/observability/runtimeErrorSchema";
 
 const serializedLogLines = vi.hoisted((): string[] => []);
 const nativeFetch = globalThis.fetch;
@@ -87,56 +82,29 @@ const RESPONSE_BODY_CANARY = `body-${FNR}-${REQUEST_ID}-${BEHOV_ID}`;
 
 const successSchema = z.object({ ok: z.literal(true) });
 
-let activeContext: Context = ROOT_CONTEXT;
+const contextManager = new AsyncLocalStorageContextManager();
+const tracerProvider = new BasicTracerProvider();
 
-const synchronousContextManager: ContextManager = {
-  active: () => activeContext,
-  bind: (_context, target) => target,
-  disable() {
-    activeContext = ROOT_CONTEXT;
-    return this;
-  },
-  enable() {
-    return this;
-  },
-  with(contextToActivate, fn, thisArg, ...args) {
-    const previousContext = activeContext;
-    activeContext = contextToActivate;
-    try {
-      return fn.call(thisArg, ...args);
-    } finally {
-      activeContext = previousContext;
-    }
-  },
-};
-
-async function withActiveTrace<T>(
-  traceId: string,
-  fn: () => T | Promise<T>,
-): Promise<T> {
-  const previousContext = activeContext;
-  const span = trace.wrapSpanContext({
-    traceId,
-    spanId: "1234567890abcdef",
-    traceFlags: TraceFlags.SAMPLED,
-    isRemote: false,
-  });
-  activeContext = trace.setSpan(ROOT_CONTEXT, span);
-
-  try {
-    return await fn();
-  } finally {
-    activeContext = previousContext;
-  }
+async function withActiveTrace(fn: () => Promise<unknown>): Promise<string> {
+  return tracerProvider
+    .getTracer("runtime-logging-test")
+    .startActiveSpan("tokenx-request", async (span) => {
+      try {
+        await fn();
+        return span.spanContext().traceId;
+      } finally {
+        span.end();
+      }
+    });
 }
 
 beforeAll(() => {
   context.disable();
-  context.setGlobalContextManager(synchronousContextManager.enable());
+  context.setGlobalContextManager(contextManager.enable());
+  trace.setGlobalTracerProvider(tracerProvider);
 });
 
 beforeEach(() => {
-  activeContext = ROOT_CONTEXT;
   vi.clearAllMocks();
   fetchMock.mockReset();
   serializedLogLines.length = 0;
@@ -145,7 +113,10 @@ beforeEach(() => {
   vi.stubGlobal("fetch", fetchMock);
 });
 
-afterAll(() => {
+afterAll(async () => {
+  await tracerProvider.shutdown();
+  trace.disable();
+  contextManager.disable();
   context.disable();
   vi.unstubAllGlobals();
 });
@@ -158,9 +129,15 @@ describe("serialisert logg mot felles runtime-schema", () => {
     );
 
     expect(serializedLogLines).toHaveLength(1);
-    const log = JSON.parse(serializedLogLines[0]);
-
-    expect(() => assertRuntimeErrorSchema(log)).toThrow(/event_type/);
+    expect(() =>
+      assertLogEvent(serializedLogLines.join(""), {
+        event: {
+          name: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+          level: "error",
+          message: "Kontrollert feil uten hendelsesidentitet",
+        },
+      }),
+    ).toThrow(/required/);
   });
 
   it("avviser status som streng uten å konvertere eller fjerne feltet", () => {
@@ -173,9 +150,17 @@ describe("serialisert logg mot felles runtime-schema", () => {
     );
 
     expect(serializedLogLines).toHaveLength(1);
-    const log = JSON.parse(serializedLogLines[0]);
+    const [log] = parseLogs(serializedLogLines.join(""));
 
-    expect(() => assertRuntimeErrorSchema(log)).toThrow(/integer/);
+    expect(() =>
+      assertLogEvent(serializedLogLines.join(""), {
+        event: {
+          name: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+          level: "error",
+          message: "Kontrollert feil med ugyldig statustype",
+        },
+      }),
+    ).toThrow(/upstream_status.*type/);
     expect(log.upstream_status).toBe("503");
   });
 });
@@ -250,7 +235,6 @@ describe("serialized TokenX GET runtime errors", () => {
   });
 
   it("logger 5xx med trace_id fra aktiv OpenTelemetry-span", async () => {
-    const traceId = "1234567890abcdef1234567890abcdef";
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -261,7 +245,7 @@ describe("serialized TokenX GET runtime errors", () => {
       ),
     );
 
-    await withActiveTrace(traceId, () =>
+    const traceId = await withActiveTrace(() =>
       expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV),
     );
 
@@ -560,14 +544,13 @@ describe("serialized TokenX POST runtime errors", () => {
 
 describe("serialized TokenX update runtime errors", () => {
   it("beholder brutt forbindelse og aktiv trace ved oppdatering", async () => {
-    const traceId = "1234567890abcdef1234567890abcdef";
     fetchMock.mockRejectedValue(
       new TypeError(ERROR_DETAIL, {
         cause: Object.assign(new Error(ENDPOINT), { code: "UND_ERR_SOCKET" }),
       }),
     );
 
-    await withActiveTrace(traceId, async () => {
+    const traceId = await withActiveTrace(async () => {
       await expect(
         tokenXFetchUpdate({
           targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
@@ -788,20 +771,23 @@ function expectCanonicalLog({
   validationIssue?: string;
   networkCause?: string;
 }): void {
-  expect(serializedLogLines).toHaveLength(1);
-
-  const serializedLog = serializedLogLines[0];
-  const parsedLog = JSON.parse(serializedLog) as Record<string, unknown>;
-
-  assertRuntimeErrorSchema(parsedLog);
-
-  expect(parsedLog).toMatchObject({
-    level: "error",
-    event_type: event,
-    operation,
-    error_code: errorCode,
-    message,
+  const serializedLog = serializedLogLines.join("");
+  assertLogEvent(serializedLog, {
+    event: { name: event, level: "error", operation, message },
+    context: { error_code: errorCode },
+    ...(traceId === undefined ? {} : { traceId }),
+    excludes: [
+      FNR,
+      ORGNUMMER,
+      BEHOV_ID,
+      REQUEST_ID,
+      ACCESS_TOKEN,
+      ERROR_DETAIL,
+      ENDPOINT,
+      RESPONSE_BODY_CANARY,
+    ],
   });
+  const [parsedLog] = parseLogs(serializedLog);
 
   if (networkCause === undefined) {
     expect(parsedLog).not.toHaveProperty("network_cause");
@@ -847,18 +833,5 @@ function expectCanonicalLog({
     "stack",
   ]) {
     expect(parsedLog).not.toHaveProperty(field);
-  }
-
-  for (const canary of [
-    FNR,
-    ORGNUMMER,
-    BEHOV_ID,
-    REQUEST_ID,
-    ACCESS_TOKEN,
-    ERROR_DETAIL,
-    ENDPOINT,
-    RESPONSE_BODY_CANARY,
-  ]) {
-    expect(serializedLog).not.toContain(canary);
   }
 }

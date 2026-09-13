@@ -13,7 +13,6 @@
       "!.next",
       "!dist",
       "!build",
-      "!test/observability/runtime-error-v1.0.0/schema.json",
       "!.github/skills/**/scripts",
       "!.github/skills/**/references"
     ]
