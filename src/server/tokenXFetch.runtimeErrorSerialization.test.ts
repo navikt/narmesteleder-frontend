@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { logger } from "@navikt/next-logger";
 import {
   type Context,
   type ContextManager,
@@ -33,6 +34,7 @@ import {
   tokenXFetchPost,
   tokenXFetchUpdate,
 } from "@/server/tokenXFetch";
+import { assertRuntimeErrorSchema } from "../../test/observability/runtimeErrorSchema";
 
 const serializedLogLines = vi.hoisted((): string[] => []);
 const nativeFetch = globalThis.fetch;
@@ -146,6 +148,36 @@ beforeEach(() => {
 afterAll(() => {
   context.disable();
   vi.unstubAllGlobals();
+});
+
+describe("serialisert logg mot felles runtime-schema", () => {
+  it("avviser en faktisk ERROR-logg som mangler event_type", () => {
+    logger.error(
+      { operation: RuntimeErrorOperation.HENT_ORGANISASJONER },
+      "Kontrollert feil uten hendelsesidentitet",
+    );
+
+    expect(serializedLogLines).toHaveLength(1);
+    const log = JSON.parse(serializedLogLines[0]);
+
+    expect(() => assertRuntimeErrorSchema(log)).toThrow(/event_type/);
+  });
+
+  it("avviser status som streng uten å konvertere eller fjerne feltet", () => {
+    logger.error(
+      {
+        event_type: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+        upstream_status: "503",
+      },
+      "Kontrollert feil med ugyldig statustype",
+    );
+
+    expect(serializedLogLines).toHaveLength(1);
+    const log = JSON.parse(serializedLogLines[0]);
+
+    expect(() => assertRuntimeErrorSchema(log)).toThrow(/integer/);
+    expect(log.upstream_status).toBe("503");
+  });
 });
 
 describe("serialized TokenX GET runtime errors", () => {
@@ -760,6 +792,8 @@ function expectCanonicalLog({
 
   const serializedLog = serializedLogLines[0];
   const parsedLog = JSON.parse(serializedLog) as Record<string, unknown>;
+
+  assertRuntimeErrorSchema(parsedLog);
 
   expect(parsedLog).toMatchObject({
     level: "error",
