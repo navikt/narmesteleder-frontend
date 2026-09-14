@@ -1,11 +1,11 @@
+import { assertLogEvent, parseLogs } from "@navikt/esyfo-logger-testkit";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { oppdaterNarmesteLeder } from "@/server/actions/oppdaterNarmesteLeder";
 import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 import { revokeLinemanager } from "@/server/actions/revokeLinemanager";
 import {
   RuntimeErrorCode,
-  RuntimeErrorEvent,
-  RuntimeErrorOperation,
+  type RuntimeErrorOperation,
 } from "@/server/observability/runtimeErrorContract";
 
 const serializedLogLines = vi.hoisted((): string[] => []);
@@ -51,8 +51,8 @@ describe("serialized server-action validation warnings", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalActionLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_CREATE_FAILED,
-      operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+      event: "narmeste_leder_create_failed",
+      operation: "opprett_narmeste_leder",
       message: "Kunne ikke opprette nærmeste leder",
       validationTarget: "narmeste_leder_info",
       validationIssue: "sykmeldt.orgnummer",
@@ -65,8 +65,8 @@ describe("serialized server-action validation warnings", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalActionLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
-      operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      event: "narmeste_leder_update_failed",
+      operation: "oppdater_narmeste_leder",
       message: "Kunne ikke oppdatere nærmeste leder",
       validationTarget: "requirement_id",
       validationIssue: "Invalid UUID",
@@ -82,8 +82,8 @@ describe("serialized server-action validation warnings", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalActionLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
-      operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      event: "narmeste_leder_update_failed",
+      operation: "oppdater_narmeste_leder",
       message: "Kunne ikke oppdatere nærmeste leder",
       validationTarget: "narmeste_leder_form",
       validationIssue: "mobilnummer",
@@ -100,8 +100,8 @@ describe("serialized server-action validation warnings", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalActionLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
-      operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      event: "narmeste_leder_revoke_failed",
+      operation: "fjern_narmeste_leder",
       message: "Kunne ikke fjerne nærmeste leder",
       validationTarget: "revoke_request",
       validationIssue: "employeeIdentificationNumber",
@@ -116,31 +116,29 @@ function expectCanonicalActionLog({
   validationTarget,
   validationIssue,
 }: {
-  event: RuntimeErrorEvent;
+  event: string;
   operation: RuntimeErrorOperation;
   message: string;
   validationTarget: string;
   validationIssue: string;
 }): void {
-  expect(serializedLogLines).toHaveLength(1);
-  const line = serializedLogLines[0];
-  const record = JSON.parse(line) as Record<string, unknown>;
-
-  expect(record).toMatchObject({
-    level: "warn",
-    event_type: event,
-    operation,
-    error_code: RuntimeErrorCode.INVALID_INPUT,
-    message,
-    validation_target: validationTarget,
-    validationIssues: expect.stringContaining(validationIssue),
+  const output = serializedLogLines.join("");
+  assertLogEvent(output, {
+    event: { name: event, level: "warn", operation, message },
+    context: {
+      error_code: RuntimeErrorCode.INVALID_INPUT,
+      validation_target: validationTarget,
+    },
+    contains: [validationIssue],
+    excludes: [FNR, ORGNUMMER, BEHOV_ID, PRIVATE_DETAIL],
   });
+  const [record] = parseLogs(output);
+  expect(record.validationIssues).toEqual(
+    expect.stringContaining(validationIssue),
+  );
   expect(record).not.toHaveProperty("upstream_status");
 
   for (const forbiddenField of ["body", "error", "err", "stack", "issues"]) {
     expect(record).not.toHaveProperty(forbiddenField);
-  }
-  for (const canary of [FNR, ORGNUMMER, BEHOV_ID, PRIVATE_DETAIL]) {
-    expect(line).not.toContain(canary);
   }
 }

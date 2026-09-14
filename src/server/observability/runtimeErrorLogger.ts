@@ -1,22 +1,20 @@
+import { createEventLogger } from "@navikt/esyfo-logger";
 import { logger } from "@navikt/next-logger";
 import { type ZodError, z } from "zod";
+import { networkErrorCode } from "./networkErrorCode";
 import {
-  getRuntimeErrorMessage,
-  type RuntimeErrorCode,
+  RuntimeErrorCode,
   type RuntimeErrorOperation,
+  type RuntimeInputOperation,
+  RuntimeValidationTarget,
   runtimeErrorContext,
+  runtimeErrorDefinitions,
+  runtimeInputWarnings,
 } from "./runtimeErrorContract";
 
-export const RuntimeValidationTarget = {
-  NARMESTE_LEDER_INFO: "narmeste_leder_info",
-  REQUIREMENT_ID: "requirement_id",
-  NARMESTE_LEDER_FORM: "narmeste_leder_form",
-  REVOKE_REQUEST: "revoke_request",
-  UPSTREAM_RESPONSE: "upstream_response",
-} as const;
+export { RuntimeValidationTarget } from "./runtimeErrorContract";
 
-type RuntimeValidationTarget =
-  (typeof RuntimeValidationTarget)[keyof typeof RuntimeValidationTarget];
+const runtimeLog = createEventLogger(logger);
 
 /**
  * Logger bare felt fra den lukkede runtime-kontrakten. Dynamiske feilobjekter,
@@ -27,56 +25,60 @@ export function logRuntimeError(
   errorCode: RuntimeErrorCode,
   upstreamStatus?: number,
 ): void {
-  logger.error(
-    runtimeErrorContext(operation, errorCode, upstreamStatus),
-    getRuntimeErrorMessage(operation),
+  runtimeLog.event(
+    runtimeErrorDefinitions[operation],
+    runtimeErrorContext(errorCode, upstreamStatus),
   );
 }
 
-const runtimeValidationContext = (
+export function logRuntimeNetworkError(
   operation: RuntimeErrorOperation,
+  error: unknown,
+): void {
+  runtimeLog.event(runtimeErrorDefinitions[operation], {
+    ...runtimeErrorContext(RuntimeErrorCode.NETWORK_ERROR),
+    network_code: networkErrorCode(error),
+  });
+}
+
+const runtimeValidationContext = (
   errorCode: RuntimeErrorCode,
   validationTarget: RuntimeValidationTarget,
   validationError: ZodError,
   upstreamStatus?: number,
 ) => ({
-  ...runtimeErrorContext(operation, errorCode, upstreamStatus),
+  ...runtimeErrorContext(errorCode, upstreamStatus),
   validation_target: validationTarget,
   validationIssues: z.prettifyError(validationError),
 });
 
-export function logRuntimeValidationError(
+export function logInvalidResponse(
   operation: RuntimeErrorOperation,
-  errorCode: RuntimeErrorCode,
-  validationTarget: RuntimeValidationTarget,
   validationError: ZodError,
   upstreamStatus?: number,
 ): void {
-  logger.error(
+  runtimeLog.event(
+    runtimeErrorDefinitions[operation],
     runtimeValidationContext(
-      operation,
-      errorCode,
-      validationTarget,
+      RuntimeErrorCode.INVALID_RESPONSE,
+      RuntimeValidationTarget.UPSTREAM_RESPONSE,
       validationError,
       upstreamStatus,
     ),
-    getRuntimeErrorMessage(operation),
   );
 }
 
-export function logRuntimeValidationWarning(
-  operation: RuntimeErrorOperation,
-  errorCode: RuntimeErrorCode,
+export function logInvalidInput(
+  operation: RuntimeInputOperation,
   validationTarget: RuntimeValidationTarget,
   validationError: ZodError,
 ): void {
-  logger.warn(
+  runtimeLog.event(
+    runtimeInputWarnings[operation],
     runtimeValidationContext(
-      operation,
-      errorCode,
+      RuntimeErrorCode.INVALID_INPUT,
       validationTarget,
       validationError,
     ),
-    getRuntimeErrorMessage(operation),
   );
 }

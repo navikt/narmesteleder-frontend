@@ -11,7 +11,7 @@ import {
 } from "@/schemas/organisasjonSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
-import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
+
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 
 const getOrganisasjonerPath = () =>
@@ -44,7 +44,7 @@ const realFetchOrganisasjoner =
     try {
       const response = await tokenXFetchGet({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-        operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
+        operation: "hent_organisasjoner",
         endpoint: getOrganisasjonerPath(),
         responseDataSchema: accessibleOrganizationsResponseSchema,
         redirectAfterLoginUrl: publicEnv.NEXT_PUBLIC_BASE_PATH,

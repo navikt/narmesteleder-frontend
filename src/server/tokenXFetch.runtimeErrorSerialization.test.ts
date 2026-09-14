@@ -1,11 +1,12 @@
+import { createServer } from "node:http";
 import {
-  type Context,
-  type ContextManager,
-  context,
-  ROOT_CONTEXT,
-  TraceFlags,
-  trace,
-} from "@opentelemetry/api";
+  assertLogEvent,
+  type ExpectedLogEvent,
+  parseLogs,
+} from "@navikt/esyfo-logger-testkit";
+import { context, trace } from "@opentelemetry/api";
+import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
+import { BasicTracerProvider } from "@opentelemetry/sdk-trace-base";
 import {
   afterAll,
   beforeAll,
@@ -20,11 +21,11 @@ import { TokenXTargetApi } from "@/server/helpers";
 import {
   BackendErrorType,
   errorTypeToDetail,
+  NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
 } from "@/server/narmesteLederErrorUtils";
 import {
   RuntimeErrorCode,
-  RuntimeErrorEvent,
-  RuntimeErrorOperation,
+  type RuntimeErrorOperation,
 } from "@/server/observability/runtimeErrorContract";
 import {
   tokenXFetchGet,
@@ -33,6 +34,7 @@ import {
 } from "@/server/tokenXFetch";
 
 const serializedLogLines = vi.hoisted((): string[] => []);
+const nativeFetch = globalThis.fetch;
 const {
   fetchMock,
   validateTokenAndGetTokenXMock,
@@ -82,56 +84,29 @@ const RESPONSE_BODY_CANARY = `body-${FNR}-${REQUEST_ID}-${BEHOV_ID}`;
 
 const successSchema = z.object({ ok: z.literal(true) });
 
-let activeContext: Context = ROOT_CONTEXT;
+const contextManager = new AsyncLocalStorageContextManager();
+const tracerProvider = new BasicTracerProvider();
 
-const synchronousContextManager: ContextManager = {
-  active: () => activeContext,
-  bind: (_context, target) => target,
-  disable() {
-    activeContext = ROOT_CONTEXT;
-    return this;
-  },
-  enable() {
-    return this;
-  },
-  with(contextToActivate, fn, thisArg, ...args) {
-    const previousContext = activeContext;
-    activeContext = contextToActivate;
-    try {
-      return fn.call(thisArg, ...args);
-    } finally {
-      activeContext = previousContext;
-    }
-  },
-};
-
-async function withActiveTrace<T>(
-  traceId: string,
-  fn: () => T | Promise<T>,
-): Promise<T> {
-  const previousContext = activeContext;
-  const span = trace.wrapSpanContext({
-    traceId,
-    spanId: "1234567890abcdef",
-    traceFlags: TraceFlags.SAMPLED,
-    isRemote: false,
-  });
-  activeContext = trace.setSpan(ROOT_CONTEXT, span);
-
-  try {
-    return await fn();
-  } finally {
-    activeContext = previousContext;
-  }
+async function withActiveTrace(fn: () => Promise<unknown>): Promise<string> {
+  return tracerProvider
+    .getTracer("runtime-logging-test")
+    .startActiveSpan("tokenx-request", async (span) => {
+      try {
+        await fn();
+        return span.spanContext().traceId;
+      } finally {
+        span.end();
+      }
+    });
 }
 
 beforeAll(() => {
   context.disable();
-  context.setGlobalContextManager(synchronousContextManager.enable());
+  context.setGlobalContextManager(contextManager.enable());
+  trace.setGlobalTracerProvider(tracerProvider);
 });
 
 beforeEach(() => {
-  activeContext = ROOT_CONTEXT;
   vi.clearAllMocks();
   fetchMock.mockReset();
   serializedLogLines.length = 0;
@@ -140,7 +115,10 @@ beforeEach(() => {
   vi.stubGlobal("fetch", fetchMock);
 });
 
-afterAll(() => {
+afterAll(async () => {
+  await tracerProvider.shutdown();
+  trace.disable();
+  contextManager.disable();
   context.disable();
   vi.unstubAllGlobals();
 });
@@ -160,7 +138,7 @@ describe("serialized TokenX GET runtime errors", () => {
 
     const rejection = await tokenXFetchGet({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      operation: RuntimeErrorOperation.HENT_BEHOV,
+      operation: "hent_behov",
       endpoint: ENDPOINT,
       responseDataSchema: successSchema,
       redirectAfterLoginUrl: `/arbeidsgiver/${BEHOV_ID}`,
@@ -184,14 +162,19 @@ describe("serialized TokenX GET runtime errors", () => {
       ),
     );
 
-    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_ORGANISASJONER);
+    await expectTokenXGetToReject("hent_organisasjoner");
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
-      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
-      message: "Kunne ikke hente organisasjoner",
-      upstreamStatus: 403,
+      event: {
+        name: "organisasjoner_fetch_failed",
+        operation: "hent_organisasjoner",
+        message: "Kunne ikke hente organisasjoner",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+        upstream_status: 403,
+      },
     });
   });
 
@@ -203,19 +186,23 @@ describe("serialized TokenX GET runtime errors", () => {
       }),
     );
 
-    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOVSLISTE);
+    await expectTokenXGetToReject("hent_behovsliste");
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.BEHOVSLISTE_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
-      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
-      message: "Kunne ikke hente listen over behov for nærmeste leder",
-      upstreamStatus: 403,
+      event: {
+        name: "behovsliste_fetch_failed",
+        operation: "hent_behovsliste",
+        message: "Kunne ikke hente listen over behov for nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+        upstream_status: 403,
+      },
     });
   });
 
   it("logger 5xx med trace_id fra aktiv OpenTelemetry-span", async () => {
-    const traceId = "1234567890abcdef1234567890abcdef";
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -226,16 +213,21 @@ describe("serialized TokenX GET runtime errors", () => {
       ),
     );
 
-    await withActiveTrace(traceId, () =>
-      expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV),
+    const traceId = await withActiveTrace(() =>
+      expectTokenXGetToReject("hent_behov"),
     );
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_BEHOV,
-      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
-      message: "Kunne ikke hente behovet for nærmeste leder",
-      upstreamStatus: 503,
+      event: {
+        name: "behov_fetch_failed",
+        operation: "hent_behov",
+        message: "Kunne ikke hente behovet for nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+        upstream_status: 503,
+      },
       traceId,
     });
   });
@@ -245,14 +237,19 @@ describe("serialized TokenX GET runtime errors", () => {
     tokenXError.name = "TokenXExchangeError";
     validateTokenAndGetTokenXOrRedirectMock.mockRejectedValue(tokenXError);
 
-    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOVSLISTE);
+    await expectTokenXGetToReject("hent_behovsliste");
 
     expect(fetchMock).not.toHaveBeenCalled();
     expectCanonicalLog({
-      event: RuntimeErrorEvent.BEHOVSLISTE_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
-      errorCode: RuntimeErrorCode.TOKEN_EXCHANGE_FAILED,
-      message: "Kunne ikke hente listen over behov for nærmeste leder",
+      event: {
+        name: "behovsliste_fetch_failed",
+        operation: "hent_behovsliste",
+        message: "Kunne ikke hente listen over behov for nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.TOKEN_EXCHANGE_FAILED,
+      },
     });
   });
 
@@ -263,28 +260,150 @@ describe("serialized TokenX GET runtime errors", () => {
       tokenValidationError,
     );
 
-    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV);
+    await expectTokenXGetToReject("hent_behov");
 
     expect(fetchMock).not.toHaveBeenCalled();
     expectCanonicalLog({
-      event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_BEHOV,
-      errorCode: RuntimeErrorCode.TOKEN_VALIDATION_FAILED,
-      message: "Kunne ikke hente behovet for nærmeste leder",
+      event: {
+        name: "behov_fetch_failed",
+        operation: "hent_behov",
+        message: "Kunne ikke hente behovet for nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.TOKEN_VALIDATION_FAILED,
+      },
     });
   });
 
   it("logger nettverksfeil uten error.message eller oppdiktet HTTP-status", async () => {
     fetchMock.mockRejectedValue(new Error(ERROR_DETAIL));
 
-    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_ORGANISASJONER);
+    await expectTokenXGetToReject("hent_organisasjoner");
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_ORGANISASJONER,
-      errorCode: RuntimeErrorCode.NETWORK_ERROR,
-      message: "Kunne ikke hente organisasjoner",
+      event: {
+        name: "organisasjoner_fetch_failed",
+        operation: "hent_organisasjoner",
+        message: "Kunne ikke hente organisasjoner",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.NETWORK_ERROR,
+      },
     });
+  });
+
+  it("beholder timeout-årsaken fra fetch uten å logge underliggende melding", async () => {
+    fetchMock.mockRejectedValue(
+      new TypeError(ERROR_DETAIL, {
+        cause: Object.assign(new Error(ENDPOINT), {
+          code: "UND_ERR_CONNECT_TIMEOUT",
+        }),
+      }),
+    );
+
+    await expectTokenXGetToReject("hent_organisasjoner");
+
+    expectCanonicalLog({
+      event: {
+        name: "organisasjoner_fetch_failed",
+        operation: "hent_organisasjoner",
+        message: "Kunne ikke hente organisasjoner",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.NETWORK_ERROR,
+        network_code: "UND_ERR_CONNECT_TIMEOUT",
+      },
+    });
+  });
+
+  it.each([null, undefined, ERROR_DETAIL])(
+    "utelater transportkode for ikke-standard feil uten å eksponere verdien",
+    async (error) => {
+      fetchMock.mockRejectedValue(error);
+
+      await expectTokenXGetToReject("hent_organisasjoner");
+
+      expectCanonicalLog({
+        event: {
+          name: "organisasjoner_fetch_failed",
+          operation: "hent_organisasjoner",
+          message: "Kunne ikke hente organisasjoner",
+          level: "error",
+        },
+        context: {
+          error_code: RuntimeErrorCode.NETWORK_ERROR,
+        },
+      });
+    },
+  );
+
+  it("håndterer en sirkulær cause uten å endre feilresponsen", async () => {
+    const error = new Error(ERROR_DETAIL);
+    error.cause = error;
+    fetchMock.mockRejectedValue(error);
+
+    await expectTokenXGetToReject("hent_organisasjoner");
+
+    expectCanonicalLog({
+      event: {
+        name: "organisasjoner_fetch_failed",
+        operation: "hent_organisasjoner",
+        message: "Kunne ikke hente organisasjoner",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.NETWORK_ERROR,
+      },
+    });
+  });
+
+  it("beholder originalkoden for en faktisk brutt forbindelse fra Node fetch", async () => {
+    const server = createServer((request) => request.destroy());
+    await new Promise<void>((resolve) =>
+      server.listen(0, "127.0.0.1", resolve),
+    );
+
+    try {
+      const address = server.address();
+      if (!address || typeof address === "string") {
+        throw new Error("Testserveren mangler en TCP-port");
+      }
+      vi.stubGlobal("fetch", nativeFetch);
+
+      await expect(
+        tokenXFetchGet({
+          targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+          operation: "hent_organisasjoner",
+          endpoint: `http://127.0.0.1:${address.port}/?token=${ACCESS_TOKEN}`,
+          responseDataSchema: successSchema,
+          redirectAfterLoginUrl: "/arbeidsgiver/oversikt",
+        }),
+      ).rejects.toMatchObject({
+        name: "FrontendError",
+        errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+      });
+
+      expectCanonicalLog({
+        event: {
+          name: "organisasjoner_fetch_failed",
+          operation: "hent_organisasjoner",
+          message: "Kunne ikke hente organisasjoner",
+          level: "error",
+        },
+        context: {
+          error_code: RuntimeErrorCode.NETWORK_ERROR,
+          network_code: "UND_ERR_SOCKET",
+        },
+      });
+      expect(serializedLogLines[0]).not.toContain("127.0.0.1");
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()));
+      });
+    }
   });
 
   it("logger trygg Zod-diagnostikk for ugyldig suksesspayload", async () => {
@@ -297,15 +416,20 @@ describe("serialized TokenX GET runtime errors", () => {
       }),
     );
 
-    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV);
+    await expectTokenXGetToReject("hent_behov");
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_BEHOV,
-      errorCode: RuntimeErrorCode.INVALID_RESPONSE,
-      message: "Kunne ikke hente behovet for nærmeste leder",
-      upstreamStatus: 200,
-      validationTarget: "upstream_response",
+      event: {
+        name: "behov_fetch_failed",
+        operation: "hent_behov",
+        message: "Kunne ikke hente behovet for nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.INVALID_RESPONSE,
+        upstream_status: 200,
+        validation_target: "upstream_response",
+      },
       validationIssue: "at ok",
     });
   });
@@ -318,14 +442,19 @@ describe("serialized TokenX GET runtime errors", () => {
       }),
     );
 
-    await expectTokenXGetToReject(RuntimeErrorOperation.HENT_BEHOV);
+    await expectTokenXGetToReject("hent_behov");
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.BEHOV_FETCH_FAILED,
-      operation: RuntimeErrorOperation.HENT_BEHOV,
-      errorCode: RuntimeErrorCode.INVALID_JSON,
-      message: "Kunne ikke hente behovet for nærmeste leder",
-      upstreamStatus: 200,
+      event: {
+        name: "behov_fetch_failed",
+        operation: "hent_behov",
+        message: "Kunne ikke hente behovet for nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.INVALID_JSON,
+        upstream_status: 200,
+      },
     });
   });
 });
@@ -337,10 +466,38 @@ describe("serialized TokenX POST runtime errors", () => {
     await expectTokenXPostToReject();
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDERE_SEARCH_FAILED,
-      operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
-      errorCode: RuntimeErrorCode.NETWORK_ERROR,
-      message: "Kunne ikke søke etter nærmeste ledere",
+      event: {
+        name: "narmeste_ledere_search_failed",
+        operation: "sok_narmeste_ledere",
+        message: "Kunne ikke søke etter nærmeste ledere",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.NETWORK_ERROR,
+      },
+    });
+  });
+
+  it("beholder DNS-årsak for POST uten søkeparametere eller request-body", async () => {
+    fetchMock.mockRejectedValue(
+      new TypeError(ERROR_DETAIL, {
+        cause: Object.assign(new Error(ENDPOINT), { code: "ENOTFOUND" }),
+      }),
+    );
+
+    await expectTokenXPostToReject();
+
+    expectCanonicalLog({
+      event: {
+        name: "narmeste_ledere_search_failed",
+        operation: "sok_narmeste_ledere",
+        message: "Kunne ikke søke etter nærmeste ledere",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.NETWORK_ERROR,
+        network_code: "ENOTFOUND",
+      },
     });
   });
 
@@ -362,6 +519,43 @@ describe("serialized TokenX POST runtime errors", () => {
 });
 
 describe("serialized TokenX update runtime errors", () => {
+  it("beholder brutt forbindelse og aktiv trace ved oppdatering", async () => {
+    fetchMock.mockRejectedValue(
+      new TypeError(ERROR_DETAIL, {
+        cause: Object.assign(new Error(ENDPOINT), { code: "UND_ERR_SOCKET" }),
+      }),
+    );
+
+    const traceId = await withActiveTrace(async () => {
+      await expect(
+        tokenXFetchUpdate({
+          targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
+          operation: "oppdater_narmeste_leder",
+          endpoint: ENDPOINT,
+          requestBody: { fnr: FNR, orgnummer: ORGNUMMER, behovId: BEHOV_ID },
+          method: "PUT",
+        }),
+      ).resolves.toEqual({
+        success: false,
+        errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
+      });
+    });
+
+    expectCanonicalLog({
+      event: {
+        name: "narmeste_leder_update_failed",
+        operation: "oppdater_narmeste_leder",
+        message: "Kunne ikke oppdatere nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.NETWORK_ERROR,
+        network_code: "UND_ERR_SOCKET",
+      },
+      traceId,
+    });
+  });
+
   it("logger én teknisk HTTP-feil og returnerer trygg feiltilstand", async () => {
     fetchMock.mockResolvedValue(
       new Response(RESPONSE_BODY_CANARY, {
@@ -373,7 +567,7 @@ describe("serialized TokenX update runtime errors", () => {
     await expect(
       tokenXFetchUpdate({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-        operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+        operation: "oppdater_narmeste_leder",
         endpoint: ENDPOINT,
         requestBody: { fnr: FNR, orgnummer: ORGNUMMER, behovId: BEHOV_ID },
         method: "PUT",
@@ -381,11 +575,16 @@ describe("serialized TokenX update runtime errors", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
-      operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
-      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
-      message: "Kunne ikke oppdatere nærmeste leder",
-      upstreamStatus: 503,
+      event: {
+        name: "narmeste_leder_update_failed",
+        operation: "oppdater_narmeste_leder",
+        message: "Kunne ikke oppdatere nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+        upstream_status: 503,
+      },
     });
   });
 
@@ -402,7 +601,7 @@ describe("serialized TokenX update runtime errors", () => {
 
     const result = await tokenXFetchUpdate({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+      operation: "opprett_narmeste_leder",
       endpoint: ENDPOINT,
       requestBody: { fnr: FNR },
     });
@@ -432,7 +631,7 @@ describe("serialized TokenX update runtime errors", () => {
     await expect(
       tokenXFetchUpdate({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-        operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+        operation: "fjern_narmeste_leder",
         endpoint: ENDPOINT,
         requestBody: { fnr: FNR },
         method: "DELETE",
@@ -440,11 +639,16 @@ describe("serialized TokenX update runtime errors", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
-      operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
-      errorCode: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
-      message: "Kunne ikke fjerne nærmeste leder",
-      upstreamStatus: 400,
+      event: {
+        name: "narmeste_leder_revoke_failed",
+        operation: "fjern_narmeste_leder",
+        message: "Kunne ikke fjerne nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.UPSTREAM_HTTP_ERROR,
+        upstream_status: 400,
+      },
     });
   });
 
@@ -456,7 +660,7 @@ describe("serialized TokenX update runtime errors", () => {
     await expect(
       tokenXFetchUpdate({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-        operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+        operation: "fjern_narmeste_leder",
         endpoint: ENDPOINT,
         requestBody: { fnr: FNR },
         method: "DELETE",
@@ -465,10 +669,15 @@ describe("serialized TokenX update runtime errors", () => {
 
     expect(fetchMock).not.toHaveBeenCalled();
     expectCanonicalLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
-      operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
-      errorCode: RuntimeErrorCode.TOKEN_VALIDATION_FAILED,
-      message: "Kunne ikke fjerne nærmeste leder",
+      event: {
+        name: "narmeste_leder_revoke_failed",
+        operation: "fjern_narmeste_leder",
+        message: "Kunne ikke fjerne nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.TOKEN_VALIDATION_FAILED,
+      },
     });
   });
 
@@ -480,7 +689,7 @@ describe("serialized TokenX update runtime errors", () => {
     await expect(
       tokenXFetchUpdate({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-        operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+        operation: "opprett_narmeste_leder",
         endpoint: ENDPOINT,
         requestBody: { fnr: FNR },
       }),
@@ -488,10 +697,15 @@ describe("serialized TokenX update runtime errors", () => {
 
     expect(fetchMock).not.toHaveBeenCalled();
     expectCanonicalLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_CREATE_FAILED,
-      operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
-      errorCode: RuntimeErrorCode.TOKEN_EXCHANGE_FAILED,
-      message: "Kunne ikke opprette nærmeste leder",
+      event: {
+        name: "narmeste_leder_create_failed",
+        operation: "opprett_narmeste_leder",
+        message: "Kunne ikke opprette nærmeste leder",
+        level: "error",
+      },
+      context: {
+        error_code: RuntimeErrorCode.TOKEN_EXCHANGE_FAILED,
+      },
     });
   });
 
@@ -501,7 +715,7 @@ describe("serialized TokenX update runtime errors", () => {
     await expect(
       tokenXFetchUpdate({
         targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-        operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+        operation: "opprett_narmeste_leder",
         endpoint: ENDPOINT,
         requestBody: { fnr: FNR },
       }),
@@ -528,7 +742,7 @@ async function expectTokenXPostToReject(): Promise<void> {
   await expect(
     tokenXFetchPost({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+      operation: "sok_narmeste_ledere",
       endpoint: ENDPOINT,
       requestBody: { fnr: FNR, orgnummer: ORGNUMMER, behovId: BEHOV_ID },
       responseDataSchema: successSchema,
@@ -537,66 +751,46 @@ async function expectTokenXPostToReject(): Promise<void> {
   ).rejects.toMatchObject({ name: "FrontendError" });
 }
 
-function expectCanonicalLog({
-  event,
-  operation,
-  errorCode,
-  message,
-  upstreamStatus,
-  traceId,
-  validationTarget,
-  validationIssue,
-}: {
-  event: RuntimeErrorEvent;
-  operation: RuntimeErrorOperation;
-  errorCode: RuntimeErrorCode;
-  message: string;
-  upstreamStatus?: number;
-  traceId?: string;
-  validationTarget?: string;
-  validationIssue?: string;
-}): void {
-  expect(serializedLogLines).toHaveLength(1);
-
-  const serializedLog = serializedLogLines[0];
-  const parsedLog = JSON.parse(serializedLog) as Record<string, unknown>;
-
-  expect(parsedLog).toMatchObject({
-    level: "error",
-    event_type: event,
-    operation,
-    error_code: errorCode,
-    message,
+function expectCanonicalLog(
+  expected: ExpectedLogEvent & { validationIssue?: string },
+): void {
+  const output = serializedLogLines.join("");
+  assertLogEvent(output, {
+    ...expected,
+    excludes: [
+      FNR,
+      ORGNUMMER,
+      BEHOV_ID,
+      REQUEST_ID,
+      ACCESS_TOKEN,
+      ERROR_DETAIL,
+      ENDPOINT,
+      RESPONSE_BODY_CANARY,
+    ],
   });
-
-  if (upstreamStatus === undefined) {
-    expect(parsedLog).not.toHaveProperty("upstream_status");
-  } else {
-    expect(parsedLog).toHaveProperty("upstream_status", upstreamStatus);
-  }
-
-  if (traceId === undefined) {
-    expect(parsedLog).not.toHaveProperty("trace_id");
-  } else {
-    expect(parsedLog).toHaveProperty("trace_id", traceId);
-    expect(traceId).toMatch(/^[0-9a-f]{32}$/);
-  }
-
-  if (validationTarget === undefined) {
-    expect(parsedLog).not.toHaveProperty("validation_target");
-    expect(parsedLog).not.toHaveProperty("validationIssues");
-  } else {
-    if (validationIssue === undefined) {
-      throw new Error("validationIssue is required with validationTarget");
-    }
-    expect(parsedLog).toHaveProperty("validation_target", validationTarget);
-    expect(parsedLog).toHaveProperty(
-      "validationIssues",
-      expect.stringContaining(validationIssue),
-    );
-  }
+  const [record] = parseLogs(output);
 
   for (const field of [
+    "network_code",
+    "upstream_status",
+    "validation_target",
+  ]) {
+    if (!(field in (expected.context ?? {}))) {
+      expect(record).not.toHaveProperty(field);
+    }
+  }
+  if (expected.traceId === undefined) {
+    expect(record).not.toHaveProperty("trace_id");
+  }
+  if (expected.validationIssue === undefined) {
+    expect(record).not.toHaveProperty("validationIssues");
+  } else {
+    expect(record.validationIssues).toEqual(
+      expect.stringContaining(expected.validationIssue),
+    );
+  }
+  for (const field of [
+    "network_cause",
     "endpoint",
     "url",
     "body",
@@ -606,19 +800,6 @@ function expectCanonicalLog({
     "err",
     "stack",
   ]) {
-    expect(parsedLog).not.toHaveProperty(field);
-  }
-
-  for (const canary of [
-    FNR,
-    ORGNUMMER,
-    BEHOV_ID,
-    REQUEST_ID,
-    ACCESS_TOKEN,
-    ERROR_DETAIL,
-    ENDPOINT,
-    RESPONSE_BODY_CANARY,
-  ]) {
-    expect(serializedLog).not.toContain(canary);
+    expect(record).not.toHaveProperty(field);
   }
 }

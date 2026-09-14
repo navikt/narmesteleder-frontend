@@ -19,9 +19,9 @@ import {
   type RuntimeErrorOperation,
 } from "./observability/runtimeErrorContract";
 import {
+  logInvalidResponse,
   logRuntimeError,
-  logRuntimeValidationError,
-  RuntimeValidationTarget,
+  logRuntimeNetworkError,
 } from "./observability/runtimeErrorLogger";
 
 const createSafeFrontendError = () =>
@@ -64,13 +64,7 @@ const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
 
   const result = responseDataSchema.safeParse(responseData);
   if (!result.success) {
-    logRuntimeValidationError(
-      operation,
-      RuntimeErrorCode.INVALID_RESPONSE,
-      RuntimeValidationTarget.UPSTREAM_RESPONSE,
-      result.error,
-      response.status,
-    );
+    logInvalidResponse(operation, result.error, response.status);
     throw createSafeFrontendError();
   }
 
@@ -101,8 +95,8 @@ export async function tokenXFetchGet<S extends z.ZodType>({
     response = await fetch(endpoint, {
       headers: getBackendRequestHeaders(oboToken),
     });
-  } catch {
-    logRuntimeError(operation, RuntimeErrorCode.NETWORK_ERROR);
+  } catch (error) {
+    logRuntimeNetworkError(operation, error);
     throw createSafeFrontendError();
   }
 
@@ -155,8 +149,8 @@ export async function tokenXFetchPost<S extends z.ZodType>({
       body: JSON.stringify(requestBody),
       headers: getBackendRequestHeaders(oboToken),
     });
-  } catch {
-    logRuntimeError(operation, RuntimeErrorCode.NETWORK_ERROR);
+  } catch (error) {
+    logRuntimeNetworkError(operation, error);
     throw createSafeFrontendError();
   }
 
@@ -228,8 +222,8 @@ export async function tokenXFetchUpdate({
     if (response.ok) {
       return { success: true };
     }
-  } catch {
-    logRuntimeError(operation, RuntimeErrorCode.NETWORK_ERROR);
+  } catch (error) {
+    logRuntimeNetworkError(operation, error);
     return {
       success: false,
       errorDetail: NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,

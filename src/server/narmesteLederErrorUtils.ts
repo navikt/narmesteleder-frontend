@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RuntimeErrorOperation } from "./observability/runtimeErrorContract";
+import type { RuntimeErrorOperation } from "./observability/runtimeErrorContract";
 
 const NO_ACCESS_TO_FORM_MESSAGE =
   "Du har ikke tilgang til å åpne dette skjemaet";
@@ -93,17 +93,11 @@ const expectedDomainRejections: Record<
   RuntimeErrorOperation,
   readonly ExpectedDomainRejectionRule[]
 > = {
-  [RuntimeErrorOperation.HENT_ORGANISASJONER]: [],
-  [RuntimeErrorOperation.HENT_BEHOVSLISTE]: [
-    { status: 403, types: accessRejectionTypes },
-  ],
-  [RuntimeErrorOperation.HENT_BEHOV]: [
-    { status: 403, types: accessRejectionTypes },
-  ],
-  [RuntimeErrorOperation.SOK_NARMESTE_LEDERE]: [
-    { status: 403, types: accessRejectionTypes },
-  ],
-  [RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER]: [
+  hent_organisasjoner: [],
+  hent_behovsliste: [{ status: 403, types: accessRejectionTypes }],
+  hent_behov: [{ status: 403, types: accessRejectionTypes }],
+  sok_narmeste_ledere: [{ status: 403, types: accessRejectionTypes }],
+  opprett_narmeste_leder: [
     {
       status: 400,
       types: [
@@ -115,7 +109,7 @@ const expectedDomainRejections: Record<
     },
     { status: 403, types: accessRejectionTypes },
   ],
-  [RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER]: [
+  oppdater_narmeste_leder: [
     {
       status: 400,
       types: [
@@ -126,7 +120,7 @@ const expectedDomainRejections: Record<
     },
     { status: 403, types: accessRejectionTypes },
   ],
-  [RuntimeErrorOperation.FJERN_NARMESTE_LEDER]: [
+  fjern_narmeste_leder: [
     {
       status: 400,
       types: [
