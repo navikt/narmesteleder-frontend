@@ -1,6 +1,5 @@
-import { createEventLogger } from "@navikt/esyfo-logger";
-import { logger } from "@navikt/next-logger";
 import { type ZodError, z } from "zod";
+import { log } from "./logger";
 import { networkErrorCode } from "./networkErrorCode";
 import {
   RuntimeErrorCode,
@@ -14,8 +13,6 @@ import {
 
 export { RuntimeValidationTarget } from "./runtimeErrorContract";
 
-const runtimeLog = createEventLogger(logger);
-
 /**
  * Logger bare felt fra den lukkede runtime-kontrakten. Dynamiske feilobjekter,
  * URL-er og request-data er med vilje ikke parametere.
@@ -25,7 +22,7 @@ export function logRuntimeError(
   errorCode: RuntimeErrorCode,
   upstreamStatus?: number,
 ): void {
-  runtimeLog.event(
+  log.event(
     runtimeErrorDefinitions[operation],
     runtimeErrorContext(errorCode, upstreamStatus),
   );
@@ -35,7 +32,7 @@ export function logRuntimeNetworkError(
   operation: RuntimeErrorOperation,
   error: unknown,
 ): void {
-  runtimeLog.event(runtimeErrorDefinitions[operation], {
+  log.event(runtimeErrorDefinitions[operation], {
     ...runtimeErrorContext(RuntimeErrorCode.NETWORK_ERROR),
     network_code: networkErrorCode(error),
   });
@@ -57,7 +54,7 @@ export function logInvalidResponse(
   validationError: ZodError,
   upstreamStatus?: number,
 ): void {
-  runtimeLog.event(
+  log.event(
     runtimeErrorDefinitions[operation],
     runtimeValidationContext(
       RuntimeErrorCode.INVALID_RESPONSE,
@@ -73,7 +70,7 @@ export function logInvalidInput(
   validationTarget: RuntimeValidationTarget,
   validationError: ZodError,
 ): void {
-  runtimeLog.event(
+  log.event(
     runtimeInputWarnings[operation],
     runtimeValidationContext(
       RuntimeErrorCode.INVALID_INPUT,

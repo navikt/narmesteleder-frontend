@@ -1,4 +1,4 @@
-import { logger } from "@navikt/next-logger";
+import { defineEvent } from "@navikt/esyfo-logger";
 import { Suspense } from "react";
 import { z } from "zod";
 import { InfoLoader } from "@/app/(behov)/[behovId]/components/InfoLoader";
@@ -6,6 +6,17 @@ import { InfoSpinner } from "@/app/(behov)/[behovId]/components/InfoSpinner";
 import notFound from "@/app/not-found";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import type { MockScenario } from "@/server/fetchData/fetchLederInfo";
+import { log } from "@/server/observability/logger";
+
+const invalidBehovId = defineEvent<{
+  error_code: "INVALID_INPUT";
+  validationIssues: string;
+}>({
+  name: "behov_route_invalid_parameter",
+  operation: "vis_behov",
+  level: "warn",
+  message: "[Route] invalid behovId parameter in URL",
+});
 
 const isValidBehovId = (behovId: string) => {
   const parseResult = requirementIdSchema.safeParse(behovId);
@@ -13,10 +24,10 @@ const isValidBehovId = (behovId: string) => {
     return true;
   }
 
-  logger.warn(
-    { validationIssues: z.prettifyError(parseResult.error) },
-    "[Route] invalid behovId parameter in URL",
-  );
+  log.event(invalidBehovId, {
+    error_code: "INVALID_INPUT",
+    validationIssues: z.prettifyError(parseResult.error),
+  });
 
   return false;
 };

@@ -1,3 +1,7 @@
+import { vi } from "vitest";
+
+vi.mock("server-only", () => ({}));
+
 process.env.NEXT_PUBLIC_BASE_PATH = "/arbeidsgiver/ansatte/narmesteleder";
 process.env.NEXT_PUBLIC_RUNTIME_ENVIRONMENT = "test";
 process.env.NEXT_PUBLIC_MIN_SIDE_ARBEIDSGIVER_URL =

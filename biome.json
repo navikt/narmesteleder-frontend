@@ -35,6 +35,52 @@
       "react": "recommended"
     }
   },
+  "overrides": [
+    {
+      "includes": [
+        "src/**",
+        "!**/*.test.*",
+        "!src/server/observability/logger.ts",
+        "!src/app/error.tsx",
+        "!src/app/Providers.tsx",
+        "!src/app/api/logger/route.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": { "noConsole": "error" },
+          "style": {
+            "noCommonJs": "error",
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "@navikt/esyfo-logger": {
+                    "importNames": ["createLogger", "createEventLogger", "*"],
+                    "message": "Bruk log fra @/server/observability/logger. Definer hendelser lokalt med defineEvent."
+                  }
+                },
+                "patterns": [
+                  {
+                    "group": [
+                      "@navikt/next-logger",
+                      "@navikt/next-logger/**",
+                      "@navikt/pino-logger",
+                      "@navikt/pino-logger/**",
+                      "pino",
+                      "pino/**",
+                      "node:console",
+                      "console"
+                    ],
+                    "message": "Serverlogger skal gå gjennom log fra @/server/observability/logger. Nettleserintegrasjoner har eksplisitte unntak."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "assist": {
     "actions": {
       "source": {
