@@ -1,35 +1,5 @@
 import { defineEvent } from "@navikt/esyfo-logger";
-import type { networkErrorCause } from "./networkErrorCause";
-
-/**
- * Lukket katalog for runtime-feil som skal kunne grupperes stabilt i logger.
- * Domenespråket er norsk, mens det tekniske utfallet bruker suffikset `failed`.
- */
-export const RuntimeErrorOperation = {
-  HENT_ORGANISASJONER: "hent_organisasjoner",
-  HENT_BEHOVSLISTE: "hent_behovsliste",
-  HENT_BEHOV: "hent_behov",
-  SOK_NARMESTE_LEDERE: "sok_narmeste_ledere",
-  OPPRETT_NARMESTE_LEDER: "opprett_narmeste_leder",
-  OPPDATER_NARMESTE_LEDER: "oppdater_narmeste_leder",
-  FJERN_NARMESTE_LEDER: "fjern_narmeste_leder",
-} as const;
-
-export type RuntimeErrorOperation =
-  (typeof RuntimeErrorOperation)[keyof typeof RuntimeErrorOperation];
-
-export const RuntimeErrorEvent = {
-  ORGANISASJONER_FETCH_FAILED: "organisasjoner_fetch_failed",
-  BEHOVSLISTE_FETCH_FAILED: "behovsliste_fetch_failed",
-  BEHOV_FETCH_FAILED: "behov_fetch_failed",
-  NARMESTE_LEDERE_SEARCH_FAILED: "narmeste_ledere_search_failed",
-  NARMESTE_LEDER_CREATE_FAILED: "narmeste_leder_create_failed",
-  NARMESTE_LEDER_UPDATE_FAILED: "narmeste_leder_update_failed",
-  NARMESTE_LEDER_REVOKE_FAILED: "narmeste_leder_revoke_failed",
-} as const;
-
-export type RuntimeErrorEvent =
-  (typeof RuntimeErrorEvent)[keyof typeof RuntimeErrorEvent];
+import type { NetworkErrorCode } from "./networkErrorCode";
 
 export const RuntimeErrorCode = {
   NETWORK_ERROR: "NETWORK_ERROR",
@@ -66,75 +36,86 @@ type RuntimeValidationContext = RuntimeErrorContext & {
 };
 
 type RuntimeFailureContext = RuntimeErrorContext & {
-  network_cause?: ReturnType<typeof networkErrorCause>;
+  network_code?: NetworkErrorCode;
   validation_target?: RuntimeValidationTarget;
   validationIssues?: string;
 };
 
 function defineRuntimeFailure(
-  operation: RuntimeErrorOperation,
-  name: RuntimeErrorEvent,
+  operation: string,
+  name: string,
   message: string,
 ) {
-  const metadata = { operation, name, message };
-  return {
-    error: defineEvent<RuntimeFailureContext>({ ...metadata, level: "error" }),
-    validationWarning: defineEvent<RuntimeValidationContext>({
-      ...metadata,
-      level: "warn",
-    }),
-  };
+  return defineEvent<RuntimeFailureContext>({
+    operation,
+    name,
+    message,
+    level: "error",
+  });
 }
 
 export const runtimeErrorDefinitions = {
-  [RuntimeErrorOperation.HENT_ORGANISASJONER]: defineRuntimeFailure(
-    RuntimeErrorOperation.HENT_ORGANISASJONER,
-    RuntimeErrorEvent.ORGANISASJONER_FETCH_FAILED,
+  hent_organisasjoner: defineRuntimeFailure(
+    "hent_organisasjoner",
+    "organisasjoner_fetch_failed",
     "Kunne ikke hente organisasjoner",
   ),
-  [RuntimeErrorOperation.HENT_BEHOVSLISTE]: defineRuntimeFailure(
-    RuntimeErrorOperation.HENT_BEHOVSLISTE,
-    RuntimeErrorEvent.BEHOVSLISTE_FETCH_FAILED,
+  hent_behovsliste: defineRuntimeFailure(
+    "hent_behovsliste",
+    "behovsliste_fetch_failed",
     "Kunne ikke hente listen over behov for nærmeste leder",
   ),
-  [RuntimeErrorOperation.HENT_BEHOV]: defineRuntimeFailure(
-    RuntimeErrorOperation.HENT_BEHOV,
-    RuntimeErrorEvent.BEHOV_FETCH_FAILED,
+  hent_behov: defineRuntimeFailure(
+    "hent_behov",
+    "behov_fetch_failed",
     "Kunne ikke hente behovet for nærmeste leder",
   ),
-  [RuntimeErrorOperation.SOK_NARMESTE_LEDERE]: defineRuntimeFailure(
-    RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
-    RuntimeErrorEvent.NARMESTE_LEDERE_SEARCH_FAILED,
+  sok_narmeste_ledere: defineRuntimeFailure(
+    "sok_narmeste_ledere",
+    "narmeste_ledere_search_failed",
     "Kunne ikke søke etter nærmeste ledere",
   ),
-  [RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER]: defineRuntimeFailure(
-    RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
-    RuntimeErrorEvent.NARMESTE_LEDER_CREATE_FAILED,
+  opprett_narmeste_leder: defineRuntimeFailure(
+    "opprett_narmeste_leder",
+    "narmeste_leder_create_failed",
     "Kunne ikke opprette nærmeste leder",
   ),
-  [RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER]: defineRuntimeFailure(
-    RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
-    RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
+  oppdater_narmeste_leder: defineRuntimeFailure(
+    "oppdater_narmeste_leder",
+    "narmeste_leder_update_failed",
     "Kunne ikke oppdatere nærmeste leder",
   ),
-  [RuntimeErrorOperation.FJERN_NARMESTE_LEDER]: defineRuntimeFailure(
-    RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
-    RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
+  fjern_narmeste_leder: defineRuntimeFailure(
+    "fjern_narmeste_leder",
+    "narmeste_leder_revoke_failed",
     "Kunne ikke fjerne nærmeste leder",
   ),
-} satisfies Record<
-  RuntimeErrorOperation,
-  ReturnType<typeof defineRuntimeFailure>
->;
+};
+
+export type RuntimeErrorOperation = keyof typeof runtimeErrorDefinitions;
+
+export const runtimeInputWarnings = {
+  opprett_narmeste_leder: defineEvent<RuntimeValidationContext>({
+    ...runtimeErrorDefinitions.opprett_narmeste_leder,
+    level: "warn",
+  }),
+  oppdater_narmeste_leder: defineEvent<RuntimeValidationContext>({
+    ...runtimeErrorDefinitions.oppdater_narmeste_leder,
+    level: "warn",
+  }),
+  fjern_narmeste_leder: defineEvent<RuntimeValidationContext>({
+    ...runtimeErrorDefinitions.fjern_narmeste_leder,
+    level: "warn",
+  }),
+};
+
+export type RuntimeInputOperation = keyof typeof runtimeInputWarnings;
 
 export function runtimeErrorContext(
   errorCode: RuntimeErrorCode,
   upstreamStatus?: number,
 ): RuntimeErrorContext {
-  const context = {
-    error_code: errorCode,
-  } as const;
-
+  const context = { error_code: errorCode };
   const hasValidUpstreamStatus =
     upstreamStatus !== undefined &&
     Number.isInteger(upstreamStatus) &&

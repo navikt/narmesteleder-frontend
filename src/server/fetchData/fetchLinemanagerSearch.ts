@@ -15,7 +15,7 @@ import {
 } from "@/schemas/lineManagerSearchSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
-import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
+
 import { tokenXFetchPost } from "@/server/tokenXFetch";
 
 export interface FetchLinemanagerSearchParams {
@@ -55,7 +55,7 @@ const realFetchLinemanagerSearch = async (
   try {
     const response = await tokenXFetchPost({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      operation: RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+      operation: "sok_narmeste_ledere",
       endpoint,
       requestBody: {
         orgNumber: params.orgNumber,

@@ -11,7 +11,7 @@ import {
 } from "@/schemas/lineManagerRequirementsListSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
-import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
+
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 
 export interface FetchRequirementsListResult {
@@ -50,7 +50,7 @@ const realFetchRequirementsList = async (
   try {
     const response = await tokenXFetchGet({
       targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-      operation: RuntimeErrorOperation.HENT_BEHOVSLISTE,
+      operation: "hent_behovsliste",
       endpoint: getRequirementsListPath(orgNumber),
       responseDataSchema: lineManagerRequirementsCollectionSchema,
       redirectAfterLoginUrl: publicEnv.NEXT_PUBLIC_BASE_PATH,

@@ -7,7 +7,6 @@ import {
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
   toFrontendErrorResponse,
 } from "./narmesteLederErrorUtils";
-import { RuntimeErrorOperation } from "./observability/runtimeErrorContract";
 
 vi.mock("@navikt/next-logger", () => ({
   logger: {
@@ -112,32 +111,24 @@ describe("toFrontendErrorResponse", () => {
 
 describe("isKnownDomainRejection", () => {
   it.each([
+    ["hent_behov", 403, BackendErrorType.MISSING_ORG_ACCESS],
     [
-      RuntimeErrorOperation.HENT_BEHOV,
-      403,
-      BackendErrorType.MISSING_ORG_ACCESS,
-    ],
-    [
-      RuntimeErrorOperation.SOK_NARMESTE_LEDERE,
+      "sok_narmeste_ledere",
       403,
       BackendErrorType.MISSING_ALITINN_RESOURCE_ACCESS,
     ],
+    ["opprett_narmeste_leder", 400, BackendErrorType.NO_ACTIVE_SICK_LEAVE],
     [
-      RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
-      400,
-      BackendErrorType.NO_ACTIVE_SICK_LEAVE,
-    ],
-    [
-      RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      "oppdater_narmeste_leder",
       400,
       BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
     ],
     [
-      RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      "fjern_narmeste_leder",
       400,
       BackendErrorType.EMPLOYEE_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
     ],
-  ])(
+  ] as const)(
     "godtar dokumentert kombinasjon %s + %i + %s",
     (operation, status, type) => {
       expect(isKnownDomainRejection(operation, status, type)).toBe(true);
@@ -147,14 +138,14 @@ describe("isKnownDomainRejection", () => {
   it("behandler samme type og status fra en annen operasjon som teknisk feil", () => {
     expect(
       isKnownDomainRejection(
-        RuntimeErrorOperation.HENT_ORGANISASJONER,
+        "hent_organisasjoner",
         403,
         BackendErrorType.MISSING_ORG_ACCESS,
       ),
     ).toBe(false);
     expect(
       isKnownDomainRejection(
-        RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+        "fjern_narmeste_leder",
         400,
         BackendErrorType.LINEMANAGER_NAME_NATIONAL_IDENTIFICATION_NUMBER_MISMATCH,
       ),
@@ -164,7 +155,7 @@ describe("isKnownDomainRejection", () => {
   it("behandler en utdatert domenetype som teknisk feil", () => {
     expect(
       isKnownDomainRejection(
-        RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+        "opprett_narmeste_leder",
         400,
         BackendErrorType.LINEMANAGER_MISSING_EMPLOYMENT_IN_ORG,
       ),
@@ -176,7 +167,7 @@ describe("isKnownDomainRejection", () => {
     (status) => {
       expect(
         isKnownDomainRejection(
-          RuntimeErrorOperation.HENT_BEHOV,
+          "hent_behov",
           status,
           BackendErrorType.MISSING_ORG_ACCESS,
         ),
@@ -185,8 +176,6 @@ describe("isKnownDomainRejection", () => {
   );
 
   it("behandler ukjent 4xx-respons som uventet teknisk utfall", () => {
-    expect(
-      isKnownDomainRejection(RuntimeErrorOperation.HENT_BEHOV, 403, undefined),
-    ).toBe(false);
+    expect(isKnownDomainRejection("hent_behov", 403, undefined)).toBe(false);
   });
 });

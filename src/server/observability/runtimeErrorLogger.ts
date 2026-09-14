@@ -1,13 +1,15 @@
 import { createEventLogger } from "@navikt/esyfo-logger";
 import { logger } from "@navikt/next-logger";
 import { type ZodError, z } from "zod";
-import { networkErrorCause } from "./networkErrorCause";
+import { networkErrorCode } from "./networkErrorCode";
 import {
   RuntimeErrorCode,
   type RuntimeErrorOperation,
-  type RuntimeValidationTarget,
+  type RuntimeInputOperation,
+  RuntimeValidationTarget,
   runtimeErrorContext,
   runtimeErrorDefinitions,
+  runtimeInputWarnings,
 } from "./runtimeErrorContract";
 
 export { RuntimeValidationTarget } from "./runtimeErrorContract";
@@ -24,7 +26,7 @@ export function logRuntimeError(
   upstreamStatus?: number,
 ): void {
   runtimeLog.event(
-    runtimeErrorDefinitions[operation].error,
+    runtimeErrorDefinitions[operation],
     runtimeErrorContext(errorCode, upstreamStatus),
   );
 }
@@ -33,9 +35,9 @@ export function logRuntimeNetworkError(
   operation: RuntimeErrorOperation,
   error: unknown,
 ): void {
-  runtimeLog.event(runtimeErrorDefinitions[operation].error, {
+  runtimeLog.event(runtimeErrorDefinitions[operation], {
     ...runtimeErrorContext(RuntimeErrorCode.NETWORK_ERROR),
-    network_cause: networkErrorCause(error),
+    network_code: networkErrorCode(error),
   });
 }
 
@@ -50,32 +52,33 @@ const runtimeValidationContext = (
   validationIssues: z.prettifyError(validationError),
 });
 
-export function logRuntimeValidationError(
+export function logInvalidResponse(
   operation: RuntimeErrorOperation,
-  errorCode: RuntimeErrorCode,
-  validationTarget: RuntimeValidationTarget,
   validationError: ZodError,
   upstreamStatus?: number,
 ): void {
   runtimeLog.event(
-    runtimeErrorDefinitions[operation].error,
+    runtimeErrorDefinitions[operation],
     runtimeValidationContext(
-      errorCode,
-      validationTarget,
+      RuntimeErrorCode.INVALID_RESPONSE,
+      RuntimeValidationTarget.UPSTREAM_RESPONSE,
       validationError,
       upstreamStatus,
     ),
   );
 }
 
-export function logRuntimeValidationWarning(
-  operation: RuntimeErrorOperation,
-  errorCode: RuntimeErrorCode,
+export function logInvalidInput(
+  operation: RuntimeInputOperation,
   validationTarget: RuntimeValidationTarget,
   validationError: ZodError,
 ): void {
   runtimeLog.event(
-    runtimeErrorDefinitions[operation].validationWarning,
-    runtimeValidationContext(errorCode, validationTarget, validationError),
+    runtimeInputWarnings[operation],
+    runtimeValidationContext(
+      RuntimeErrorCode.INVALID_INPUT,
+      validationTarget,
+      validationError,
+    ),
   );
 }

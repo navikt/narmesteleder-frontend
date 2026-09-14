@@ -5,8 +5,7 @@ import { opprettNarmesteLeder } from "@/server/actions/opprettNarmesteLeder";
 import { revokeLinemanager } from "@/server/actions/revokeLinemanager";
 import {
   RuntimeErrorCode,
-  RuntimeErrorEvent,
-  RuntimeErrorOperation,
+  type RuntimeErrorOperation,
 } from "@/server/observability/runtimeErrorContract";
 
 const serializedLogLines = vi.hoisted((): string[] => []);
@@ -52,8 +51,8 @@ describe("serialized server-action validation warnings", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalActionLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_CREATE_FAILED,
-      operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+      event: "narmeste_leder_create_failed",
+      operation: "opprett_narmeste_leder",
       message: "Kunne ikke opprette nærmeste leder",
       validationTarget: "narmeste_leder_info",
       validationIssue: "sykmeldt.orgnummer",
@@ -66,8 +65,8 @@ describe("serialized server-action validation warnings", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalActionLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
-      operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      event: "narmeste_leder_update_failed",
+      operation: "oppdater_narmeste_leder",
       message: "Kunne ikke oppdatere nærmeste leder",
       validationTarget: "requirement_id",
       validationIssue: "Invalid UUID",
@@ -83,8 +82,8 @@ describe("serialized server-action validation warnings", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalActionLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_UPDATE_FAILED,
-      operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+      event: "narmeste_leder_update_failed",
+      operation: "oppdater_narmeste_leder",
       message: "Kunne ikke oppdatere nærmeste leder",
       validationTarget: "narmeste_leder_form",
       validationIssue: "mobilnummer",
@@ -101,8 +100,8 @@ describe("serialized server-action validation warnings", () => {
     ).resolves.toMatchObject({ success: false });
 
     expectCanonicalActionLog({
-      event: RuntimeErrorEvent.NARMESTE_LEDER_REVOKE_FAILED,
-      operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+      event: "narmeste_leder_revoke_failed",
+      operation: "fjern_narmeste_leder",
       message: "Kunne ikke fjerne nærmeste leder",
       validationTarget: "revoke_request",
       validationIssue: "employeeIdentificationNumber",
@@ -117,7 +116,7 @@ function expectCanonicalActionLog({
   validationTarget,
   validationIssue,
 }: {
-  event: RuntimeErrorEvent;
+  event: string;
   operation: RuntimeErrorOperation;
   message: string;
   validationTarget: string;

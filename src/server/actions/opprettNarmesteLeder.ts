@@ -9,11 +9,7 @@ import {
 } from "@/schemas/nærmestelederFormSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import {
-  RuntimeErrorCode,
-  RuntimeErrorOperation,
-} from "@/server/observability/runtimeErrorContract";
-import {
-  logRuntimeValidationWarning,
+  logInvalidInput,
   RuntimeValidationTarget,
 } from "@/server/observability/runtimeErrorLogger";
 import {
@@ -30,9 +26,8 @@ export const opprettNarmesteLeder = async (
 ): Promise<TokenXFetchUpdateResult> => {
   const validationResult = narmesteLederInfoSchema.safeParse(narmesteLeder);
   if (!validationResult.success) {
-    logRuntimeValidationWarning(
-      RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
-      RuntimeErrorCode.INVALID_INPUT,
+    logInvalidInput(
+      "opprett_narmeste_leder",
       RuntimeValidationTarget.NARMESTE_LEDER_INFO,
       validationResult.error,
     );
@@ -44,7 +39,7 @@ export const opprettNarmesteLeder = async (
 
   return tokenXFetchUpdate({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-    operation: RuntimeErrorOperation.OPPRETT_NARMESTE_LEDER,
+    operation: "opprett_narmeste_leder",
     endpoint: getLineManagerPostPath(),
     requestBody: toLineManagerRequest(validationResult.data),
     method: "POST",

@@ -19,10 +19,9 @@ import {
   type RuntimeErrorOperation,
 } from "./observability/runtimeErrorContract";
 import {
+  logInvalidResponse,
   logRuntimeError,
   logRuntimeNetworkError,
-  logRuntimeValidationError,
-  RuntimeValidationTarget,
 } from "./observability/runtimeErrorLogger";
 
 const createSafeFrontendError = () =>
@@ -65,13 +64,7 @@ const parseAndValidateResponse = async <S extends z.ZodTypeAny>(
 
   const result = responseDataSchema.safeParse(responseData);
   if (!result.success) {
-    logRuntimeValidationError(
-      operation,
-      RuntimeErrorCode.INVALID_RESPONSE,
-      RuntimeValidationTarget.UPSTREAM_RESPONSE,
-      result.error,
-      response.status,
-    );
+    logInvalidResponse(operation, result.error, response.status);
     throw createSafeFrontendError();
   }
 

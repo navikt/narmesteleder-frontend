@@ -7,11 +7,7 @@ import {
 } from "@/schemas/lineManagerRevokeSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import {
-  RuntimeErrorCode,
-  RuntimeErrorOperation,
-} from "@/server/observability/runtimeErrorContract";
-import {
-  logRuntimeValidationWarning,
+  logInvalidInput,
   RuntimeValidationTarget,
 } from "@/server/observability/runtimeErrorLogger";
 import {
@@ -28,9 +24,8 @@ export async function revokeLinemanager(
 ): Promise<TokenXFetchUpdateResult> {
   const validatedPayload = lineManagerRevokeRequestSchema.safeParse(payload);
   if (!validatedPayload.success) {
-    logRuntimeValidationWarning(
-      RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
-      RuntimeErrorCode.INVALID_INPUT,
+    logInvalidInput(
+      "fjern_narmeste_leder",
       RuntimeValidationTarget.REVOKE_REQUEST,
       validatedPayload.error,
     );
@@ -42,7 +37,7 @@ export async function revokeLinemanager(
 
   return tokenXFetchUpdate({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-    operation: RuntimeErrorOperation.FJERN_NARMESTE_LEDER,
+    operation: "fjern_narmeste_leder",
     endpoint: getRevokeEndpoint(),
     requestBody: validatedPayload.data,
     method: "POST",

@@ -9,11 +9,7 @@ import {
 import { requirementIdSchema } from "@/schemas/requirementSchema";
 import { TokenXTargetApi } from "@/server/helpers";
 import {
-  RuntimeErrorCode,
-  RuntimeErrorOperation,
-} from "@/server/observability/runtimeErrorContract";
-import {
-  logRuntimeValidationWarning,
+  logInvalidInput,
   RuntimeValidationTarget,
 } from "@/server/observability/runtimeErrorLogger";
 import {
@@ -33,9 +29,8 @@ export const oppdaterNarmesteLeder = async (
   const validatedForm = narmesteLederFormSchema.safeParse(narmesteLeder);
 
   if (!validatedRequirementId.success) {
-    logRuntimeValidationWarning(
-      RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
-      RuntimeErrorCode.INVALID_INPUT,
+    logInvalidInput(
+      "oppdater_narmeste_leder",
       RuntimeValidationTarget.REQUIREMENT_ID,
       validatedRequirementId.error,
     );
@@ -46,9 +41,8 @@ export const oppdaterNarmesteLeder = async (
   }
 
   if (!validatedForm.success) {
-    logRuntimeValidationWarning(
-      RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
-      RuntimeErrorCode.INVALID_INPUT,
+    logInvalidInput(
+      "oppdater_narmeste_leder",
       RuntimeValidationTarget.NARMESTE_LEDER_FORM,
       validatedForm.error,
     );
@@ -59,7 +53,7 @@ export const oppdaterNarmesteLeder = async (
   }
   return await tokenXFetchUpdate({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-    operation: RuntimeErrorOperation.OPPDATER_NARMESTE_LEDER,
+    operation: "oppdater_narmeste_leder",
     endpoint: getLineManagerPutPath(validatedRequirementId.data),
     requestBody: toManagerRequest(validatedForm.data),
     method: "PUT",

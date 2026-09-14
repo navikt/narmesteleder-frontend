@@ -13,7 +13,7 @@ import {
   createFrontendError,
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
 } from "@/server/narmesteLederErrorUtils";
-import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
+
 import { tokenXFetchGet } from "@/server/tokenXFetch";
 import { formatFnr, joinNonEmpty } from "@/utils/formatting";
 
@@ -67,7 +67,7 @@ const realFetchLederInfo = async (
 ): Promise<LederInfo> => {
   const result = await tokenXFetchGet({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
-    operation: RuntimeErrorOperation.HENT_BEHOV,
+    operation: "hent_behov",
     endpoint: getLineManagerRequirementPath(requirementId),
     responseDataSchema: lineManagerReadSchema,
     redirectAfterLoginUrl: getRedirectAfterLoginUrlForAG(requirementId),
