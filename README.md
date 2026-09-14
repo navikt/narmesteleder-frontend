@@ -58,6 +58,18 @@ Når appen er startet, åpne http://localhost:3000/arbeidsgiver/ansatte/narmeste
 
 For å vise siden for oversikt over de som har behov for å sette leder, åpne http://localhost:3000/arbeidsgiver/ansatte/narmesteleder/oversikt
 
+## Logging
+
+Serverkode bruker `log` fra `@/server/observability/logger`. Den kobler eSyfo-logger til appens eksisterende next-logger; encoder, trace og konfigurasjon er uendret.
+
+- Advarsler og feil: `log.event(definisjon, kontekst, vurdertFeil?)`. Definisjonen ligger ved koden som eier hendelsen og bestemmer navn, nivå og forklaring. Bruk de eksisterende `logRuntimeError`-/valideringshjelperne for TokenX- og skjemafeil.
+- Vanlig informasjon/debug: `log.info("Opprydding ferdig", { removed_count: 12 })` eller `log.debug(...)`. Feltene er enkle verdier, ikke vilkårlige feilobjekter eller payloads.
+- Test faktisk JSON med testkit, inkludert diagnose, nivå, antall og fravær av sensitive testverdier. Behold nyttig `prettifyError`; ikke send rå auth-/fetch-feil, backend-body eller URL-er med identifikatorer.
+
+Biome stopper native logger-importer, nye loggerinstanser og `console` i vanlig appkode. Unntakene i `biome.json` er tester, loggerens tilkobling og eksisterende nettleserintegrasjon (`error.tsx`, `Providers.tsx` og `/api/logger`). Nettleserlogging og frameworklogger er ikke migrert til serverbiblioteket. Nye unntak krever en konkret integrasjonsgrunn, ikke bare et nytt loggkall.
+
+Se [bibliotekets veiledning](https://github.com/navikt/esyfo-observability) for typed hendelser og ansvarsdeling. Biblioteket endrer ikke autentisering, HTTP-respons, retry eller hvor en feil håndteres.
+
 ## For Nav-ansatte
 
 Interne henvendelser kan sendes via Slack i kanalen [#esyfo](https://nav-it.slack.com/archives/C012X796B4L).
