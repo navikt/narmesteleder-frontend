@@ -9,11 +9,11 @@ test.describe("Oversikt-flow", () => {
     await page.goto(OVERSIKT_URL);
   });
 
-  test("viser heading, søkeknapp og filtre", async ({ page }) => {
+  test("viser heading, søkefelt og filtre", async ({ page }) => {
     await expectAllVisible(page, [
       UiSelector.HeadingLeder,
       UiSelector.OversiktFaner,
-      UiSelector.ExpandableSearchTrigger,
+      UiSelector.OversiktSok,
     ]);
   });
 
@@ -27,7 +27,6 @@ test.describe("Oversikt-flow", () => {
     const firstRow = tabell.getByRole("row").nth(1);
     const firstName = await firstRow.getByRole("rowheader").innerText();
 
-    await getByUiSelector(page, UiSelector.ExpandableSearchTrigger).click();
     const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
     await sokFelt.fill(firstName);
 
@@ -41,7 +40,6 @@ test.describe("Oversikt-flow", () => {
     const firstRow = tabell.getByRole("row").nth(1);
     const fnr = await firstRow.getByText(/\d{6}\s\d{5}/).innerText();
 
-    await getByUiSelector(page, UiSelector.ExpandableSearchTrigger).click();
     const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
     await sokFelt.fill(fnr.replace(/\s/g, ""));
 
@@ -49,12 +47,31 @@ test.describe("Oversikt-flow", () => {
   });
 
   test("viser tom tilstand ved ingen treff", async ({ page }) => {
-    await getByUiSelector(page, UiSelector.ExpandableSearchTrigger).click();
     const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
     await sokFelt.fill("xyzingentreff999");
 
     await expect(
       getByUiSelector(page, UiSelector.OversiktTomState),
+    ).toBeVisible();
+  });
+
+  test("viser lasting når filteret for manglende leder henter nye data", async ({
+    page,
+  }) => {
+    await page
+      .getByRole("button", { name: "Aktiv sykmelding", exact: true })
+      .click();
+    await expect(page.getByText("Kari Nordmann").first()).toBeVisible();
+
+    await page
+      .getByRole("button", { name: "Mangler nærmeste leder", exact: true })
+      .click();
+
+    await expect(
+      getByUiSelector(page, UiSelector.OversiktLasterSpinner),
+    ).toBeVisible();
+    await expect(
+      getByUiSelector(page, UiSelector.OversiktTabell),
     ).toBeVisible();
   });
 
@@ -77,17 +94,14 @@ test.describe("Oversikt-flow", () => {
     );
   });
 
-  test("aktiv sykmelding viser tabell og begge handlingene", async ({
+  test("aktiv sykmelding viser begge handlingene og bekrefter fjerning", async ({
     page,
   }) => {
     await page
       .getByRole("button", { name: "Aktiv sykmelding", exact: true })
       .click();
 
-    const linemanagerTabell = getByUiSelector(
-      page,
-      UiSelector.LinemanagerTabell,
-    );
+    const linemanagerTabell = getByUiSelector(page, UiSelector.OversiktTabell);
     await expect(linemanagerTabell).toBeVisible();
 
     await linemanagerTabell
@@ -99,17 +113,38 @@ test.describe("Oversikt-flow", () => {
     await expect(
       page.getByRole("menuitem", { name: "Fjern nærmeste leder" }),
     ).toBeVisible();
+
+    await page.getByRole("menuitem", { name: "Fjern nærmeste leder" }).click();
+
+    const dialog = page.getByRole("alertdialog", {
+      name: "Fjern nærmeste leder?",
+    });
+    await expect(dialog).toContainText("Kari Nordmann");
+    await expect(dialog).not.toContainText(
+      "Den ansatte vil ikke lenger vises i denne oversikten.",
+    );
+
+    await dialog.getByRole("button", { name: "Avbryt" }).click();
+    await expect(dialog).toBeHidden();
+    await expect(
+      linemanagerTabell.getByRole("rowheader", { name: "Kari Nordmann" }),
+    ).toHaveCount(2);
   });
 
-  test("ingen aktiv sykmelding viser bare fjerning", async ({ page }) => {
+  test("ingen aktiv sykmelding forklarer og bekrefter fjerning", async ({
+    page,
+  }) => {
     await page
       .getByRole("button", { name: "Ingen aktiv sykmelding", exact: true })
       .click();
 
-    const linemanagerTabell = getByUiSelector(
-      page,
-      UiSelector.LinemanagerTabell,
-    );
+    await expect(
+      page.getByText(
+        "Fjerner du nærmeste leder, vil den ansatte ikke lenger vises i denne oversikten.",
+      ),
+    ).toBeVisible();
+
+    const linemanagerTabell = getByUiSelector(page, UiSelector.OversiktTabell);
     await expect(linemanagerTabell).toBeVisible();
     await linemanagerTabell
       .getByRole("button", { name: /Handlinger for Lars Johansen/ })
@@ -120,6 +155,39 @@ test.describe("Oversikt-flow", () => {
     await expect(
       page.getByRole("menuitem", { name: "Endre nærmeste leder" }),
     ).toHaveCount(0);
+
+    await page.getByRole("menuitem", { name: "Fjern nærmeste leder" }).click();
+
+    const dialog = page.getByRole("alertdialog", {
+      name: "Fjern nærmeste leder?",
+    });
+    await expect(dialog).toContainText("Lars Johansen");
+    await expect(dialog).toContainText(
+      "Den ansatte vil ikke lenger vises i denne oversikten.",
+    );
+
+    await dialog.getByRole("button", { name: "Avbryt" }).click();
+    await expect(dialog).toBeHidden();
+    await expect(
+      linemanagerTabell.getByRole("rowheader", { name: "Lars Johansen" }),
+    ).toHaveCount(2);
+
+    await linemanagerTabell
+      .getByRole("button", { name: /Handlinger for Lars Johansen/ })
+      .click();
+    await page.getByRole("menuitem", { name: "Fjern nærmeste leder" }).click();
+    await dialog
+      .getByRole("button", { name: "Fjern nærmeste leder", exact: true })
+      .click();
+
+    await expect(
+      page.getByText(
+        "Nærmeste leder er fjernet. Den ansatte vises ikke lenger i oversikten.",
+      ),
+    ).toBeVisible();
+    await expect(
+      linemanagerTabell.getByRole("rowheader", { name: "Lars Johansen" }),
+    ).toHaveCount(0);
   });
 
   test("bytter nærmeste leder med en PII-fri URL og returnerer til oversikten", async ({
@@ -129,10 +197,7 @@ test.describe("Oversikt-flow", () => {
       .getByRole("button", { name: "Aktiv sykmelding", exact: true })
       .click();
 
-    const linemanagerTabell = getByUiSelector(
-      page,
-      UiSelector.LinemanagerTabell,
-    );
+    const linemanagerTabell = getByUiSelector(page, UiSelector.OversiktTabell);
     await expect(linemanagerTabell).toBeVisible();
     await linemanagerTabell
       .getByRole("button", { name: /Handlinger for Kari Nordmann/ })

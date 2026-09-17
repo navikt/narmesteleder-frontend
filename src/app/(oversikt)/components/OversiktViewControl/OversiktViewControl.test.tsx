@@ -98,7 +98,7 @@ describe("Oversikt ViewControl", () => {
     expect(markup).toContain(`data-testid="${UiSelector.OversiktFeilAlert}"`);
   });
 
-  it("viser Figma-tekst uten antall og valgt filter som Chips.Toggle", () => {
+  it("viser én fast oversikt med synlig søk og statusfiltre", () => {
     const markup = ReactDOMServer.renderToStaticMarkup(
       <OversiktViewControl
         organisasjonerResult={{
@@ -113,7 +113,9 @@ describe("Oversikt ViewControl", () => {
       />,
     );
 
-    expect(markup).toContain("Vis ansatte");
+    expect(markup).toContain("Ansatte");
+    expect(markup).toContain("Søk og filtrer ansatte i virksomheten.");
+    expect(markup).toContain("Status");
     expect(markup).toContain("Mangler nærmeste leder");
     expect(markup).toContain("Aktiv sykmelding");
     expect(markup).toContain("Ingen aktiv sykmelding");
@@ -122,20 +124,12 @@ describe("Oversikt ViewControl", () => {
     expect(markup).not.toMatch(/Ingen aktiv sykmelding \(\d+\)/);
     expect(markup).toContain('aria-pressed="true"');
     expect(markup).toContain('aria-pressed="false"');
+    expect(markup).toContain("Søk etter ansatt");
+    expect(markup).toContain("Søk med navn eller fødselsnummer");
+    expect(markup).toContain(`data-testid="${UiSelector.OversiktSok}"`);
     expect(markup).toContain(
-      `data-testid="${UiSelector.ExpandableSearchTrigger}"`,
+      "Viser ansatte som trenger registrert nærmeste leder.",
     );
-    expect(markup).toContain("Søk");
-    expect(markup).not.toContain("Søk etter ansatt");
-    expect(markup).not.toContain("Søk med navn eller fødselsnummer");
-    expect(markup).not.toContain(`data-testid="${UiSelector.OversiktSok}"`);
-    expect(markup).toContain("Ansatte som mangler nærmeste leder");
-    expect(markup).toContain(
-      "Disse ansatte må få registrert en nærmeste leder.",
-    );
-    expect(
-      markup.indexOf(`data-testid="${UiSelector.ExpandableSearchTrigger}"`),
-    ).toBeLessThan(markup.indexOf("Ansatte som mangler nærmeste leder"));
   });
 
   it("viser riktig beskrivelse for ansatte med aktiv sykmelding", () => {
@@ -154,26 +148,15 @@ describe("Oversikt ViewControl", () => {
       />,
     );
 
-    expect(markup).toContain("Ansatte med aktiv sykmelding");
-    expect(markup).toContain(
-      "Her kan du se og oppdatere hvem som er registrert som nærmeste leder.",
-    );
-    expect(markup).toContain(
-      `data-testid="${UiSelector.ExpandableSearchTrigger}"`,
-    );
-    expect(markup).toContain("Søk");
-    expect(markup).not.toContain("Søk etter ansatt");
-    expect(markup).not.toContain("Søk med navn eller fødselsnummer");
-    expect(markup).not.toContain(`data-testid="${UiSelector.LinemanagerSok}"`);
-    expect(
-      markup.indexOf(`data-testid="${UiSelector.ExpandableSearchTrigger}"`),
-    ).toBeLessThan(markup.indexOf("Ansatte med aktiv sykmelding"));
+    expect(markup).toContain("Viser ansatte med aktiv sykmelding.");
+    expect(markup).toContain("Søk etter ansatt");
+    expect(markup).toContain(`data-testid="${UiSelector.OversiktSok}"`);
     expect(markup).not.toContain(
       "Du kan bryte koblingen mellom ansatt og leder fra",
     );
   });
 
-  it("viser kollapset søk for ansatte uten aktiv sykmelding", () => {
+  it("viser konsekvensen for ansatte uten aktiv sykmelding", () => {
     const markup = ReactDOMServer.renderToStaticMarkup(
       <OversiktViewControl
         organisasjonerResult={{
@@ -189,15 +172,10 @@ describe("Oversikt ViewControl", () => {
       />,
     );
 
+    expect(markup).toContain("Søk etter ansatt");
+    expect(markup).toContain(`data-testid="${UiSelector.OversiktSok}"`);
     expect(markup).toContain(
-      `data-testid="${UiSelector.ExpandableSearchTrigger}"`,
+      "Viser ansatte uten aktiv sykmelding. Fjerner du nærmeste leder, vil den ansatte ikke lenger vises i oversikten.",
     );
-    expect(markup).toContain("Søk");
-    expect(markup).not.toContain("Søk etter ansatt");
-    expect(markup).not.toContain("Søk med navn eller fødselsnummer");
-    expect(markup).not.toContain(`data-testid="${UiSelector.LinemanagerSok}"`);
-    expect(
-      markup.indexOf(`data-testid="${UiSelector.ExpandableSearchTrigger}"`),
-    ).toBeLessThan(markup.indexOf("Ansatte uten aktiv sykmelding"));
   });
 });

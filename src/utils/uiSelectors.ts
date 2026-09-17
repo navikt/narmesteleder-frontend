@@ -30,12 +30,7 @@ export enum UiSelector {
   OversiktLasterSpinner = "oversiktLasterSpinner",
   OversiktFeilAlert = "oversiktFeilAlert",
   OversiktTomState = "oversiktTomState",
-  ExpandableSearchTrigger = "expandableSearchTrigger",
-  // Lederkobling-oversikt (fane 2 og 3)
-  LinemanagerTabell = "linemanagerTabell",
-  LinemanagerSok = "linemanagerSok",
-  LinemanagerLasterSpinner = "linemanagerLasterSpinner",
-  LinemanagerTomState = "linemanagerTomState",
+  // Lederkobling-oversikt
   LinemanagerFeilAlert = "linemanagerFeilAlert",
   LinemanagerLastFlere = "linemanagerLastFlere",
   // Behov
