@@ -90,7 +90,9 @@ export function OversiktTabell({
         <Table.Row>
           <Table.HeaderCell scope="col">Ansatt</Table.HeaderCell>
           <Table.HeaderCell scope="col">Nærmeste leder</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Handling</Table.HeaderCell>
+          <Table.HeaderCell scope="col" align="right">
+            Handling
+          </Table.HeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -112,7 +114,7 @@ export function OversiktTabell({
                 </VStack>
               </Table.HeaderCell>
               <Table.DataCell>Ikke registrert</Table.DataCell>
-              <Table.DataCell>
+              <Table.DataCell align="right">
                 <HandlingCell requirement={req} orgnr={orgnr} />
               </Table.DataCell>
             </Table.Row>

@@ -55,10 +55,6 @@ export function getEditLinemanagerHref(
   return `${publicEnv.NEXT_PUBLIC_BASE_PATH}/endre/${linemanagerId}?${params}`;
 }
 
-export function canChangeLinemanager(hasActiveSickLeave: boolean): boolean {
-  return hasActiveSickLeave;
-}
-
 function PersonSummary({
   name,
   nationalIdentificationNumber,
@@ -109,7 +105,7 @@ function LinemanagerActionMenu({
         />
       </ActionMenu.Trigger>
       <ActionMenu.Content align="end">
-        {canChangeLinemanager(hasActiveSickLeave) && (
+        {hasActiveSickLeave && (
           <ActionMenu.Item
             as="a"
             href={getEditLinemanagerHref(item.linemanagerId, orgNumber)}
@@ -157,7 +153,7 @@ function MobileDetails({ item }: { item: LinemanagerSearchItem }) {
       </VStack>
       <VStack gap="space-4">
         <BodyShort weight="semibold">Kontaktinformasjon</BodyShort>
-        <HStack gap="space-16" wrap>
+        <VStack gap="space-4">
           <HStack gap="space-4" align="center">
             <EnvelopeClosedIcon aria-hidden />
             <BodyShort>{item.manager.email}</BodyShort>
@@ -166,7 +162,7 @@ function MobileDetails({ item }: { item: LinemanagerSearchItem }) {
             <PhoneIcon aria-hidden />
             <BodyShort>{item.manager.mobile}</BodyShort>
           </HStack>
-        </HStack>
+        </VStack>
       </VStack>
       <VStack gap="space-4">
         <BodyShort weight="semibold">Leder siden</BodyShort>
@@ -216,7 +212,7 @@ export function LinemanagerTabell({
               </Table.HeaderCell>
               <Table.HeaderCell scope="col">Ansatt</Table.HeaderCell>
               <Table.HeaderCell scope="col">Nærmeste leder</Table.HeaderCell>
-              <Table.HeaderCell scope="col">
+              <Table.HeaderCell scope="col" align="right">
                 <BodyShort as="span" visuallyHidden>
                   Handling
                 </BodyShort>
@@ -272,7 +268,9 @@ export function LinemanagerTabell({
                 Kontaktinformasjon
               </Table.HeaderCell>
               <Table.HeaderCell scope="col">Leder siden</Table.HeaderCell>
-              <Table.HeaderCell scope="col">Handling</Table.HeaderCell>
+              <Table.HeaderCell scope="col" align="right">
+                Handling
+              </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -309,7 +307,7 @@ export function LinemanagerTabell({
                 <Table.DataCell>
                   {formatActiveFrom(item.activeFrom)}
                 </Table.DataCell>
-                <Table.DataCell>
+                <Table.DataCell align="right">
                   <LinemanagerActionMenu
                     item={item}
                     orgNumber={orgNumber}

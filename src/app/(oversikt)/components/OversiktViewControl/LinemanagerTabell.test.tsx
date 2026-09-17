@@ -2,11 +2,7 @@ import ReactDOMServer from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { mockLinemanagerIds } from "@/mocks/data/mockLinemanagerSearch";
 import type { LinemanagerSearchItem } from "@/schemas/lineManagerSearchSchema";
-import {
-  canChangeLinemanager,
-  getEditLinemanagerHref,
-  LinemanagerTabell,
-} from "./LinemanagerTabell";
+import { getEditLinemanagerHref, LinemanagerTabell } from "./LinemanagerTabell";
 
 const linemanager: LinemanagerSearchItem = {
   linemanagerId: mockLinemanagerIds.activeKari,
@@ -60,13 +56,8 @@ describe("LinemanagerTabell", () => {
   it("utelater endrehandling for inaktive rader og beholder handlingsmenyen", () => {
     const markup = renderTable(false);
 
-    expect(canChangeLinemanager(false)).toBe(false);
     expect(markup).not.toContain("Endre nærmeste leder");
     expect(markup).toContain('aria-label="Handlinger for Test Employee"');
-  });
-
-  it("viser endrehandling for aktive rader", () => {
-    expect(canChangeLinemanager(true)).toBe(true);
   });
 
   it("viser fem Figma-kolonner med samlet informasjon per person", () => {
