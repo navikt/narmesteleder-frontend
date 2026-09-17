@@ -42,7 +42,7 @@ export function LinemanagerContent({
   const [revokeError, setRevokeError] = useState<string | null>(null);
   const [revokingKey, setRevokingKey] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const debouncedSearch = useDebounce(search, 1000);
+  const debouncedSearch = useDebounce(search, 300);
 
   // Fetch on mount and whenever orgNumber, hasActiveSickLeave or search changes.
   useEffect(() => {

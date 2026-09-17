@@ -6,7 +6,7 @@ import {
   LocalAlert,
   VStack,
 } from "@navikt/ds-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import type { FetchRequirementsListResult } from "@/server/fetchData/fetchRequirementsList";
 import { useDebounce } from "@/shared/hooks/useDebounce";
@@ -40,17 +40,12 @@ export function OversiktContent({
 }: OversiktContentProps) {
   const router = useRouter();
   const virksomhet = useVirksomhetContext();
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
   const requirements = requirementsResult.requirements;
   const [isPending, startTransition] = useTransition();
-  const [activeTab, setActiveTab] = useState<OversiktTabValue>(
-    getValidTabValue(selectedTab),
-  );
-
-  useEffect(() => {
-    setActiveTab(getValidTabValue(selectedTab));
-  }, [selectedTab]);
+  const activeTab = getValidTabValue(searchParams.get("tab") ?? selectedTab);
 
   // Naviger til ny URL når virksomhet endres i heading → trigger ny server-fetch
   useEffect(() => {
@@ -69,10 +64,12 @@ export function OversiktContent({
 
   const handleTabChange = (value: string) => {
     const nextTab = getValidTabValue(value);
-    setActiveTab(nextTab);
-    startTransition(() => {
-      router.push(`?orgnr=${selectedOrCurrentOrgnr}&tab=${nextTab}`);
-    });
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set("orgnr", selectedOrCurrentOrgnr);
+    params.set("tab", nextTab);
+
+    window.history.pushState(null, "", `?${params.toString()}`);
   };
 
   return (
