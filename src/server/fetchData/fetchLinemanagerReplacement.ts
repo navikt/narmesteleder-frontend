@@ -5,13 +5,14 @@ import { getMockLinemanagerReplacement } from "@/mocks/data/mockLinemanagerRepla
 import { simulateBackendDelay } from "@/mocks/simulateBackendDelay";
 import {
   type LineManagerReplacementReadResponse,
-  lineManagerReplacementReadSchema,
+  replacementSchema,
 } from "@/schemas/lineManagerReadSchema";
 import type { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
 import { getRedirectAfterLoginUrlForLinemanagerReplacement } from "@/server/auth/redirectToLogin";
 import { TokenXTargetApi } from "@/server/helpers";
 import { RuntimeErrorOperation } from "@/server/observability/runtimeErrorContract";
 import { tokenXFetchGet } from "@/server/tokenXFetch";
+import type { ValgtVirksomhet } from "@/shared/state/virksomhetContext";
 import {
   createFrontendError,
   NARMESTE_LEDER_FALLBACK_ERROR_DETAIL,
@@ -19,22 +20,33 @@ import {
 
 export type ReplacementMockScenario = "fetch-error";
 
-const getLinemanagerPath = (id: string) =>
-  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/api/v1/linemanager/${id}`;
+export type LinemanagerReplacementContext = {
+  initialData: NarmesteLederInfo;
+  virksomhet: ValgtVirksomhet;
+};
 
-export const mapToReplacementDefaults = (
-  response: LineManagerReplacementReadResponse,
-): NarmesteLederInfo => ({
-  sykmeldt: {
-    fodselsnummer: response.employeeIdentificationNumber,
-    etternavn: response.lastName,
-    orgnummer: response.orgNumber,
+const getLinemanagerPath = (id: string) =>
+  `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/internal/api/v1/linemanager/${id}`;
+
+export const mapToReplacementDefaults = ({
+  linemanagerRelation,
+}: LineManagerReplacementReadResponse): LinemanagerReplacementContext => ({
+  initialData: {
+    sykmeldt: {
+      fodselsnummer: linemanagerRelation.employee.nationalIdentificationNumber,
+      etternavn: linemanagerRelation.employee.name.lastName,
+      orgnummer: linemanagerRelation.organization.orgNumber,
+    },
+    leder: {
+      fodselsnummer: "",
+      etternavn: "",
+      mobilnummer: "",
+      epost: "",
+    },
   },
-  leder: {
-    fodselsnummer: "",
-    etternavn: "",
-    mobilnummer: "",
-    epost: "",
+  virksomhet: {
+    orgnummer: linemanagerRelation.organization.orgNumber,
+    orgnavn: linemanagerRelation.organization.name,
   },
 });
 
@@ -42,12 +54,12 @@ const realFetchLinemanagerReplacement = async (
   linemanagerId: string,
   _mockScenario?: ReplacementMockScenario,
   returnTo?: string,
-): Promise<NarmesteLederInfo | null> => {
+): Promise<LinemanagerReplacementContext | null> => {
   const response = await tokenXFetchGet({
     targetApi: TokenXTargetApi.NARMESTELEDER_BACKEND,
     operation: RuntimeErrorOperation.HENT_NARMESTE_LEDER_FOR_ERSTATNING,
     endpoint: getLinemanagerPath(linemanagerId),
-    responseDataSchema: lineManagerReplacementReadSchema,
+    responseDataSchema: replacementSchema,
     redirectAfterLoginUrl: getRedirectAfterLoginUrlForLinemanagerReplacement(
       linemanagerId,
       returnTo,
@@ -62,7 +74,7 @@ const fakeFetchLinemanagerReplacement = async (
   linemanagerId: string,
   mockScenario?: ReplacementMockScenario,
   _returnTo?: string,
-): Promise<NarmesteLederInfo | null> => {
+): Promise<LinemanagerReplacementContext | null> => {
   await simulateBackendDelay();
 
   if (mockScenario === "fetch-error") {

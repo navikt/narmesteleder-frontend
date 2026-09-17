@@ -24,7 +24,7 @@ export function OversiktHeadingLeder({
             style={{ maxWidth: "80rem", marginInline: "auto" }}
           >
             <Heading size="xlarge" level="1">
-              Administrer nærmeste ledere for sykmeldte ansatte
+              Administrer nærmeste ledere
             </Heading>
             <HeadingVirksomhetsvelgerContent readOnly={readOnlyVirksomhet} />
           </HGrid>

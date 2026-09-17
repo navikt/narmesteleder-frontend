@@ -1,5 +1,5 @@
 import { array, boolean, number, object, string, type z } from "zod";
-import { employeeSchema } from "@/schemas/lineManagerReadSchema";
+import { nameSchema } from "@/schemas/lineManagerReadSchema";
 
 export const requirementsListItemSchema = object({
   id: string(),
@@ -8,7 +8,7 @@ export const requirementsListItemSchema = object({
   orgName: string().nullable(),
   mainOrgNumber: string(),
   managerIdentificationNumber: string().nullable(),
-  name: employeeSchema,
+  name: nameSchema,
   /**
    * Scaffold: angir om sykmeldingen fortsatt er aktiv.
    * Feltet er valgfritt i responsen og defaulter til true.

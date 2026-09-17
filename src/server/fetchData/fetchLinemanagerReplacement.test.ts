@@ -4,7 +4,10 @@ import {
   mockLinemanagerSearchActive,
   mockLinemanagerSearchInactive,
 } from "@/mocks/data/mockLinemanagerSearch";
+import { mockOrganisasjoner } from "@/mocks/data/mockOrganisasjoner";
+import { replacementSchema } from "@/schemas/lineManagerReadSchema";
 import { requirementIdSchema } from "@/schemas/requirementSchema";
+import { findOrganisasjonNavn } from "@/utils/findOrganisasjonNavn";
 import { NARMESTE_LEDER_FALLBACK_ERROR_DETAIL } from "../narmesteLederErrorUtils";
 
 const tokenXFetchGetMock = vi.fn();
@@ -32,32 +35,86 @@ describe("fetchLinemanagerReplacement", () => {
   });
 
   it("maps loaded employee and organization data while leaving manager fields empty", async () => {
-    tokenXFetchGetMock.mockResolvedValue({
-      employeeIdentificationNumber: "employee-id",
-      orgNumber: "organization-id",
-      lastName: "Last name",
-    });
+    const response = {
+      linemanagerRelation: {
+        id: "11111111-1111-4111-8111-111111111111",
+        employee: {
+          nationalIdentificationNumber: "employee-id",
+          name: {
+            firstName: "Ola",
+            middleName: null,
+            lastName: "Nordmann",
+          },
+        },
+        organization: {
+          orgNumber: "organization-id",
+          name: "organization-name",
+        },
+      },
+    };
+    expect(replacementSchema.safeParse(response).success).toBe(true);
+    tokenXFetchGetMock.mockResolvedValue(response);
     const { fetchLinemanagerReplacement } = await importFetcher();
 
     await expect(fetchLinemanagerReplacement("relation-id")).resolves.toEqual({
-      sykmeldt: {
-        fodselsnummer: "employee-id",
-        etternavn: "Last name",
-        orgnummer: "organization-id",
+      initialData: {
+        sykmeldt: {
+          fodselsnummer: "employee-id",
+          etternavn: "Nordmann",
+          orgnummer: "organization-id",
+        },
+        leder: {
+          fodselsnummer: "",
+          etternavn: "",
+          mobilnummer: "",
+          epost: "",
+        },
       },
-      leder: {
-        fodselsnummer: "",
-        etternavn: "",
-        mobilnummer: "",
-        epost: "",
+      virksomhet: {
+        orgnummer: "organization-id",
+        orgnavn: "organization-name",
       },
     });
     expect(tokenXFetchGetMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        endpoint: "https://backend/api/v1/linemanager/relation-id",
+        endpoint: "https://backend/internal/api/v1/linemanager/relation-id",
         returnNullOnNotFound: true,
       }),
     );
+    const { responseDataSchema } = tokenXFetchGetMock.mock.calls[0][0] as {
+      responseDataSchema: typeof replacementSchema;
+    };
+    expect(responseDataSchema.safeParse(response).success).toBe(true);
+  });
+
+  it("requires a UUID and nullable middleName in the nested response", () => {
+    const response = {
+      linemanagerRelation: {
+        id: mockLinemanagerIds.activeKari,
+        employee: {
+          nationalIdentificationNumber: "employee-id",
+          name: { firstName: "Ola", middleName: "Per", lastName: "Nordmann" },
+        },
+        organization: { orgNumber: "organization-id", name: "Test AS" },
+      },
+    };
+    expect(replacementSchema.safeParse(response).success).toBe(true);
+    expect(
+      replacementSchema.safeParse({
+        linemanagerRelation: { ...response.linemanagerRelation, id: "invalid" },
+      }).success,
+    ).toBe(false);
+    expect(
+      replacementSchema.safeParse({
+        linemanagerRelation: {
+          ...response.linemanagerRelation,
+          employee: {
+            ...response.linemanagerRelation.employee,
+            name: { firstName: "Ola", lastName: "Nordmann" },
+          },
+        },
+      }).success,
+    ).toBe(false);
   });
 
   it("returns null for the data-free unavailable response", async () => {
@@ -95,21 +152,42 @@ describe("fetchLinemanagerReplacement", () => {
       await expect(
         fetchLinemanagerReplacement(selectedRelation.linemanagerId),
       ).resolves.toEqual({
-        sykmeldt: {
-          fodselsnummer: selectedRelation.employee.nationalIdentificationNumber,
-          etternavn: selectedRelation.employee.name?.lastName,
-          orgnummer: selectedRelation.orgNumber,
+        initialData: {
+          sykmeldt: {
+            fodselsnummer:
+              selectedRelation.employee.nationalIdentificationNumber,
+            etternavn: selectedRelation.employee.name?.lastName,
+            orgnummer: selectedRelation.orgNumber,
+          },
+          leder: {
+            fodselsnummer: "",
+            etternavn: "",
+            mobilnummer: "",
+            epost: "",
+          },
         },
-        leder: {
-          fodselsnummer: "",
-          etternavn: "",
-          mobilnummer: "",
-          epost: "",
+        virksomhet: {
+          orgnummer: selectedRelation.orgNumber,
+          orgnavn: findOrganisasjonNavn(
+            selectedRelation.orgNumber,
+            mockOrganisasjoner,
+          ),
         },
       });
       expect(tokenXFetchGetMock).not.toHaveBeenCalled();
     },
   );
+
+  it("provides a valid response with a non-empty organization name in demo", async () => {
+    const { getMockLinemanagerReplacement } = await import(
+      "@/mocks/data/mockLinemanagerReplacement"
+    );
+    const response = getMockLinemanagerReplacement(
+      mockLinemanagerIds.activeKari,
+    );
+    expect(replacementSchema.safeParse(response).success).toBe(true);
+    expect(response?.linemanagerRelation.organization.name).toBe("Shark AS");
+  });
 
   it("uses valid UUIDs for all local relation fixtures", () => {
     const relationIds = [

@@ -1,5 +1,7 @@
 import { mockLinemanagerSearchActive } from "@/mocks/data/mockLinemanagerSearch";
+import { mockOrganisasjoner } from "@/mocks/data/mockOrganisasjoner";
 import type { LineManagerReplacementReadResponse } from "@/schemas/lineManagerReadSchema";
+import { findOrganisasjonNavn } from "@/utils/findOrganisasjonNavn";
 
 export const getMockLinemanagerReplacement = (
   linemanagerId: string,
@@ -14,9 +16,17 @@ export const getMockLinemanagerReplacement = (
   }
 
   return {
-    employeeIdentificationNumber:
-      relation.employee.nationalIdentificationNumber,
-    orgNumber: relation.orgNumber,
-    lastName: relation.employee.name.lastName,
+    linemanagerRelation: {
+      id: relation.linemanagerId,
+      employee: {
+        nationalIdentificationNumber:
+          relation.employee.nationalIdentificationNumber,
+        name: relation.employee.name,
+      },
+      organization: {
+        orgNumber: relation.orgNumber,
+        name: findOrganisasjonNavn(relation.orgNumber, mockOrganisasjoner),
+      },
+    },
   };
 };
