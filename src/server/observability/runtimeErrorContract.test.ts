@@ -1,12 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
   RuntimeErrorCode,
+  RuntimeErrorOperation,
   runtimeErrorContext,
   runtimeErrorDefinitions,
   runtimeInputWarnings,
 } from "./runtimeErrorContract";
 
 describe("runtime error contract", () => {
+  it("har en operasjonskatalog som samsvarer med feilhendelsene", () => {
+    expect(Object.values(RuntimeErrorOperation).sort()).toEqual(
+      Object.keys(runtimeErrorDefinitions).sort(),
+    );
+  });
+
   it("kobler hver operasjon til en unik feilhendelse", () => {
     const events = Object.values(runtimeErrorDefinitions);
     expect(new Set(events.map((event) => event.name)).size).toBe(events.length);
