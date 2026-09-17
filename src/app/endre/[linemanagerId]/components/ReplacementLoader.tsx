@@ -2,6 +2,7 @@ import notFound from "@/app/not-found";
 import { fetchLinemanagerReplacement } from "@/server/fetchData/fetchLinemanagerReplacement";
 import { fetchOrganisasjoner } from "@/server/fetchData/fetchOrganisasjoner";
 import { isFrontendError } from "@/server/narmesteLederErrorUtils";
+import { log } from "@/server/observability/logger";
 import { LederInfoError } from "@/shared/components/LederInfoError";
 import { findOrganisasjonNavn } from "@/utils/findOrganisasjonNavn";
 import { ViewControl } from "./ViewControl";
@@ -16,6 +17,7 @@ export async function ReplacementLoader({
   unavailable?: boolean;
 }) {
   if (unavailable || !linemanagerId) {
+    log.info("No linemanager id or unavailable");
     return notFound();
   }
 
@@ -26,6 +28,7 @@ export async function ReplacementLoader({
     ]);
 
     if (!initialData) {
+      log.info("No initial data");
       return notFound();
     }
 
