@@ -25,7 +25,9 @@ test.describe("Oversikt-flow", () => {
   test("søk filtrerer på navn", async ({ page }) => {
     const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
     const firstRow = tabell.getByRole("row").nth(1);
-    const firstName = await firstRow.getByRole("rowheader").innerText();
+    const firstName = (await firstRow.getByRole("rowheader").innerText())
+      .trim()
+      .split(/\r?\n/)[0];
 
     const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
     await sokFelt.fill(firstName);
@@ -38,12 +40,18 @@ test.describe("Oversikt-flow", () => {
   test("søk filtrerer på fødselsnummer", async ({ page }) => {
     const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
     const firstRow = tabell.getByRole("row").nth(1);
+    const employeeName = (await firstRow.getByRole("rowheader").innerText())
+      .trim()
+      .split(/\r?\n/)[0];
     const fnr = await firstRow.getByText(/\d{6}\s\d{5}/).innerText();
 
     const sokFelt = getByUiSelector(page, UiSelector.OversiktSok);
     await sokFelt.fill(fnr.replace(/\s/g, ""));
 
-    await expect(tabell.getByText(fnr)).toBeVisible();
+    await expect(
+      tabell.getByRole("rowheader", { name: employeeName }),
+    ).toBeVisible();
+    await expect(tabell.getByRole("rowheader")).toHaveCount(1);
   });
 
   test("viser tom tilstand ved ingen treff", async ({ page }) => {
@@ -58,10 +66,13 @@ test.describe("Oversikt-flow", () => {
   test("viser lasting når filteret for manglende leder henter nye data", async ({
     page,
   }) => {
+    const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
     await page
       .getByRole("button", { name: "Aktiv sykmelding", exact: true })
       .click();
-    await expect(page.getByText("Kari Nordmann").first()).toBeVisible();
+    await expect(
+      tabell.getByRole("rowheader", { name: "Kari Nordmann" }),
+    ).toBeVisible();
 
     await page
       .getByRole("button", { name: "Mangler nærmeste leder", exact: true })
@@ -128,7 +139,7 @@ test.describe("Oversikt-flow", () => {
     await expect(dialog).toBeHidden();
     await expect(
       linemanagerTabell.getByRole("rowheader", { name: "Kari Nordmann" }),
-    ).toHaveCount(2);
+    ).toHaveCount(1);
   });
 
   test("ingen aktiv sykmelding forklarer og bekrefter fjerning", async ({
@@ -140,9 +151,10 @@ test.describe("Oversikt-flow", () => {
 
     await expect(
       page.getByText(
-        "Fjerner du nærmeste leder, vil den ansatte ikke lenger vises i denne oversikten.",
+        "Viser ansatte uten aktiv sykmelding. Fjerner du nærmeste leder, vil den ansatte ikke lenger vises i oversikten.",
+        { exact: true },
       ),
-    ).toBeVisible();
+    ).toHaveCount(1);
 
     const linemanagerTabell = getByUiSelector(page, UiSelector.OversiktTabell);
     await expect(linemanagerTabell).toBeVisible();
@@ -170,7 +182,7 @@ test.describe("Oversikt-flow", () => {
     await expect(dialog).toBeHidden();
     await expect(
       linemanagerTabell.getByRole("rowheader", { name: "Lars Johansen" }),
-    ).toHaveCount(2);
+    ).toHaveCount(1);
 
     await linemanagerTabell
       .getByRole("button", { name: /Handlinger for Lars Johansen/ })
