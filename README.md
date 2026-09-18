@@ -14,6 +14,8 @@
 
 🛠️ [Utvikling](https://www.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
 
+🎬 [Demo - oversikt nærmeste leder](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder/oversikt)
+
 🎬 [Demo - skjema for sykmeldt og nærmeste leder](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder)
 
 🎬 [Demo - skjema med forhåndsutfylt sykmeldt](https://demo.ekstern.dev.nav.no/arbeidsgiver/ansatte/narmesteleder/b8dec976-932a-45d3-b1d4-09debe8e44be)

@@ -70,6 +70,11 @@ export const runtimeErrorDefinitions = {
     "behov_fetch_failed",
     "Kunne ikke hente behovet for nærmeste leder",
   ),
+  hent_narmeste_leder_for_erstatning: defineRuntimeFailure(
+    "hent_narmeste_leder_for_erstatning",
+    "linemanager_replacement_fetch_failed",
+    "Kunne ikke hente nærmeste leder for erstatning",
+  ),
   sok_narmeste_ledere: defineRuntimeFailure(
     "sok_narmeste_ledere",
     "narmeste_ledere_search_failed",
@@ -92,7 +97,19 @@ export const runtimeErrorDefinitions = {
   ),
 };
 
-export type RuntimeErrorOperation = keyof typeof runtimeErrorDefinitions;
+export const RuntimeErrorOperation = {
+  HENT_ORGANISASJONER: "hent_organisasjoner",
+  HENT_BEHOVSLISTE: "hent_behovsliste",
+  HENT_BEHOV: "hent_behov",
+  HENT_NARMESTE_LEDER_FOR_ERSTATNING: "hent_narmeste_leder_for_erstatning",
+  SOK_NARMESTE_LEDERE: "sok_narmeste_ledere",
+  OPPRETT_NARMESTE_LEDER: "opprett_narmeste_leder",
+  OPPDATER_NARMESTE_LEDER: "oppdater_narmeste_leder",
+  FJERN_NARMESTE_LEDER: "fjern_narmeste_leder",
+} as const satisfies Record<string, keyof typeof runtimeErrorDefinitions>;
+
+export type RuntimeErrorOperation =
+  (typeof RuntimeErrorOperation)[keyof typeof RuntimeErrorOperation];
 
 export const runtimeInputWarnings = {
   opprett_narmeste_leder: defineEvent<RuntimeValidationContext>({

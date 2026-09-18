@@ -1,9 +1,9 @@
 "use client";
 import { LocalAlert } from "@navikt/ds-react";
-import type { Organisasjon } from "@navikt/virksomhetsvelger";
 import { RegistreringViewControlProvider } from "@/app/(registrering)/state/contextState";
 import type { FetchOrganisasjonerResult } from "@/server/fetchData/fetchOrganisasjoner";
 import { VirksomhetProvider } from "@/shared/state/virksomhetContext";
+import { findOrganisasjonNavn } from "@/utils/findOrganisasjonNavn";
 import { UiSelector } from "@/utils/uiSelectors";
 import { EditView } from "./EditView";
 import { SubmitView } from "./SubmitView";
@@ -13,15 +13,6 @@ type ViewControlProps = {
   initialOrgnr?: string;
   returnTo?: string;
 };
-
-function findOrgNavn(orgnr: string, organisasjoner: Organisasjon[]): string {
-  for (const org of organisasjoner) {
-    if (org.orgnr === orgnr) return org.navn;
-    const nested = findOrgNavn(orgnr, org.underenheter);
-    if (nested) return nested;
-  }
-  return "";
-}
 
 function BlockedOrganisasjonerAlert({
   status,
@@ -55,7 +46,7 @@ export function ViewControl({
   }
 
   const initialOrgnavn = initialOrgnr
-    ? findOrgNavn(initialOrgnr, organisasjonerResult.organisasjoner)
+    ? findOrganisasjonNavn(initialOrgnr, organisasjonerResult.organisasjoner)
     : "";
   const initialVirksomhet =
     initialOrgnr && initialOrgnavn

@@ -1,28 +1,40 @@
 import {
   BodyLong,
+  Button,
+  Chips,
+  Dialog,
   Heading,
+  HGrid,
+  Label,
   LocalAlert,
-  Tabs,
   TextField,
   VStack,
 } from "@navikt/ds-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  type ComponentProps,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import type { FetchRequirementsListResult } from "@/server/fetchData/fetchRequirementsList";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { useVirksomhetContext } from "@/shared/state/virksomhetContext";
+import { joinNonEmpty } from "@/utils/formatting";
 import { UiSelector } from "@/utils/uiSelectors";
 import { filterBySearch } from "./filterBySearch";
-import { LinemanagerContent } from "./LinemanagerContent";
 import { OversiktHeadingLeder } from "./OversiktHeadingLeder";
 import { OversiktTabell } from "./OversiktTabell";
+import { useLinemanagerData } from "./useLinemanagerData";
+import { useRequirementsData } from "./useRequirementsData";
 
-type OversiktTabValue =
+type OversiktFilterValue =
   | "mangler-leder"
   | "aktiv-sykmelding"
   | "ikke-aktiv-sykmelding";
 
-function getValidTabValue(tab?: string): OversiktTabValue {
+function getValidFilterValue(tab?: string): OversiktFilterValue {
   return tab === "aktiv-sykmelding" || tab === "ikke-aktiv-sykmelding"
     ? tab
     : "mangler-leder";
@@ -39,114 +51,241 @@ export function OversiktContent({
 }: OversiktContentProps) {
   const router = useRouter();
   const virksomhet = useVirksomhetContext();
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
-  const requirements = requirementsResult.requirements;
-  const [isPending, startTransition] = useTransition();
-  const [activeTab, setActiveTab] = useState<OversiktTabValue>(
-    getValidTabValue(selectedTab),
+  const [isNavigationPending, startTransition] = useTransition();
+  const activeFilter = getValidFilterValue(
+    searchParams.get("tab") ?? selectedTab,
   );
+  const selectedOrCurrentOrgnr = virksomhet.orgnummer || selectedOrgnr;
+  const hasActiveSickLeave =
+    activeFilter === "mangler-leder"
+      ? null
+      : activeFilter === "aktiv-sykmelding";
+  const linemanagerData = useLinemanagerData({
+    orgNumber: selectedOrCurrentOrgnr,
+    hasActiveSickLeave,
+    search: debouncedSearch,
+  });
+  const requirementsData = useRequirementsData({
+    initialResult: requirementsResult,
+    orgNumber: selectedOrCurrentOrgnr,
+    enabled: activeFilter === "mangler-leder",
+  });
 
-  useEffect(() => {
-    setActiveTab(getValidTabValue(selectedTab));
-  }, [selectedTab]);
-
-  // Naviger til ny URL når virksomhet endres i heading → trigger ny server-fetch
   useEffect(() => {
     if (virksomhet.orgnummer && virksomhet.orgnummer !== selectedOrgnr) {
       startTransition(() => {
-        router.push(`?orgnr=${virksomhet.orgnummer}&tab=${activeTab}`);
+        router.push(`?orgnr=${virksomhet.orgnummer}&tab=${activeFilter}`);
       });
     }
-  }, [virksomhet.orgnummer, selectedOrgnr, activeTab, router]);
+  }, [virksomhet.orgnummer, selectedOrgnr, activeFilter, router]);
 
-  const filtered = useMemo(
-    () => filterBySearch(requirements, debouncedSearch),
-    [requirements, debouncedSearch],
+  const filteredRequirements = useMemo(
+    () => filterBySearch(requirementsData.result.requirements, debouncedSearch),
+    [requirementsData.result.requirements, debouncedSearch],
   );
-  const selectedOrCurrentOrgnr = virksomhet.orgnummer || selectedOrgnr;
+
+  const handleFilterChange = (value: string) => {
+    const nextFilter = getValidFilterValue(value);
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set("orgnr", selectedOrCurrentOrgnr);
+    params.set("tab", nextFilter);
+
+    window.history.pushState(null, "", `?${params.toString()}`);
+  };
+
+  const isMissingLinemanagerFilter = activeFilter === "mangler-leder";
+  const hasLoadError = isMissingLinemanagerFilter
+    ? requirementsData.result.status === "error"
+    : linemanagerData.result.status === "error";
+
+  const tableProps: ComponentProps<typeof OversiktTabell> =
+    isMissingLinemanagerFilter
+      ? {
+          variant: "missing-linemanager",
+          requirements: filteredRequirements,
+          orgNumber: selectedOrCurrentOrgnr,
+          loading: isNavigationPending || requirementsData.isPending,
+        }
+      : {
+          variant: "linemanager",
+          linemanagers: linemanagerData.result.linemanagers,
+          orgNumber: selectedOrCurrentOrgnr,
+          hasActiveSickLeave: activeFilter === "aktiv-sykmelding",
+          loading: isNavigationPending || linemanagerData.isPending,
+          revokingKey: linemanagerData.revokingKey,
+          onRevoke: linemanagerData.handleRevoke,
+        };
+
+  const filterDescription =
+    activeFilter === "mangler-leder"
+      ? "Viser ansatte som trenger registrert nærmeste leder."
+      : activeFilter === "aktiv-sykmelding"
+        ? "Viser ansatte med aktiv sykmelding."
+        : "Viser ansatte uten aktiv sykmelding. Fjerner du nærmeste leder, vil den ansatte ikke lenger vises i oversikten.";
+
+  const pendingEmployeeName = linemanagerData.pendingRevoke?.employee.name
+    ? joinNonEmpty([
+        linemanagerData.pendingRevoke.employee.name.firstName,
+        linemanagerData.pendingRevoke.employee.name.middleName,
+        linemanagerData.pendingRevoke.employee.name.lastName,
+      ])
+    : "den ansatte";
 
   return (
     <VStack gap="space-32">
       <OversiktHeadingLeder />
 
-      {requirementsResult.status === "error" ? (
-        <LocalAlert status="error" data-testid={UiSelector.OversiktFeilAlert}>
-          <LocalAlert.Header>
-            <LocalAlert.Title>Noe gikk galt</LocalAlert.Title>
-          </LocalAlert.Header>
-          <LocalAlert.Content>
-            Vi klarte ikke å hente oversikten. Prøv igjen litt senere.
-          </LocalAlert.Content>
-        </LocalAlert>
-      ) : (
-        <Tabs
-          value={activeTab}
-          onChange={(value) => {
-            const nextTab = getValidTabValue(value);
-            setActiveTab(nextTab);
-            startTransition(() => {
-              router.push(`?orgnr=${selectedOrCurrentOrgnr}&tab=${nextTab}`);
-            });
-          }}
-          data-testid={UiSelector.OversiktFaner}
+      <VStack gap="space-24">
+        <VStack gap="space-4">
+          <Heading level="2" size="medium">
+            Ansatte
+          </Heading>
+          <BodyLong>Søk og filtrer ansatte i virksomheten.</BodyLong>
+        </VStack>
+
+        <HGrid
+          columns={{ xs: 1, lg: "minmax(20rem, 1fr) auto" }}
+          gap="space-24"
+          align="end"
         >
-          <Tabs.List>
-            <Tabs.Tab value="mangler-leder" label="Mangler leder" />
-            <Tabs.Tab value="aktiv-sykmelding" label="Aktiv sykmelding" />
-            <Tabs.Tab
-              value="ikke-aktiv-sykmelding"
-              label="Ikke aktiv sykmelding"
-            />
-          </Tabs.List>
+          <TextField
+            label="Søk etter ansatt"
+            description="Søk med navn eller fødselsnummer"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            data-testid={UiSelector.OversiktSok}
+            autoComplete="off"
+          />
+          <VStack gap="space-8">
+            <Label>Status</Label>
+            <Chips data-testid={UiSelector.OversiktFaner}>
+              <Chips.Toggle
+                selected={activeFilter === "mangler-leder"}
+                onClick={() => handleFilterChange("mangler-leder")}
+                data-color="neutral"
+              >
+                Mangler nærmeste leder
+              </Chips.Toggle>
+              <Chips.Toggle
+                selected={activeFilter === "aktiv-sykmelding"}
+                onClick={() => handleFilterChange("aktiv-sykmelding")}
+                data-color="neutral"
+              >
+                Aktiv sykmelding
+              </Chips.Toggle>
+              <Chips.Toggle
+                selected={activeFilter === "ikke-aktiv-sykmelding"}
+                onClick={() => handleFilterChange("ikke-aktiv-sykmelding")}
+                data-color="neutral"
+              >
+                Ingen aktiv sykmelding
+              </Chips.Toggle>
+            </Chips>
+          </VStack>
+        </HGrid>
+      </VStack>
 
-          <Tabs.Panel value="mangler-leder">
-            <VStack gap="space-32" paddingBlock="space-24 space-0">
-              <Heading level="2" size="small">
-                Sykmeldte ansatte uten leder
-              </Heading>
-              <BodyLong>
-                Her ser du en oversikt over sykmeldte ansatte i virksomheten med
-                behov for å bli tildelt nærmeste leder. Klikk på "Oppgi leder"
-                for å legge til nærmeste leder for en ansatt.
-              </BodyLong>
+      <VStack gap="space-32">
+        <BodyLong aria-live="polite" className="sr-only">
+          {filterDescription}
+        </BodyLong>
 
-              <TextField
-                label="Søk på navn eller fødselsnummer"
-                size="medium"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                data-testid={UiSelector.OversiktSok}
-                autoComplete="off"
-              />
+        {!isMissingLinemanagerFilter && linemanagerData.revokeSuccess && (
+          <LocalAlert status="success">
+            <LocalAlert.Header>
+              <LocalAlert.Title>
+                Den nærmeste lederen er fjernet
+              </LocalAlert.Title>
+            </LocalAlert.Header>
+            <LocalAlert.Content>
+              {linemanagerData.revokeSuccess}
+            </LocalAlert.Content>
+          </LocalAlert>
+        )}
 
-              <OversiktTabell
-                requirements={filtered}
-                orgnr={selectedOrCurrentOrgnr ?? ""}
-                loading={isPending}
-              />
-            </VStack>
-          </Tabs.Panel>
+        {!isMissingLinemanagerFilter && linemanagerData.revokeError && (
+          <LocalAlert
+            status="error"
+            data-testid={UiSelector.LinemanagerFeilAlert}
+          >
+            <LocalAlert.Header>
+              <LocalAlert.Title>Kunne ikke fjerne leder</LocalAlert.Title>
+            </LocalAlert.Header>
+            <LocalAlert.Content>
+              {linemanagerData.revokeError}
+            </LocalAlert.Content>
+          </LocalAlert>
+        )}
 
-          <Tabs.Panel value="aktiv-sykmelding">
-            <VStack paddingBlock="space-24 space-0">
-              <LinemanagerContent
-                orgNumber={selectedOrgnr}
-                hasActiveSickLeave={true}
-              />
-            </VStack>
-          </Tabs.Panel>
+        {hasLoadError ? (
+          <LocalAlert status="error" data-testid={UiSelector.OversiktFeilAlert}>
+            <LocalAlert.Header>
+              <LocalAlert.Title>Noe gikk galt</LocalAlert.Title>
+            </LocalAlert.Header>
+            <LocalAlert.Content>
+              Vi klarte ikke å hente oversikten. Prøv igjen litt senere.
+            </LocalAlert.Content>
+          </LocalAlert>
+        ) : (
+          <OversiktTabell {...tableProps} />
+        )}
 
-          <Tabs.Panel value="ikke-aktiv-sykmelding">
-            <VStack paddingBlock="space-24 space-0">
-              <LinemanagerContent
-                orgNumber={selectedOrgnr}
-                hasActiveSickLeave={false}
-              />
-            </VStack>
-          </Tabs.Panel>
-        </Tabs>
-      )}
+        {!isMissingLinemanagerFilter &&
+          linemanagerData.result.meta?.hasMore && (
+            <Button
+              variant="secondary"
+              onClick={linemanagerData.handleLoadMore}
+              loading={linemanagerData.isPending}
+              data-testid={UiSelector.LinemanagerLastFlere}
+            >
+              Last flere
+            </Button>
+          )}
+      </VStack>
+
+      <Dialog
+        open={linemanagerData.pendingRevoke !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            linemanagerData.closeRevokeDialog();
+          }
+        }}
+      >
+        <Dialog.Popup
+          role="alertdialog"
+          closeOnOutsideClick={false}
+          width="small"
+        >
+          <Dialog.Header withClosebutton={!linemanagerData.isPending}>
+            <Dialog.Title>Fjern nærmeste leder?</Dialog.Title>
+            <Dialog.Description>
+              Du er i ferd med å fjerne nærmeste leder for {pendingEmployeeName}
+              .
+              {hasActiveSickLeave === false &&
+                " Den ansatte vil ikke lenger vises i denne oversikten."}{" "}
+              Det kan ta litt tid før endringen vises.
+            </Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Footer>
+            <Dialog.CloseTrigger>
+              <Button variant="secondary" disabled={linemanagerData.isPending}>
+                Avbryt
+              </Button>
+            </Dialog.CloseTrigger>
+            <Button
+              data-color="danger"
+              loading={linemanagerData.isPending}
+              onClick={linemanagerData.confirmRevoke}
+            >
+              Fjern nærmeste leder
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Popup>
+      </Dialog>
     </VStack>
   );
 }
