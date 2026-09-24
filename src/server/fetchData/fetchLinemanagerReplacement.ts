@@ -23,18 +23,22 @@ export type ReplacementMockScenario = "fetch-error";
 export type LinemanagerReplacementContext = {
   initialData: NarmesteLederInfo;
   virksomhet: ValgtVirksomhet;
+  isSykmeldtKnown: boolean;
 };
 
 const getLinemanagerPath = (id: string) =>
   `${getServerEnv().NARMESTELEDER_BACKEND_HOST}/internal/api/v1/linemanager/${id}`;
 
-export const mapToReplacementDefaults = ({
+export const mapToReplacementContext = ({
   linemanagerRelation,
 }: LineManagerReplacementReadResponse): LinemanagerReplacementContext => ({
+  isSykmeldtKnown: linemanagerRelation.employee.name !== null,
   initialData: {
     sykmeldt: {
-      fodselsnummer: linemanagerRelation.employee.nationalIdentificationNumber,
-      etternavn: linemanagerRelation.employee.name.lastName,
+      fodselsnummer: linemanagerRelation.employee.name
+        ? linemanagerRelation.employee.nationalIdentificationNumber
+        : "",
+      etternavn: linemanagerRelation.employee.name?.lastName ?? "",
       orgnummer: linemanagerRelation.organization.orgNumber,
     },
     leder: {
@@ -67,7 +71,7 @@ const realFetchLinemanagerReplacement = async (
     returnNullOnNotFound: true,
   });
 
-  return response ? mapToReplacementDefaults(response) : null;
+  return response ? mapToReplacementContext(response) : null;
 };
 
 const fakeFetchLinemanagerReplacement = async (
@@ -83,7 +87,7 @@ const fakeFetchLinemanagerReplacement = async (
 
   const response = getMockLinemanagerReplacement(linemanagerId);
 
-  return response ? mapToReplacementDefaults(response) : null;
+  return response ? mapToReplacementContext(response) : null;
 };
 
 export const fetchLinemanagerReplacement = isLocalOrDemo

@@ -5,6 +5,7 @@ import type { NarmesteLederInfo } from "@/schemas/nærmestelederFormSchema";
 
 const providerProps = vi.hoisted(() => ({
   current: undefined as Record<string, unknown> | undefined,
+  edit: undefined as Record<string, unknown> | undefined,
 }));
 
 vi.mock("@/shared/state/virksomhetContext", () => ({
@@ -21,7 +22,10 @@ vi.mock("@/shared/state/virksomhetContext", () => ({
 }));
 
 vi.mock("./EditView", () => ({
-  EditView: () => <div>EditView</div>,
+  EditView: (props: Record<string, unknown>) => {
+    providerProps.edit = props;
+    return <div>EditView</div>;
+  },
 }));
 
 vi.mock("./SubmitView", () => ({
@@ -53,8 +57,12 @@ it("uses endpoint organization context for VirksomhetProvider, independently of 
     <ViewControl
       initialData={initialData}
       initialVirksomhet={initialVirksomhet}
+      isSykmeldtKnown={false}
     />,
   );
 
   expect(providerProps.current).toEqual({ initialVirksomhet });
+  expect(providerProps.edit).toEqual(
+    expect.objectContaining({ initialData, isSykmeldtKnown: false }),
+  );
 });

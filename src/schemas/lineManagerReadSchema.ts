@@ -29,7 +29,7 @@ export const replacementSchema = object({
     id: uuid(),
     employee: object({
       nationalIdentificationNumber: string(),
-      name: nameSchema,
+      name: nameSchema.nullable(),
     }),
     organization: object({
       orgNumber: string(),

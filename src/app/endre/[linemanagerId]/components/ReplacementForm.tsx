@@ -8,14 +8,17 @@ import { narmesteLederInfoSchema } from "@/schemas/nærmestelederFormSchema";
 import ErrorAlert from "@/shared/components/ErrorAlert";
 import { useAppForm } from "@/shared/components/form/hooks/form";
 import { LederGroup } from "@/shared/components/form/LederGroup";
+import { SykmeldtGroup } from "@/shared/components/form/SykmeldtGroup";
 import { SykmeldtInfoBox } from "@/shared/components/SykmeldtInfoBox";
 import { UiSelector } from "@/utils/uiSelectors";
 
 export function ReplacementForm({
   initialData,
+  isSykmeldtKnown,
   onSuccess,
 }: {
   initialData: NarmesteLederInfo;
+  isSykmeldtKnown: boolean;
   onSuccess: (data: NarmesteLederInfo) => void;
 }) {
   const { startOpprettNarmesteLeder, error } = useRegistreringAction();
@@ -42,15 +45,30 @@ export function ReplacementForm({
     >
       <form.AppForm>
         <VStack gap="space-32">
-          <SykmeldtInfoBox
-            fields={[
-              { label: "Etternavn", value: initialData.sykmeldt.etternavn },
-              {
-                label: "Fødselsnummer",
-                value: initialData.sykmeldt.fodselsnummer,
-              },
-            ]}
-          />
+          {isSykmeldtKnown ? (
+            <SykmeldtInfoBox
+              fields={[
+                { label: "Etternavn", value: initialData.sykmeldt.etternavn },
+                {
+                  label: "Fødselsnummer",
+                  value: initialData.sykmeldt.fodselsnummer,
+                },
+              ]}
+            />
+          ) : (
+            <Box padding="space-16" background="accent-soft" borderRadius="8">
+              <VStack gap="space-24" className="w-full max-w-md">
+                <Heading className="mt-2" size="medium" level="2">
+                  Sykmeldt
+                </Heading>
+                <SykmeldtGroup
+                  form={form}
+                  fields="sykmeldt"
+                  showOrgnummer={false}
+                />
+              </VStack>
+            </Box>
+          )}
           <Box padding="space-16" background="accent-soft" borderRadius="8">
             <VStack gap="space-24" className="w-full max-w-md">
               <Heading level="2" size="medium">

@@ -57,6 +57,7 @@ describe("fetchLinemanagerReplacement", () => {
     const { fetchLinemanagerReplacement } = await importFetcher();
 
     await expect(fetchLinemanagerReplacement("relation-id")).resolves.toEqual({
+      isSykmeldtKnown: true,
       initialData: {
         sykmeldt: {
           fodselsnummer: "employee-id",
@@ -85,6 +86,40 @@ describe("fetchLinemanagerReplacement", () => {
       responseDataSchema: typeof replacementSchema;
     };
     expect(responseDataSchema.safeParse(response).success).toBe(true);
+  });
+
+  it("maps a null employee name to empty sykmeldt inputs while preserving endpoint organization", async () => {
+    const response = {
+      linemanagerRelation: {
+        id: mockLinemanagerIds.activeKari,
+        employee: {
+          nationalIdentificationNumber: "employee-id",
+          name: null,
+        },
+        organization: { orgNumber: "organization-id", name: "Test AS" },
+      },
+    };
+    expect(replacementSchema.safeParse(response).success).toBe(true);
+    tokenXFetchGetMock.mockResolvedValue(response);
+    const { fetchLinemanagerReplacement } = await importFetcher();
+
+    await expect(fetchLinemanagerReplacement("relation-id")).resolves.toEqual({
+      isSykmeldtKnown: false,
+      initialData: {
+        sykmeldt: {
+          fodselsnummer: "",
+          etternavn: "",
+          orgnummer: "organization-id",
+        },
+        leder: {
+          fodselsnummer: "",
+          etternavn: "",
+          mobilnummer: "",
+          epost: "",
+        },
+      },
+      virksomhet: { orgnummer: "organization-id", orgnavn: "Test AS" },
+    });
   });
 
   it("requires a UUID and nullable middleName in the nested response", () => {
@@ -152,11 +187,13 @@ describe("fetchLinemanagerReplacement", () => {
       await expect(
         fetchLinemanagerReplacement(selectedRelation.linemanagerId),
       ).resolves.toEqual({
+        isSykmeldtKnown: selectedRelation.employee.name != null,
         initialData: {
           sykmeldt: {
-            fodselsnummer:
-              selectedRelation.employee.nationalIdentificationNumber,
-            etternavn: selectedRelation.employee.name?.lastName,
+            fodselsnummer: selectedRelation.employee.name
+              ? selectedRelation.employee.nationalIdentificationNumber
+              : "",
+            etternavn: selectedRelation.employee.name?.lastName ?? "",
             orgnummer: selectedRelation.orgNumber,
           },
           leder: {

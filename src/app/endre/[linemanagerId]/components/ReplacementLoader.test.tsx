@@ -82,6 +82,7 @@ describe("ReplacementLoader", () => {
     fetchLinemanagerReplacementMock.mockResolvedValue({
       initialData,
       virksomhet,
+      isSykmeldtKnown: false,
     });
 
     const element = await ReplacementLoader({
@@ -93,6 +94,7 @@ describe("ReplacementLoader", () => {
     expect(viewControlProps.current).toEqual({
       initialData,
       initialVirksomhet: virksomhet,
+      isSykmeldtKnown: false,
       returnTo: "/oversikt",
     });
   });

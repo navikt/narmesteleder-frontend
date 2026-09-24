@@ -11,7 +11,7 @@ export const getMockLinemanagerReplacement = (
       activeLinemanagerId === linemanagerId,
   );
 
-  if (!relation?.employee.name) {
+  if (!relation) {
     return null;
   }
 

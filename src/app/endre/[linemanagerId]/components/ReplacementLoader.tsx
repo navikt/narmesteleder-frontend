@@ -32,6 +32,7 @@ export async function ReplacementLoader({
       <ViewControl
         initialData={context.initialData}
         initialVirksomhet={context.virksomhet}
+        isSykmeldtKnown={context.isSykmeldtKnown}
         returnTo={returnTo}
       />
     );

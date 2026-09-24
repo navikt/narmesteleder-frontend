@@ -12,10 +12,12 @@ import { SubmitView } from "./SubmitView";
 export function ViewControl({
   initialData,
   initialVirksomhet,
+  isSykmeldtKnown,
   returnTo,
 }: {
   initialData: NarmesteLederInfo;
   initialVirksomhet: ValgtVirksomhet;
+  isSykmeldtKnown: boolean;
   returnTo?: string;
 }) {
   const [submittedData, setSubmittedData] = useState(initialData);
@@ -28,6 +30,7 @@ export function ViewControl({
       ) : (
         <EditView
           initialData={submittedData}
+          isSykmeldtKnown={isSykmeldtKnown}
           returnTo={returnTo}
           onSuccess={(data) => {
             setSubmittedData(data);

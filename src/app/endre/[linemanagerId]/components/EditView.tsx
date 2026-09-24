@@ -8,10 +8,12 @@ import { ReplacementForm } from "./ReplacementForm";
 
 export function EditView({
   initialData,
+  isSykmeldtKnown,
   returnTo,
   onSuccess,
 }: {
   initialData: NarmesteLederInfo;
+  isSykmeldtKnown: boolean;
   returnTo?: string;
   onSuccess: (data: NarmesteLederInfo) => void;
 }) {
@@ -20,7 +22,11 @@ export function EditView({
   return (
     <VStack gap="space-32">
       <HeadingLeder readOnlyVirksomhet tittel="Bytt nærmeste leder" />
-      <ReplacementForm initialData={initialData} onSuccess={onSuccess} />
+      <ReplacementForm
+        initialData={initialData}
+        isSykmeldtKnown={isSykmeldtKnown}
+        onSuccess={onSuccess}
+      />
       {returnToUrl ? (
         <HStack>
           <Button as="a" href={returnToUrl} variant="secondary" size="small">

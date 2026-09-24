@@ -24,7 +24,10 @@ interface TextInputFieldProps {
   [key: string]: unknown;
 }
 
-function renderSykmeldtGroup(showSelector: boolean | undefined) {
+function renderSykmeldtGroup(
+  showSelector: boolean | undefined,
+  showOrgnummer?: boolean,
+) {
   mockState.showSelector = showSelector;
   const TextInputField = vi.fn((_: TextInputFieldProps) => null);
 
@@ -41,6 +44,7 @@ function renderSykmeldtGroup(showSelector: boolean | undefined) {
   const sykmeldtGroupConfig = SykmeldtGroup as unknown as {
     render: (props: {
       group: { AppField: typeof AppField };
+      showOrgnummer?: boolean;
     }) => React.ReactNode;
   };
 
@@ -49,6 +53,7 @@ function renderSykmeldtGroup(showSelector: boolean | undefined) {
       group: {
         AppField,
       },
+      showOrgnummer,
     }),
   );
 
@@ -78,5 +83,14 @@ describe("SykmeldtGroup", () => {
     );
 
     expect(hasOrgnummerField).toBe(true);
+  });
+
+  it("hides orgnummer explicitly without hiding sykmeldt inputs", () => {
+    const { TextInputField } = renderSykmeldtGroup(false, false);
+    const labels = TextInputField.mock.calls.map(([props]) => props?.label);
+
+    expect(labels).toContain("Fødselsnummer (11 siffer)");
+    expect(labels).toContain("Etternavn");
+    expect(labels).not.toContain(ORGNUMMER_LABEL);
   });
 });

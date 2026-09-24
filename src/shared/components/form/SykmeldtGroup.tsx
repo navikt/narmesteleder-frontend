@@ -5,7 +5,8 @@ import { UiSelector } from "@/utils/uiSelectors";
 
 export const SykmeldtGroup = withFieldGroup({
   defaultValues: sykmeldtFormDefaults,
-  render: function Sykmeldt({ group }) {
+  props: {} as { showOrgnummer?: boolean },
+  render: function Sykmeldt({ group, showOrgnummer }) {
     const virksomhet = useOptionalVirksomhetContext();
 
     return (
@@ -32,7 +33,7 @@ export const SykmeldtGroup = withFieldGroup({
         </group.AppField>
         <group.AppField name="orgnummer">
           {(field) =>
-            virksomhet?.showSelector ? null : (
+            showOrgnummer === false || virksomhet?.showSelector ? null : (
               <field.TextInputField
                 label="Organisasjonsnummer (9 siffer)"
                 className="w-66"
