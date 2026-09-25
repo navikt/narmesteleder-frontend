@@ -1,12 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
   RuntimeErrorCode,
+  RuntimeErrorOperation,
   runtimeErrorContext,
   runtimeErrorDefinitions,
   runtimeInputWarnings,
 } from "./runtimeErrorContract";
 
 describe("runtime error contract", () => {
+  it("har en operasjonskatalog som samsvarer med feilhendelsene", () => {
+    expect(Object.values(RuntimeErrorOperation).sort()).toEqual(
+      Object.keys(runtimeErrorDefinitions).sort(),
+    );
+  });
+
   it("kobler hver operasjon til en unik feilhendelse", () => {
     const events = Object.values(runtimeErrorDefinitions);
     expect(new Set(events.map((event) => event.name)).size).toBe(events.length);
@@ -14,6 +21,13 @@ describe("runtime error contract", () => {
       expect(event.operation).toBe(operation);
       expect(event.level).toBe("error");
     }
+    expect(
+      runtimeErrorDefinitions.hent_narmeste_leder_for_erstatning,
+    ).toMatchObject({
+      operation: "hent_narmeste_leder_for_erstatning",
+      name: "linemanager_replacement_fetch_failed",
+      message: "Kunne ikke hente nærmeste leder for erstatning",
+    });
   });
 
   it("har input-advarsler bare for opprett, oppdater og fjern", () => {

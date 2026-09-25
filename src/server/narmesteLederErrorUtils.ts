@@ -96,6 +96,9 @@ const expectedDomainRejections: Record<
   hent_organisasjoner: [],
   hent_behovsliste: [{ status: 403, types: accessRejectionTypes }],
   hent_behov: [{ status: 403, types: accessRejectionTypes }],
+  hent_narmeste_leder_for_erstatning: [
+    { status: 403, types: accessRejectionTypes },
+  ],
   sok_narmeste_ledere: [{ status: 403, types: accessRejectionTypes }],
   opprett_narmeste_leder: [
     {

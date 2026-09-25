@@ -1,7 +1,7 @@
 import { Button, HStack, VStack } from "@navikt/ds-react";
 import { useBehovContextState } from "@/app/(behov)/[behovId]/state/contextState";
-import { getSafeReturnTo } from "@/app/(registrering)/utils/returnTo";
 import { HeadingLeder } from "@/shared/components/HeadingLeder";
+import { getSafeReturnTo } from "@/utils/returnTo";
 import BehovForm from "./BehovForm";
 import OppgiLederPanel from "./OppgiLederPanel";
 import SykmeldtBox from "./SykmeldtBox";

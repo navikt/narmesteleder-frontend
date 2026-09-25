@@ -1,6 +1,6 @@
-import { object, string, type z } from "zod";
+import { object, string, uuid, type z } from "zod";
 
-export const employeeSchema = object({
+export const nameSchema = object({
   firstName: string(),
   lastName: string(),
   middleName: string().nullable(),
@@ -13,9 +13,27 @@ export const lineManagerReadSchema = object({
   orgName: string().nullable(),
   mainOrgNumber: string(),
   managerIdentificationNumber: string().nullable(),
-  name: employeeSchema,
+  name: nameSchema,
 });
 
 export type LineManagerReadResponse = z.infer<typeof lineManagerReadSchema>;
 
-export type EmployeeResponse = z.infer<typeof employeeSchema>;
+export type EmployeeName = z.infer<typeof nameSchema>;
+
+export type LineManagerReplacementReadResponse = z.infer<
+  typeof replacementSchema
+>;
+
+export const replacementSchema = object({
+  linemanagerRelation: object({
+    id: uuid(),
+    employee: object({
+      nationalIdentificationNumber: string(),
+      name: nameSchema.nullable(),
+    }),
+    organization: object({
+      orgNumber: string(),
+      name: string(),
+    }),
+  }),
+});

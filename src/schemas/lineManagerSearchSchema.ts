@@ -19,11 +19,15 @@ const linemanagerManagerSchema = object({
 });
 
 export const linemanagerSearchItemSchema = object({
+  id: string(),
   orgNumber: string(),
   activeFrom: string(),
   employee: linemanagerPersonSchema,
   manager: linemanagerManagerSchema,
-});
+}).transform(({ id, ...item }) => ({
+  ...item,
+  linemanagerId: id,
+}));
 
 export const linemanagerSearchPageInfoSchema = object({
   size: int(),
