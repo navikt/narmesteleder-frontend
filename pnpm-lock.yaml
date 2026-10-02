@@ -21,8 +21,8 @@ importers:
         specifier: ^8.16.2
         version: 8.16.2
       '@navikt/esyfo-logger':
-        specifier: 0.2.1
-        version: 0.2.1
+        specifier: 0.3.0
+        version: 0.3.0
       '@navikt/fnrvalidator':
         specifier: ^2.2.1
         version: 2.2.1
@@ -413,8 +413,8 @@ packages:
     resolution: {integrity: sha512-lNXaG852W4te5aj7jdbZ13q/c/0gEZFP1uuuZOE/JiMUrVXT0J/KzPpbMlj1Y96JCKhSQBoBZ/Z4WDIp4qgHGg==, tarball: https://npm.pkg.github.com/download/@navikt/esyfo-logger-testkit/0.2.1/19c5b7c0df1068c623e4d64c579eb434a96cec20}
     engines: {node: '>=24'}
 
-  '@navikt/esyfo-logger@0.2.1':
-    resolution: {integrity: sha512-nTVI73gVtjdWiqcV7/VTb1x/4ua0SgEN19djaqb3wnKkKTIjIl1Z0PuG+Jq5G/3NBba4GWmQztnrwCi1/QihKQ==, tarball: https://npm.pkg.github.com/download/@navikt/esyfo-logger/0.2.1/17980f9fa7c88a4363fccd55c2a903f5b7ed51f1}
+  '@navikt/esyfo-logger@0.3.0':
+    resolution: {integrity: sha512-WcmXhNT1Hgo1pH99IF1cFsTewKZ9tlk3C5TH9ZXVunaxnuZHaM3yUa0TVF39gczVc1Z7ObIak4rdVEokcOcCRQ==, tarball: https://npm.pkg.github.com/download/@navikt/esyfo-logger/0.3.0/659327298747baf9ea36d31c33ca67c7363b971f}
     engines: {node: '>=24'}
 
   '@navikt/fnrvalidator@2.2.1':
@@ -1769,7 +1769,7 @@ snapshots:
       ajv: 8.20.0
       jsonc-parser: 3.3.1
 
-  '@navikt/esyfo-logger@0.2.1': {}
+  '@navikt/esyfo-logger@0.3.0': {}
 
   '@navikt/fnrvalidator@2.2.1': {}
 
