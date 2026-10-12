@@ -33,7 +33,7 @@ export const replacementSchema = object({
     }),
     organization: object({
       orgNumber: string(),
-      name: string(),
+      name: string().nullable(),
     }),
   }),
 });

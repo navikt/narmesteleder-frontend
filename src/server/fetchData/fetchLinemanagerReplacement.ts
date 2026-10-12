@@ -50,7 +50,7 @@ export const mapToReplacementContext = ({
   },
   virksomhet: {
     orgnummer: linemanagerRelation.organization.orgNumber,
-    orgnavn: linemanagerRelation.organization.name,
+    orgnavn: linemanagerRelation.organization.name ?? "",
   },
 });
 

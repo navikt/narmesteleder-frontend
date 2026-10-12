@@ -122,6 +122,32 @@ describe("fetchLinemanagerReplacement", () => {
     });
   });
 
+  it("maps a null organization name to an empty orgnavn", async () => {
+    const response = {
+      linemanagerRelation: {
+        id: mockLinemanagerIds.activeKari,
+        employee: {
+          nationalIdentificationNumber: "employee-id",
+          name: { firstName: "Ola", middleName: null, lastName: "Nordmann" },
+        },
+        organization: { orgNumber: "963890095", name: null },
+      },
+    };
+    tokenXFetchGetMock.mockResolvedValue(response);
+    const { fetchLinemanagerReplacement } = await importFetcher();
+
+    await expect(
+      fetchLinemanagerReplacement("relation-id"),
+    ).resolves.toMatchObject({
+      initialData: { sykmeldt: { orgnummer: "963890095" } },
+      virksomhet: { orgnummer: "963890095", orgnavn: "" },
+    });
+    const { responseDataSchema } = tokenXFetchGetMock.mock.calls[0][0] as {
+      responseDataSchema: typeof replacementSchema;
+    };
+    expect(responseDataSchema.safeParse(response).success).toBe(true);
+  });
+
   it("requires a UUID and nullable middleName in the nested response", () => {
     const response = {
       linemanagerRelation: {
