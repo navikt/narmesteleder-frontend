@@ -15,7 +15,8 @@ export function useRequirementsData({
 }) {
   const [result, setResult] = useState(initialResult);
   const [isPending, startTransition] = useTransition();
-  const skipInitialFetch = useRef(enabled);
+  // Husker hvilken virksomhet listen gjelder, slik at Strict Modes ekstra effektkjøring ikke henter den på nytt.
+  const loadedOrgNumber = useRef<string | null>(enabled ? orgNumber : null);
 
   useEffect(() => {
     setResult(initialResult);
@@ -23,14 +24,14 @@ export function useRequirementsData({
 
   useEffect(() => {
     if (!enabled) {
-      skipInitialFetch.current = false;
+      loadedOrgNumber.current = null;
       return;
     }
 
-    if (skipInitialFetch.current) {
-      skipInitialFetch.current = false;
+    if (loadedOrgNumber.current === orgNumber) {
       return;
     }
+    loadedOrgNumber.current = orgNumber;
 
     let cancelled = false;
     startTransition(async () => {

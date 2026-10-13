@@ -105,6 +105,29 @@ test.describe("Oversikt-flow", () => {
     );
   });
 
+  test("henter ikke behovslisten på nytt ved første visning", async ({
+    page,
+  }) => {
+    const serverActionRequests: string[] = [];
+    page.on("request", (request) => {
+      if (request.method() === "POST" && request.headers()["next-action"]) {
+        serverActionRequests.push(request.url());
+      }
+    });
+    await page.reload();
+
+    const tabell = getByUiSelector(page, UiSelector.OversiktTabell);
+    await tabell
+      .getByRole("button", { name: /Handlinger for/ })
+      .first()
+      .click();
+    await expect(
+      page.getByRole("menuitem", { name: "Legg til nærmeste leder" }).first(),
+    ).toBeVisible();
+
+    expect(serverActionRequests).toHaveLength(0);
+  });
+
   test("aktiv sykmelding viser begge handlingene og bekrefter fjerning", async ({
     page,
   }) => {
