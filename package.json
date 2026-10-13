@@ -32,7 +32,7 @@
     "@navikt/virksomhetsvelger": "^2.1.0",
     "@tanstack/react-form": "^1.33.5",
     "next": "^16.3.8",
-    "pino": "^10.3.0",
+    "pino": "^10.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "zod": "^4.6.5"
