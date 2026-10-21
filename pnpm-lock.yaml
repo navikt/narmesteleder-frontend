@@ -61,8 +61,8 @@ importers:
         specifier: 2.5.15
         version: 2.5.15
       '@navikt/esyfo-logger-testkit':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: 0.4.0
+        version: 0.4.0
       '@opentelemetry/api':
         specifier: 1.9.1
         version: 1.9.1
@@ -409,8 +409,8 @@ packages:
   '@navikt/ds-tokens@8.19.2':
     resolution: {integrity: sha512-biANGtITI5PeOFKIuSmwELLajSQBe9hys0D/Mhk+l/J/ARoxolNFVXsg4woRRNP6aRvxGGzHQB45nyDBdgunEA==, tarball: https://npm.pkg.github.com/download/@navikt/ds-tokens/8.19.2/057a50d0df4a94efe3bb213e5306691b78b2d6f8}
 
-  '@navikt/esyfo-logger-testkit@0.3.0':
-    resolution: {integrity: sha512-W7muIqWJFkl3gnnOLMfo4Q+mji/KVi1jY8ugnREjeOW58x+K/wvFCWLoqRPV7ws9ACTy/hcO6lPWh4yCb5iQwQ==, tarball: https://npm.pkg.github.com/download/@navikt/esyfo-logger-testkit/0.3.0/ba0f0dd4ab1807485ce7191712b2c3557b278788}
+  '@navikt/esyfo-logger-testkit@0.4.0':
+    resolution: {integrity: sha512-oQXES+cwC6RBXfGeFnGoQ/+WKm8pfwrSGHl2JPvU33keR7w7Yt5RWegRevKhV1BhLgZb9ch8vNJ5ZNhzgFmXnA==, tarball: https://npm.pkg.github.com/download/@navikt/esyfo-logger-testkit/0.4.0/7669014c55daf20c65a4453c73605a110bc8fab3}
     engines: {node: '>=24'}
 
   '@navikt/esyfo-logger@0.3.0':
@@ -1765,7 +1765,7 @@ snapshots:
 
   '@navikt/ds-tokens@8.19.2': {}
 
-  '@navikt/esyfo-logger-testkit@0.3.0':
+  '@navikt/esyfo-logger-testkit@0.4.0':
     dependencies:
       ajv: 8.20.0
       jsonc-parser: 3.3.1
