@@ -24,7 +24,7 @@
     "@navikt/ds-css": "^8.19.2",
     "@navikt/ds-react": "^8.19.2",
     "@navikt/ds-tailwind": "^8.19.2",
-    "@navikt/esyfo-logger": "0.3.0",
+    "@navikt/esyfo-logger": "0.4.0",
     "@navikt/fnrvalidator": "^2.2.1",
     "@navikt/nav-dekoratoren-moduler": "^4.5.1",
     "@navikt/next-logger": "^5.0.1",
