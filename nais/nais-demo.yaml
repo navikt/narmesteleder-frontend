@@ -8,7 +8,9 @@ metadata:
     branchState: {{branchState}}
 spec:
   image: {{image}}
+  {{#if ttl}}
   ttl: {{ ttl }}
+  {{/if}}
   replicas:
     min: 1
     max: 1
