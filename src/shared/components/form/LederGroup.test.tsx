@@ -18,18 +18,20 @@ interface TextInputFieldProps {
   uiSelector?: string;
 }
 
+const TextInputField = vi.fn((_: TextInputFieldProps) => null);
+const AppField = ({
+  children,
+}: {
+  children: (field: {
+    TextInputField: typeof TextInputField;
+  }) => React.ReactNode;
+}) =>
+  children({
+    TextInputField,
+  });
+
 function renderLederGroup() {
-  const TextInputField = vi.fn((_: TextInputFieldProps) => null);
-  const AppField = ({
-    children,
-  }: {
-    children: (field: {
-      TextInputField: typeof TextInputField;
-    }) => React.ReactNode;
-  }) =>
-    children({
-      TextInputField,
-    });
+  TextInputField.mockClear();
   const lederGroupConfig = LederGroup as unknown as {
     render: (props: {
       group: { AppField: typeof AppField };

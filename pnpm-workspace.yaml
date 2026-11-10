@@ -4,8 +4,8 @@ allowBuilds:
   sharp: true
 minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
-  - '@navikt/virksomhetsvelger'
-  - '@navikt/esyfo-logger@0.2.1'
-  - '@navikt/esyfo-logger-testkit@0.2.1'
+  - "@navikt/virksomhetsvelger"
+  - "@navikt/esyfo-logger@0.2.1"
+  - "@navikt/esyfo-logger-testkit@0.2.1"
 
 blockExoticSubdeps: true
