@@ -24,23 +24,24 @@ interface TextInputFieldProps {
   [key: string]: unknown;
 }
 
+const TextInputField = vi.fn((_: TextInputFieldProps) => null);
+const AppField = ({
+  children,
+}: {
+  children: (field: {
+    TextInputField: typeof TextInputField;
+  }) => React.ReactNode;
+}) =>
+  children({
+    TextInputField,
+  });
+
 function renderSykmeldtGroup(
   showSelector: boolean | undefined,
   showOrgnummer?: boolean,
 ) {
   mockState.showSelector = showSelector;
-  const TextInputField = vi.fn((_: TextInputFieldProps) => null);
-
-  const AppField = ({
-    children,
-  }: {
-    children: (field: {
-      TextInputField: typeof TextInputField;
-    }) => React.ReactNode;
-  }) =>
-    children({
-      TextInputField,
-    });
+  TextInputField.mockClear();
   const sykmeldtGroupConfig = SykmeldtGroup as unknown as {
     render: (props: {
       group: { AppField: typeof AppField };

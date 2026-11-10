@@ -15,6 +15,7 @@ export function createContextState<T, P extends object = object>(
 
   const Context = createContext<ContextType | undefined>(undefined);
 
+  // biome-ignore lint/correctness/noComponentHookFactories: Factory callers run at module scope, so the hook identity is stable.
   function useContextState() {
     const context = useContext(Context);
     if (!context) {
@@ -23,6 +24,7 @@ export function createContextState<T, P extends object = object>(
     return context;
   }
 
+  // biome-ignore lint/correctness/noComponentHookFactories: Factory callers run at module scope, so the component identity is stable.
   function ViewControl({
     EditView,
     SubmitView,
