@@ -33,8 +33,8 @@ importers:
         specifier: ^5.0.2
         version: 5.0.2(next@16.4.6(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pino@10.4.0)
       '@navikt/oasis':
-        specifier: ^4.2.2
-        version: 4.2.2
+        specifier: ^4.2.3
+        version: 4.2.3
       '@navikt/virksomhetsvelger':
         specifier: ^2.2.0
         version: 2.2.0(@navikt/ds-css@8.23.0)(@navikt/ds-react@8.23.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -462,8 +462,8 @@ packages:
       next: 14 || 15 || 16
       pino: 8 || 9 || 10
 
-  '@navikt/oasis@4.2.2':
-    resolution: {integrity: sha512-EVMsF8uKbLPNRWuPfH1IKVJhqtibFzSTSyNkzj5mTCVMZV2QPS5W3uYMD4r0rXsmLx7nv0HnLovDphb3AFEjvw==, tarball: https://npm.pkg.github.com/download/@navikt/oasis/4.2.2/3c43e1e89bb2d46646a9a2aaf27972a024377a6f}
+  '@navikt/oasis@4.2.3':
+    resolution: {integrity: sha512-y9jzWKAxhZZvbj6xPKSOTJMfd4Vu4raQtPheeynSFokdxFwuoo3nH7khuB/F4HKjyYeR9UYZomfnjwIjuo81OQ==, tarball: https://npm.pkg.github.com/download/@navikt/oasis/4.2.3/2b6f6ff6ac6c82e6ea93f5ec4e041cf5a93b4302}
     engines: {node: ^20.19.0 || >= 22.12.0 || 24.x || 25.x}
 
   '@navikt/pino-logger@5.0.2':
@@ -472,8 +472,8 @@ packages:
     peerDependencies:
       pino: 8 || 9 || 10
 
-  '@navikt/texas@4.2.2':
-    resolution: {integrity: sha512-w/iTWLSdmvn2j2U3M+sJX9bSBvoV5UcMk+FuKs9EKz1QuaCoUksZrEfqX9/FtqyTUaOhwDnm/1iIuR6BudzFAg==, tarball: https://npm.pkg.github.com/download/@navikt/texas/4.2.2/862d743a1df21630a007a0d2d2a36a74dd8b5187}
+  '@navikt/texas@4.2.3':
+    resolution: {integrity: sha512-xESkYPtnX9OUpoANf4+ENf3l0GCxKldSkbarikVcHJFfVpTvb2zjuRxLbioO3I98vd3KC8D2aWdtTnAsUwsJVw==, tarball: https://npm.pkg.github.com/download/@navikt/texas/4.2.3/f694ea2082a8f801322606ffd3e5998d95a7133a}
     engines: {node: ^20.19.0 || >= 22.12.0 || 24.x || 25.x}
 
   '@navikt/virksomhetsvelger@2.2.0':
@@ -1009,8 +1009,8 @@ packages:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
 
-  jose@6.2.11:
-    resolution: {integrity: sha512-A5NPn7g8EAzGU3IzRs+Yiq8K5n3ypYS75M5+KKiVHdUexfpWK1kP4ZMq7QnTGDoMj6TJ1dtcEJjW60yZDXS4hg==}
+  jose@6.2.17:
+    resolution: {integrity: sha512-wOuK9V1yujQFH5S0ZWmLcDZN7+IKh9bUCC2ZPCf2HDlol3WWHy+PPyNjEI75FXRLMp3vDKQcupP59xhVU95hcg==}
 
   js-cookie@3.0.8:
     resolution: {integrity: sha512-yeJd4aNAdYZQjaon2bpD/Gb0B/omw7HQOsynXXcOiWVCacbBcPlgn8S/d1X6blFSaHao7ozqtW7NZW19xpCtIw==}
@@ -1780,12 +1780,12 @@ snapshots:
       next: 16.4.6(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       pino: 10.4.0
 
-  '@navikt/oasis@4.2.2':
+  '@navikt/oasis@4.2.3':
     dependencies:
-      '@navikt/texas': 4.2.2
+      '@navikt/texas': 4.2.3
       '@opentelemetry/api': 1.9.1
       '@prometheus-io/client': 0.16.1
-      jose: 6.2.11
+      jose: 6.2.17
 
   '@navikt/pino-logger@5.0.2(pino@10.4.0)':
     dependencies:
@@ -1794,7 +1794,7 @@ snapshots:
     optionalDependencies:
       pino-socket: 8.0.0
 
-  '@navikt/texas@4.2.2': {}
+  '@navikt/texas@4.2.3': {}
 
   '@navikt/virksomhetsvelger@2.2.0(@navikt/ds-css@8.23.0)(@navikt/ds-react@8.23.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -2207,7 +2207,7 @@ snapshots:
 
   jiti@2.7.0: {}
 
-  jose@6.2.11: {}
+  jose@6.2.17: {}
 
   js-cookie@3.0.8: {}
 
