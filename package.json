@@ -28,7 +28,7 @@
     "@navikt/fnrvalidator": "^2.2.1",
     "@navikt/nav-dekoratoren-moduler": "^4.6.0",
     "@navikt/next-logger": "^5.0.2",
-    "@navikt/oasis": "^4.2.2",
+    "@navikt/oasis": "^4.2.3",
     "@navikt/virksomhetsvelger": "^2.2.0",
     "@tanstack/react-form": "^1.33.5",
     "next": "^16.4.6",
